@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ระบบเสนอโครงร่างงานวิจัย | คณะพยาบาลศาสตร์ มรภ.ศรีสะเกษ</title>
+<meta name="description" content="ระบบเสนอโครงร่างงานวิจัยออนไลน์ คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ">
+<link rel="icon" href="logo.jpg">
+<meta property="og:title" content="ระบบเสนอโครงร่างงานวิจัย คณะพยาบาลศาสตร์ มรภ.ศรีสะเกษ">
+<meta property="og:image" content="logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Layout: green crest band header · left sticky step rail + right form sheet · summary meter rail on wide screens */
+:root{
+  --green:#1B6B3A; --green-deep:#0F4526; --orange:#E3832B; --gold:#B8913A; --ribbon:#F1DFA4;
+  --bg:#F4F7F2; --paper:#FFFFFF; --ink:#16241B; --muted:#5D6E62; --line:#DCE5DA; --soft:#EAF1E7;
+  --field:#FBFCFA; --danger:#B4332B; --ok:#1E7A45;
+  --f-display:"Bai Jamjuree","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --green:#4FB477; --green-deep:#0B2A18; --orange:#F09A4A; --gold:#D6B465; --ribbon:#5A4A1F;
+  --bg:#0E1611; --paper:#152019; --ink:#E5EEE6; --muted:#9DB0A2; --line:#2A3A2F; --soft:#1B2B21;
+  --field:#111B15; --danger:#F07A70; --ok:#5CCB8A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --green:#4FB477; --green-deep:#0B2A18; --orange:#F09A4A; --gold:#D6B465; --ribbon:#5A4A1F;
+  --bg:#0E1611; --paper:#152019; --ink:#E5EEE6; --muted:#9DB0A2; --line:#2A3A2F; --soft:#1B2B21;
+  --field:#111B15; --danger:#F07A70; --ok:#5CCB8A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.65;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* header */
+.crest{background:#0F4526;color:#F4F1E4;border-bottom:4px solid var(--gold)}
+.crest .wrap{display:flex;align-items:center;gap:18px;padding-block:18px}
+.crest img{width:64px;height:auto;background:#fff;border-radius:10px;padding:5px;flex:none}
+.crest h1{font-family:var(--f-display);font-weight:700;font-size:clamp(19px,2.6vw,26px);line-height:1.3;margin:0;text-wrap:balance}
+.crest p{margin:2px 0 0;font-size:13.5px;color:#D8D0A8}
+.crest .who{margin-left:auto;text-align:right;font-size:12.5px;color:#CFE3D4;line-height:1.5}
+.crest .who b{display:block;color:#F1DFA4;font-weight:600;font-size:13px}
+@media (max-width:720px){.crest .who{display:none}}
+.mode{font-size:13px;padding:8px 14px;border-radius:10px;margin:18px 0 0;background:var(--soft);border:1px dashed var(--gold);color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.mode button{margin-left:auto}
+/* main grid */
+.main{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;padding-block:24px 60px}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr);gap:16px}}
+.rail{position:sticky;top:16px;align-self:start;display:flex;flex-direction:column;gap:16px}
+@media (max-width:900px){.rail{position:static}}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.steps button{all:unset;cursor:pointer;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center;padding:9px 10px;border-radius:10px;width:100%;box-sizing:border-box}
+.steps button:hover{background:var(--soft)}
+.steps button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.steps .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:14px;border:1.5px solid var(--line);color:var(--muted);background:var(--paper)}
+.steps .t{font-size:14px;line-height:1.35;color:var(--muted)}
+.steps .t small{display:block;font-size:12px;opacity:.8}
+.steps li.done .n{background:var(--green);border-color:var(--green);color:#fff}
+.steps li.cur .n{background:var(--orange);border-color:var(--orange);color:#fff}
+.steps li.cur .t{color:var(--ink);font-weight:600}
+@media (max-width:900px){
+  .steps{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px}
+  .steps button{grid-template-columns:26px auto;padding:6px 10px 6px 6px;border:1px solid var(--line);background:var(--paper);white-space:nowrap}
+  .steps .n{width:26px;height:26px;font-size:12.5px}
+  .steps .t small{display:none}
+}
+.meter{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.meter .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.meter .row b{font-family:var(--f-display);color:var(--ink);font-size:20px}
+.bar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--gold));width:0;transition:width .4s}
+.meter .save{font-size:12px;color:var(--muted);margin-top:8px}
+@media (max-width:900px){.meter{display:none}}
+/* sheet */
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:16px;min-width:0}
+.sheet-head{padding:22px 28px 16px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);font-weight:600}
+.sheet-head h2{font-family:var(--f-display);font-weight:600;font-size:23px;margin:2px 0 0;line-height:1.3}
+.sheet-head p{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:62ch}
+.panel{padding:24px 28px 8px;display:none}
+.panel.show{display:block;animation:in .25s ease}
+@keyframes in{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.panel.show{animation:none}.bar i{transition:none}}
+@media (max-width:600px){.sheet-head,.panel{padding-left:16px;padding-right:16px}}
+fieldset{border:0;margin:0 0 26px;padding:0}
+legend{font-family:var(--f-display);font-weight:600;font-size:16px;color:var(--green);padding:0;margin-bottom:12px;display:flex;gap:8px;align-items:center}
+legend::after{content:"";flex:1;height:1px;background:var(--line);margin-left:6px}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px 16px}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}.c5{grid-column:span 5}
+@media (max-width:640px){.c8,.c6,.c5,.c4,.c3,.c2{grid-column:span 12!important}}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:500;min-width:0}
+label.f .req{color:var(--danger)}
+.hint{font-weight:400;color:var(--muted);font-size:12.5px}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=month],select,textarea{
+  font:inherit;font-size:15px;color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;width:100%;min-width:0}
+textarea{min-height:110px;resize:vertical;line-height:1.6}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 18%,transparent)}
+.invalid{border-color:var(--danger)!important}
+.count{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+/* choice chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:99px;border:1.5px solid var(--line);font-size:13.5px;background:var(--field);cursor:pointer;line-height:1.3}
+.chip input:checked+span{background:var(--green);border-color:var(--green);color:#fff}
+.chip input:focus-visible+span{outline:2px solid var(--orange);outline-offset:2px}
+.sdg span{padding:6px 11px 6px 6px}
+.sdg em{font-style:normal;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--soft);color:var(--green);font-weight:600;font-size:12px;font-family:var(--f-display)}
+.sdg input:checked+span em{background:rgba(255,255,255,.22);color:#fff}
+/* tags */
+.tags{display:flex;flex-wrap:wrap;gap:6px;padding:6px;border:1.5px solid var(--line);border-radius:10px;background:var(--field)}
+.tags:focus-within{border-color:var(--green)}
+.tag{background:var(--soft);color:var(--green);border-radius:6px;padding:2px 4px 2px 9px;font-size:13.5px;display:flex;align-items:center;gap:2px}
+.tag button{all:unset;cursor:pointer;padding:0 5px;color:var(--muted)}
+.tags input{border:0!important;box-shadow:none!important;background:transparent!important;flex:1;min-width:140px;padding:4px 6px!important}
+/* repeaters */
+.member{border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px;background:var(--field)}
+.member-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13.5px;font-weight:600;color:var(--muted)}
+.share{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r);background:var(--soft);font-size:14px;flex-wrap:wrap}
+.share .track{flex:1;min-width:160px;height:10px;border-radius:99px;background:var(--paper);overflow:hidden;display:flex}
+.share .track i{display:block;height:100%}
+.share b{font-family:var(--f-display);font-variant-numeric:tabular-nums}
+.ok-t{color:var(--ok)}.bad-t{color:var(--danger)}
+.list-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.list-row .num{flex:none;width:28px;height:40px;display:grid;place-items:center;font-family:var(--f-display);color:var(--green);font-weight:600}
+/* gantt */
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:middle}
+th{background:var(--soft);font-weight:600;font-size:12.5px;color:var(--muted);white-space:nowrap}
+.gantt td.m{padding:4px;text-align:center;width:34px}
+.gantt td.m button{all:unset;cursor:pointer;display:block;width:26px;height:22px;border-radius:5px;background:var(--soft);margin:auto}
+.gantt td.m button.on{background:var(--orange)}
+.gantt td.m button:focus-visible{outline:2px solid var(--green)}
+.gantt td.act{min-width:220px}
+.gantt input,.budget input{padding:6px 9px!important;font-size:14px!important}
+.budget td.amt{width:160px}
+.budget input[type=number]{text-align:right;font-variant-numeric:tabular-nums}
+.budget tfoot td{font-weight:600;background:var(--soft)}
+.budget .cat td{background:color-mix(in srgb,var(--gold) 12%,var(--paper));font-weight:600;color:var(--ink)}
+.total-box{margin-top:14px;padding:16px 18px;border-radius:var(--r);border:1.5px solid var(--gold);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.total-box b{font-family:var(--f-display);font-size:26px;color:var(--green);font-variant-numeric:tabular-nums}
+.total-box small{color:var(--muted);display:block}
+/* buttons */
+.btn{font:inherit;font-size:14.5px;font-weight:600;border-radius:10px;padding:10px 18px;cursor:pointer;border:1.5px solid transparent;display:inline-flex;align-items:center;gap:8px}
+.btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.btn-p{background:var(--green);color:#fff}
+.btn-p:hover{background:var(--green-deep)}
+.btn-o{background:var(--orange);color:#fff}
+.btn-g{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn-g:hover{background:var(--soft)}
+.btn-s{padding:6px 12px;font-size:13px}
+.btn-x{all:unset;cursor:pointer;color:var(--muted);font-size:13px;padding:2px 8px;border-radius:6px}
+.btn-x:hover{color:var(--danger);background:var(--soft)}
+.nav{display:flex;justify-content:space-between;gap:10px;padding:14px 28px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);flex-wrap:wrap;position:sticky;bottom:0;background:var(--paper);border-radius:0 0 16px 16px;z-index:5}
+@media (max-width:600px){.nav{padding-left:16px;padding-right:16px}}
+/* review */
+.review dl{display:grid;grid-template-columns:190px minmax(0,1fr);gap:6px 16px;margin:0 0 18px;font-size:14px}
+@media (max-width:600px){.review dl{grid-template-columns:minmax(0,1fr)}.review dt{margin-top:6px}}
+.review dt{color:var(--muted)}
+.review dd{margin:0;overflow-wrap:anywhere}
+.review h3{font-family:var(--f-display);font-size:16px;color:var(--green);margin:0 0 10px;display:flex;justify-content:space-between;align-items:center}
+.miss{background:color-mix(in srgb,var(--danger) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--danger) 35%,var(--line));color:var(--ink);border-radius:var(--r);padding:12px 16px;font-size:14px;margin-bottom:18px}
+.miss ul{margin:6px 0 0;padding-left:20px}
+.cert{display:flex;gap:10px;align-items:flex-start;padding:14px;border-radius:var(--r);background:var(--soft);font-size:14px}
+.cert input{width:18px;height:18px;margin-top:3px;accent-color:var(--green);flex:none}
+.done-card{text-align:center;padding:40px 24px}
+.done-card .seal{width:84px;height:84px;margin:0 auto 14px;border-radius:50%;background:var(--green);display:grid;place-items:center;color:#fff;font-size:40px}
+.done-card h2{font-family:var(--f-display);margin:0}
+.done-card .ref{font-family:var(--f-display);font-size:22px;color:var(--orange);letter-spacing:.04em;margin:10px 0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(120px);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:10px;font-size:14px;transition:transform .3s;z-index:20;max-width:calc(100% - 32px)}
+.toast.on{transform:translateX(-50%) translateY(0)}
+/* attachments */
+.howto{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+@media (max-width:640px){.howto{grid-template-columns:minmax(0,1fr)}}
+.howto div{background:var(--soft);border-radius:var(--r);padding:12px 14px;font-size:13.5px;line-height:1.5}
+.howto b{display:block;font-family:var(--f-display);color:var(--green);font-size:13px;margin-bottom:2px}
+.docs{display:flex;flex-direction:column;gap:10px}
+.doc{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:var(--field);display:flex;flex-direction:column;gap:8px}
+.doc-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px;font-weight:600}
+.doc-h .hint{font-weight:400}
+.doc-h .badge{font-size:11.5px;font-weight:600;color:var(--danger);border:1px solid currentColor;border-radius:6px;padding:0 6px}
+.doc-h input{flex:1;min-width:180px;font-weight:600}
+.st{margin-left:auto;font-size:12px;font-weight:500;padding:2px 10px;border-radius:99px;background:var(--soft);color:var(--muted);white-space:nowrap}
+.st.ok{background:color-mix(in srgb,var(--ok) 15%,var(--paper));color:var(--ok)}
+.st.warn{background:color-mix(in srgb,var(--gold) 20%,var(--paper));color:var(--ink)}
+.st.bad{background:color-mix(in srgb,var(--danger) 12%,var(--paper));color:var(--danger)}
+.doc-row{display:flex;gap:8px;align-items:center}
+.doc-row input{flex:1}
+.doc-row a{flex:none;text-decoration:none}
+.doc-row a[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.doc .fname{font-size:12.5px;color:var(--ok)}
+.btn-save{flex:none;background:var(--orange);color:#fff}
+.btn-save:hover{filter:brightness(.95)}
+.btn-save.saved{background:transparent;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.btn-save:disabled{opacity:.55;cursor:default}
+.doc.dirty{border-color:color-mix(in srgb,var(--orange) 60%,var(--line))}
+.savebar{margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;border-radius:var(--r);background:var(--soft)}
+.savebar span{font-size:13.5px;color:var(--muted);flex:1;min-width:200px}
+@media (max-width:520px){.doc-row{flex-wrap:wrap}.doc-row input{flex-basis:100%}}
+.review a.lnk{color:var(--green);overflow-wrap:anywhere}
+footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30px}
+</style>
+</head>
+<body>
+
+<header class="crest">
+  <div class="wrap">
+    <img src="logo.jpg" alt="ตราคณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ">
+    <div>
+      <h1>ระบบเสนอโครงร่างงานวิจัย</h1>
+      <p>คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ · ปีงบประมาณ <span id="fyHead">2570</span></p>
+    </div>
+    <div class="who"><b>ผู้ดูแลระบบ</b>อ.ปัณณทัต จันพานิช<br>งานวิจัย คณะพยาบาลศาสตร์</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="mode" id="demoBar" hidden>
+    <span>โหมดทดลอง: ยังไม่ได้ตั้งค่าการเชื่อมต่อฐานข้อมูล ฟอร์มเติมข้อมูลตัวอย่างไว้ และยังไม่บันทึกข้อมูลจริง</span>
+    <button class="btn btn-g btn-s" type="button" id="clearAll">ล้างข้อมูลตัวอย่าง</button>
+  </div>
+
+  <div class="main" id="main">
+    <aside class="rail">
+      <ol class="steps" id="steps"></ol>
+      <div class="meter">
+        <div class="row"><span>ความครบถ้วนของข้อมูล</span><b id="pct">0%</b></div>
+        <div class="bar"><i id="pctBar"></i></div>
+        <div class="save" id="saveNote">ยังไม่ได้บันทึกร่าง</div>
+      </div>
+    </aside>
+
+    <form class="sheet" id="form" novalidate>
+      <div class="sheet-head">
+        <div><div class="eyebrow" id="eb">ขั้นตอนที่ 1 จาก 7</div><h2 id="ph"></h2><p id="pd"></p></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <section class="panel" data-step="0">
+        <fieldset><legend>ชื่อโครงการวิจัย</legend>
+          <div class="grid">
+            <label class="f c12">ชื่อโครงการ (ภาษาไทย) <span class="req">*</span>
+              <input type="text" id="titleTh" name="titleTh" required placeholder="เช่น ผลของโปรแกรม...ต่อ...ของ...">
+            </label>
+            <label class="f c12">ชื่อโครงการ (ภาษาอังกฤษ) <span class="req">*</span>
+              <input type="text" id="titleEn" name="titleEn" required placeholder="Effects of ... on ... among ...">
+            </label>
+          </div>
+        </fieldset>
+        <fieldset><legend>ลักษณะโครงการ</legend>
+          <div class="grid">
+            <label class="f c4">ปีงบประมาณ <span class="req">*</span>
+              <select id="fy" name="fy" required><option>2569</option><option selected>2570</option><option>2571</option></select>
+            </label>
+            <label class="f c8">แหล่งทุน <span class="req">*</span>
+              <select id="fund" name="fund" required>
+                <option value="">— เลือกแหล่งทุน —</option>
+                <option>ทุนงบประมาณรายได้ คณะพยาบาลศาสตร์</option>
+                <option>ทุนงบประมาณรายได้ มหาวิทยาลัย (บ.กศ.)</option>
+                <option>ทุนกองทุนส่งเสริมวิทยาศาสตร์ วิจัยและนวัตกรรม (ววน./FF)</option>
+                <option>ทุนภายนอก (วช. / สสส. / บพท. / อื่น ๆ)</option>
+                <option>ไม่ขอรับทุน (วิจัยด้วยทุนส่วนตัว)</option>
+              </select>
+            </label>
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">ประเภทโครงการ <span class="req">*</span></span>
+              <div class="chips" data-radio="projType">
+                <label class="chip"><input type="radio" name="projType" value="โครงการเดี่ยว" required><span>โครงการเดี่ยว</span></label>
+                <label class="chip"><input type="radio" name="projType" value="แผนงานวิจัย"><span>แผนงานวิจัย</span></label>
+                <label class="chip"><input type="radio" name="projType" value="โครงการย่อยภายใต้แผนงาน"><span>โครงการย่อยภายใต้แผนงาน</span></label>
+              </div>
+            </div>
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">ประเภทการวิจัย <span class="req">*</span></span>
+              <div class="chips">
+                <label class="chip"><input type="radio" name="resType" value="วิจัยพื้นฐาน" required><span>วิจัยพื้นฐาน</span></label>
+                <label class="chip"><input type="radio" name="resType" value="วิจัยประยุกต์"><span>วิจัยประยุกต์</span></label>
+                <label class="chip"><input type="radio" name="resType" value="วิจัยและพัฒนา (R&D)"><span>วิจัยและพัฒนา (R&amp;D)</span></label>
+                <label class="chip"><input type="radio" name="resType" value="วิจัยกึ่งทดลอง"><span>วิจัยกึ่งทดลอง</span></label>
+                <label class="chip"><input type="radio" name="resType" value="วิจัยเชิงปฏิบัติการแบบมีส่วนร่วม (PAR)"><span>PAR</span></label>
+                <label class="chip"><input type="radio" name="resType" value="วิจัยเพื่อพัฒนาการเรียนการสอน"><span>วิจัยการเรียนการสอน</span></label>
+                <label class="chip"><input type="radio" name="resType" value="R2R"><span>R2R</span></label>
+              </div>
+            </div>
+            <label class="f c6">สาขาการพยาบาล <span class="req">*</span>
+              <select id="field" name="field" required>
+                <option value="">— เลือกสาขา —</option>
+                <option>การพยาบาลอนามัยชุมชน</option><option>การพยาบาลผู้ใหญ่และผู้สูงอายุ</option>
+                <option>การพยาบาลเด็กและวัยรุ่น</option><option>การพยาบาลมารดา ทารก และการผดุงครรภ์</option>
+                <option>การพยาบาลสุขภาพจิตและจิตเวช</option><option>การบริหารการพยาบาล</option>
+                <option>การศึกษาพยาบาล</option><option>อื่น ๆ / สหสาขา</option>
+              </select>
+            </label>
+            <label class="f c6">กลุ่มเป้าหมายหลัก
+              <input type="text" id="target" name="target" placeholder="เช่น ผู้สูงอายุติดเตียง, อสม., นักศึกษาพยาบาล">
+            </label>
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">คำสำคัญ (Keywords) <span class="hint">พิมพ์แล้วกด Enter · 3–5 คำ</span></span>
+              <div class="tags" id="kwBox"><input type="text" id="kwInput" aria-label="เพิ่มคำสำคัญ" placeholder="เพิ่มคำสำคัญ..."></div>
+            </div>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="panel" data-step="1">
+        <fieldset><legend>หัวหน้าโครงการ</legend>
+          <p class="hint" style="margin:-4px 0 12px">เลือกสาขาวิชาก่อน แล้วพิมพ์หรือเลือกชื่อจากรายชื่ออาจารย์ประจำสาขา ระบบจะเติมตำแหน่ง อีเมล และเบอร์โทรให้อัตโนมัติ</p>
+          <div class="grid">
+            <label class="f c4">สาขาวิชา <span class="req">*</span>
+              <select id="leadDept" name="leadDept" required><option value="">— เลือกสาขาวิชา —</option></select>
+            </label>
+            <label class="f c3">คำนำหน้า / ตำแหน่ง
+              <select id="leadPrefix" name="leadPrefix"><option>อาจารย์</option><option>อาจารย์ ดร.</option><option>ผู้ช่วยศาสตราจารย์</option><option>ผู้ช่วยศาสตราจารย์ ดร.</option><option>รองศาสตราจารย์</option><option>รองศาสตราจารย์ ดร.</option><option>ศาสตราจารย์</option></select>
+            </label>
+            <label class="f c5">ชื่อ–นามสกุล <span class="req">*</span><input type="text" id="leadName" name="leadName" list="deptFaculty" autocomplete="off" required placeholder="พิมพ์เพื่อค้นหารายชื่ออาจารย์"><span class="fname" id="leadMatch"></span></label>
+            <label class="f c3">สัดส่วนงาน (%) <span class="req">*</span><input type="number" id="leadShare" name="leadShare" min="0" max="100" required></label>
+            <label class="f c4">โทรศัพท์ <span class="req">*</span><input type="tel" id="leadTel" name="leadTel" required placeholder="08x-xxx-xxxx"></label>
+            <label class="f c5">อีเมล <span class="req">*</span><input type="email" id="leadEmail" name="leadEmail" required placeholder="name@sskru.ac.th"></label>
+          </div>
+          <datalist id="deptFaculty"></datalist><datalist id="allFaculty"></datalist>
+        </fieldset>
+        <fieldset><legend>ผู้ร่วมวิจัย</legend>
+          <div id="members"></div>
+          <button class="btn btn-g btn-s" type="button" id="addMember">+ เพิ่มผู้ร่วมวิจัย</button>
+          <div class="share" style="margin-top:16px">
+            <span>สัดส่วนรวม</span>
+            <div class="track" id="shareTrack"></div>
+            <b id="shareSum">0%</b><span id="shareMsg"></span>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="panel" data-step="2">
+        <fieldset><legend>สาระสำคัญของโครงร่าง</legend>
+          <div class="grid">
+            <label class="f c12">ความเป็นมาและความสำคัญของปัญหา <span class="req">*</span> <span class="hint">สรุปสั้น ๆ ไม่เกิน 1,500 ตัวอักษร</span>
+              <textarea id="background" name="background" maxlength="1500" required></textarea><span class="count" data-for="background"></span>
+            </label>
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">วัตถุประสงค์การวิจัย <span class="req">*</span></span>
+              <div id="objectives"></div>
+              <div><button class="btn btn-g btn-s" type="button" id="addObj">+ เพิ่มวัตถุประสงค์</button></div>
+            </div>
+            <label class="f c12">กรอบแนวคิด / ทฤษฎีที่ใช้
+              <textarea id="framework" name="framework" maxlength="800" style="min-height:80px" placeholder="เช่น ทฤษฎีการรับรู้ความสามารถของตนเอง (Bandura)"></textarea><span class="count" data-for="framework"></span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset><legend>ระเบียบวิธีวิจัย</legend>
+          <div class="grid">
+            <label class="f c6">รูปแบบการวิจัย<input type="text" id="design" name="design" placeholder="เช่น กึ่งทดลองแบบสองกลุ่มวัดก่อน–หลัง"></label>
+            <label class="f c6">พื้นที่ดำเนินการวิจัย<input type="text" id="area" name="area" placeholder="ตำบล / อำเภอ / จังหวัด"></label>
+            <label class="f c8">ประชากรและกลุ่มตัวอย่าง<input type="text" id="sample" name="sample" placeholder="ระบุจำนวนและวิธีได้มา"></label>
+            <label class="f c4">ขนาดตัวอย่าง (คน)<input type="number" id="n" name="n" min="0"></label>
+            <label class="f c12">เครื่องมือและการวิเคราะห์ข้อมูล<textarea id="tools" name="tools" style="min-height:80px" maxlength="800"></textarea></label>
+            <label class="f c6">เริ่มโครงการ <span class="req">*</span><input type="month" id="start" name="start" required></label>
+            <label class="f c6">ระยะเวลา (เดือน) <span class="req">*</span><input type="number" id="months" name="months" min="1" max="24" required></label>
+          </div>
+        </fieldset>
+        <fieldset><legend>แผนการดำเนินงาน</legend>
+          <p class="hint" style="margin:-4px 0 10px">แตะช่องเดือนเพื่อระบุช่วงเวลาของแต่ละกิจกรรม</p>
+          <div class="scroll"><table class="gantt" id="gantt"></table></div>
+          <button class="btn btn-g btn-s" type="button" id="addAct" style="margin-top:10px">+ เพิ่มกิจกรรม</button>
+        </fieldset>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="panel" data-step="3">
+        <fieldset><legend>ความสอดคล้องเชิงยุทธศาสตร์</legend>
+          <div class="grid">
+            <label class="f c12">ยุทธศาสตร์มหาวิทยาลัยราชภัฏศรีสะเกษ
+              <select id="strategy" name="strategy">
+                <option value="">— เลือกยุทธศาสตร์ —</option>
+                <option>การพัฒนาท้องถิ่น</option><option>การผลิตและพัฒนาครู</option>
+                <option>การยกระดับคุณภาพการศึกษา</option><option>การพัฒนาระบบการบริหารจัดการ</option>
+              </select>
+            </label>
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">เป้าหมายการพัฒนาที่ยั่งยืน (SDGs) <span class="hint">เลือกได้มากกว่า 1</span></span>
+              <div class="chips" id="sdgs"></div>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset><legend>ภาวะสุขภาพและการลดความเหลื่อมล้ำทางสังคม</legend>
+          <div class="grid">
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">โครงการนี้มีส่วนช่วยลดความเหลื่อมล้ำทางสุขภาพในระดับใด <span class="req">*</span></span>
+              <div class="chips">
+                <label class="chip"><input type="radio" name="equityLevel" value="เป็นเป้าหมายหลักของโครงการ" required><span>เป็นเป้าหมายหลักของโครงการ</span></label>
+                <label class="chip"><input type="radio" name="equityLevel" value="มีส่วนเกี่ยวข้อง"><span>มีส่วนเกี่ยวข้อง</span></label>
+                <label class="chip"><input type="radio" name="equityLevel" value="ไม่เกี่ยวข้องโดยตรง"><span>ไม่เกี่ยวข้องโดยตรง</span></label>
+              </div>
+            </div>
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">ภาวะสุขภาพที่โครงการมุ่งแก้ไข <span class="hint">เลือกได้มากกว่า 1</span></span>
+              <div class="chips" id="healthIssues"></div>
+            </div>
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">กลุ่มเปราะบางที่ได้รับประโยชน์ <span class="hint">เลือกได้มากกว่า 1</span></span>
+              <div class="chips" id="equityGroups"></div>
+            </div>
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">แนวทางการลดความเหลื่อมล้ำทางสังคม <span class="hint">เลือกได้มากกว่า 1</span></span>
+              <div class="chips" id="equityDims"></div>
+            </div>
+            <label class="f c12">อธิบายว่าโครงการช่วยลดความเหลื่อมล้ำหรือยกระดับภาวะสุขภาพอย่างไร
+              <textarea id="equityDesc" name="equityDesc" maxlength="600" style="min-height:80px" placeholder="เช่น ผู้สูงอายุติดเตียงในพื้นที่ห่างไกลได้รับการดูแลที่บ้านจาก อสม. ที่ผ่านการพัฒนาทักษะ ลดการเดินทางและค่าใช้จ่ายของครอบครัว"></textarea><span class="count" data-for="equityDesc"></span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset><legend>ผลผลิตและการเผยแพร่</legend>
+          <div class="grid">
+            <div class="f c12"><span style="font-size:13.5px;font-weight:500">เป้าหมายการเผยแพร่ <span class="req">*</span></span>
+              <div class="chips" id="outputs"></div>
+            </div>
+            <label class="f c12">ประโยชน์ที่คาดว่าจะได้รับ <span class="req">*</span>
+              <textarea id="benefit" name="benefit" maxlength="800" style="min-height:80px" required></textarea><span class="count" data-for="benefit"></span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset><legend>จริยธรรมการวิจัยในมนุษย์</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="ethics" value="ต้องยื่นขอรับรอง" required><span>ต้องยื่นขอรับรองจริยธรรม</span></label>
+            <label class="chip"><input type="radio" name="ethics" value="ยื่นแล้ว อยู่ระหว่างพิจารณา"><span>ยื่นแล้ว อยู่ระหว่างพิจารณา</span></label>
+            <label class="chip"><input type="radio" name="ethics" value="ได้รับการรับรองแล้ว"><span>ได้รับการรับรองแล้ว</span></label>
+            <label class="chip"><input type="radio" name="ethics" value="ไม่เกี่ยวข้องกับมนุษย์"><span>ไม่เกี่ยวข้องกับมนุษย์</span></label>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- STEP 5 -->
+      <section class="panel" data-step="4">
+        <fieldset><legend>รายละเอียดงบประมาณ</legend>
+          <div class="scroll"><table class="budget" id="budget"></table></div>
+          <div class="total-box">
+            <div><small>งบประมาณที่เสนอขอทั้งสิ้น</small><span id="bahtText">—</span></div>
+            <b id="grand">0.00 บาท</b>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- STEP 6 -->
+      <section class="panel" data-step="5">
+        <div class="howto">
+          <div><b>1. อัปโหลดไฟล์</b>อัปโหลดเอกสารไว้ใน Google Drive ของท่าน (ไฟล์ Word หรือ PDF)</div>
+          <div><b>2. ตั้งค่าการแชร์</b>คลิกขวาที่ไฟล์ > แชร์ > เลือก “ทุกคนที่มีลิงก์” หรือ “มหาวิทยาลัยราชภัฏศรีสะเกษ” สิทธิ์ผู้มีสิทธิ์อ่าน</div>
+          <div><b>3. คัดลอกลิงก์มาวาง</b>กด “คัดลอกลิงก์” แล้ววางในช่องด้านล่าง กด “เปิดดู” เพื่อทดสอบว่าเปิดได้</div>
+        </div>
+        <fieldset><legend>ลิงก์เอกสารประกอบการพิจารณา</legend>
+          <div class="docs" id="docs"></div>
+          <button class="btn btn-g btn-s" type="button" id="addDoc" style="margin-top:12px">+ เพิ่มลิงก์เอกสารอื่น ๆ</button>
+          <div class="savebar"><span id="docSaveNote">วางลิงก์แล้วกด “บันทึก” ในแต่ละรายการ หรือกดบันทึกทั้งหมดที่นี่</span>
+            <button class="btn btn-p" type="button" id="saveDocs">บันทึกเอกสารแนบทั้งหมด</button></div>
+        </fieldset>
+      </section>
+
+      <section class="panel review" data-step="6">
+        <div id="missBox"></div>
+        <div id="reviewBody"></div>
+        <label class="cert"><input type="checkbox" id="certify"><span>ข้าพเจ้าขอรับรองว่าข้อมูลข้างต้นเป็นความจริง โครงร่างนี้ไม่ซ้ำซ้อนกับโครงการที่ได้รับทุนจากแหล่งอื่น และจะปฏิบัติตามระเบียบการวิจัยของมหาวิทยาลัย</span></label>
+      </section>
+
+      <div class="nav" id="nav">
+        <button class="btn btn-g" type="button" id="prev">← ย้อนกลับ</button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-g" type="button" id="saveDraft">บันทึกร่าง</button>
+          <button class="btn btn-p" type="button" id="next">ถัดไป →</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <footer>งานวิจัยและบริการวิชาการ คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const API_URL=((window.APP_CONFIG||{}).API_URL||'').trim();
+const LIVE=/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(API_URL);
+async function api(action,data){
+  const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,data:data||{}})});
+  const j=await r.json(); if(!j.ok) throw new Error(j.error||'เกิดข้อผิดพลาด'); return j.result;
+}
+const STEPS=[
+ {t:'ข้อมูลโครงการ',s:'ชื่อ แหล่งทุน ประเภท',d:'ระบุชื่อโครงการ แหล่งทุน และลักษณะของงานวิจัย'},
+ {t:'คณะผู้วิจัย',s:'หัวหน้าและผู้ร่วมวิจัย',d:'สัดส่วนการมีส่วนร่วมของทุกคนรวมกันต้องเท่ากับ 100%'},
+ {t:'สาระสำคัญและวิธีวิจัย',s:'วัตถุประสงค์ ระเบียบวิธี แผนงาน',d:'สรุปสาระของโครงร่างเพื่อใช้ประกอบการพิจารณาของคณะกรรมการ'},
+ {t:'ความสอดคล้องและผลผลิต',s:'ยุทธศาสตร์ SDGs การเผยแพร่',d:'เชื่อมโยงโครงการกับยุทธศาสตร์มหาวิทยาลัยและเป้าหมายการเผยแพร่'},
+ {t:'งบประมาณ',s:'ค่าตอบแทน ใช้สอย วัสดุ',d:'กรอกงบประมาณตามหมวดรายจ่าย ระบบรวมยอดให้อัตโนมัติ'},
+ {t:'เอกสารแนบ',s:'ลิงก์ Google Drive',d:'แนบลิงก์ไฟล์ที่อัปโหลดไว้ใน Google Drive เพื่อให้งานวิจัยคณะเปิดอ่านและดาวน์โหลดได้'},
+ {t:'ตรวจสอบและส่ง',s:'ยืนยันข้อมูล',d:'ตรวจทานข้อมูลทั้งหมดก่อนส่งให้งานวิจัยคณะ'}
+];
+const SDG=['ขจัดความยากจน','ขจัดความหิวโหย','สุขภาพและความเป็นอยู่ที่ดี','การศึกษาที่มีคุณภาพ','ความเท่าเทียมทางเพศ','น้ำสะอาดและสุขาภิบาล','พลังงานสะอาด','งานที่มีคุณค่าและเศรษฐกิจ','อุตสาหกรรม นวัตกรรม','ลดความเหลื่อมล้ำ','เมืองและชุมชนยั่งยืน','การผลิตและบริโภคที่ยั่งยืน','การรับมือสภาพภูมิอากาศ','ทรัพยากรทางทะเล','ระบบนิเวศบนบก','สังคมสงบสุข ยุติธรรม','ความร่วมมือเพื่อการพัฒนา'];
+const HEALTH_ISSUES=['โรคไม่ติดต่อเรื้อรัง (NCDs)','ผู้สูงอายุและภาวะพึ่งพิง','การดูแลระยะยาวและประคับประคอง','สุขภาพมารดาและทารก','พัฒนาการเด็กปฐมวัย','สุขภาพจิตและยาเสพติด','โรคติดต่อและโรคอุบัติใหม่','ภาวะโภชนาการ','อุบัติเหตุ ภัยพิบัติ และการแพทย์ฉุกเฉิน','อนามัยสิ่งแวดล้อมและอาชีวอนามัย'];
+const EQUITY_GROUPS=['ผู้มีรายได้น้อย','ผู้สูงอายุติดบ้าน ติดเตียง','ผู้พิการ','ผู้อยู่ในพื้นที่ห่างไกล ชนบท ชายแดน','กลุ่มชาติพันธุ์และภาษาท้องถิ่น (เขมร กูย ลาว เยอ)','เด็กและเยาวชนกลุ่มเปราะบาง','แรงงานนอกระบบ','ผู้ดูแลในครอบครัว (Caregiver) และ อสม.'];
+const EQUITY_DIMS=['เพิ่มการเข้าถึงบริการสุขภาพ','ยกระดับความรอบรู้ด้านสุขภาพ','จัดการปัจจัยสังคมกำหนดสุขภาพ (SDH)','ลดค่าใช้จ่ายด้านสุขภาพของครัวเรือน','เสริมพลังชุมชนและเครือข่าย','ใช้เทคโนโลยีลดช่องว่างการเข้าถึง','ส่งเสริมการมีส่วนร่วมของภาคีในพื้นที่'];
+const MULTI=['sdgs','outputs','healthIssues','equityGroups','equityDims'];
+const OUTPUTS=['บทความวารสาร TCI กลุ่ม 1','บทความวารสาร TCI กลุ่ม 2','บทความวารสารนานาชาติ (Scopus)','นำเสนอในการประชุมวิชาการ','นวัตกรรม / สิ่งประดิษฐ์','คู่มือ / ต้นแบบการดูแล','นำไปใช้ประโยชน์ในชุมชน','บูรณาการกับการเรียนการสอน'];
+const BUDGET_CATS=[
+ {k:'comp',t:'หมวดค่าตอบแทน',ph:'เช่น ค่าตอบแทนผู้ทรงคุณวุฒิตรวจเครื่องมือ'},
+ {k:'use',t:'หมวดค่าใช้สอย',ph:'เช่น ค่าเดินทางเก็บข้อมูล, ค่าอาหารว่าง'},
+ {k:'mat',t:'หมวดค่าวัสดุ',ph:'เช่น วัสดุสำนักงาน, ค่าถ่ายเอกสารแบบสอบถาม'}
+];
+const DOC_TYPES=[
+ {t:'โครงร่างวิจัยฉบับสมบูรณ์',h:'ไฟล์ Word หรือ PDF',req:true},
+ {t:'ประวัติคณะผู้วิจัย',h:'CV ของหัวหน้าและผู้ร่วมวิจัย'},
+ {t:'เครื่องมือวิจัย',h:'แบบสอบถาม แบบสัมภาษณ์ โปรแกรม/คู่มือ'},
+ {t:'เอกสารจริยธรรมการวิจัยในมนุษย์',h:'แบบยื่นขอ หรือใบรับรอง (ถ้ามี)'}
+];
+const defaultLinks=()=>DOC_TYPES.map(d=>({type:d.t,url:'',fixed:true}));
+let cur=0, maxSeen=0;
+const S={members:[],objectives:[''],acts:[{n:'',m:[]}],budget:{comp:[{n:'',a:''}],use:[{n:'',a:''}],mat:[{n:'',a:''}]},keywords:[],links:defaultLinks()};
+
+/* ---------- builders ---------- */
+function buildSteps(){
+  $('#steps').innerHTML=STEPS.map((s,i)=>`<li class="${i===cur?'cur':(i<=maxSeen&&isStepDone(i))?'done':''}"><button type="button" data-go="${i}"><span class="n">${i!==cur&&i<=maxSeen&&isStepDone(i)?'✓':i+1}</span><span class="t">${s.t}<small>${s.s}</small></span></button></li>`).join('');
+}
+function chipsFrom(el,arr,name,sdg){
+  el.innerHTML=arr.map((t,i)=>`<label class="chip ${sdg?'sdg':''}"><input type="checkbox" name="${name}" value="${sdg?'SDG '+(i+1)+' '+t:t}"><span>${sdg?`<em>${i+1}</em>`:''}${t}</span></label>`).join('');
+}
+const esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderMembers(){
+  $('#members').innerHTML=S.members.map((m,i)=>`
+  <div class="member"><div class="member-h"><span>ผู้ร่วมวิจัยคนที่ ${i+1}</span><button type="button" class="btn-x" data-delm="${i}">ลบ</button></div>
+   <div class="grid">
+    <label class="f c6">ชื่อ–นามสกุล (พร้อมตำแหน่งวิชาการ)<input type="text" id="m_name_${i}" data-m="${i}" data-k="name" list="allFaculty" autocomplete="off" placeholder="พิมพ์เพื่อค้นหารายชื่ออาจารย์" value="${esc(m.name)}"></label>
+    <label class="f c4">สังกัด<input type="text" id="m_aff_${i}" data-m="${i}" data-k="aff" value="${esc(m.aff)}" placeholder="คณะพยาบาลศาสตร์ / หน่วยงานภายนอก"></label>
+    <label class="f c2">สัดส่วน (%)<input type="number" id="m_share_${i}" min="0" max="100" data-m="${i}" data-k="share" value="${esc(m.share)}"></label>
+   </div></div>`).join('') || `<p class="hint" style="margin:0 0 10px">ยังไม่มีผู้ร่วมวิจัย หากทำวิจัยคนเดียว ให้ใส่สัดส่วนหัวหน้าโครงการ 100%</p>`;
+  updateShare();
+}
+const PAL=['var(--green)','var(--orange)','var(--gold)','#5B8DB8','#8C6BB1','#C26A8A'];
+function updateShare(){
+  const parts=[{v:+$('#leadShare').value||0}].concat(S.members.map(m=>({v:+m.share||0})));
+  const sum=parts.reduce((a,b)=>a+b.v,0);
+  $('#shareTrack').innerHTML=parts.map((p,i)=>`<i style="width:${Math.min(p.v,100)}%;background:${PAL[i%PAL.length]}"></i>`).join('');
+  $('#shareSum').textContent=sum+'%';
+  const ok=sum===100;
+  $('#shareMsg').className=ok?'ok-t':'bad-t';
+  $('#shareMsg').textContent=ok?'ครบ 100% แล้ว':sum>100?`เกิน ${sum-100}%`:`ขาดอีก ${100-sum}%`;
+}
+function renderObjectives(){
+  $('#objectives').innerHTML=S.objectives.map((o,i)=>`<div class="list-row"><span class="num">${i+1}.</span><input type="text" id="obj_${i}" data-obj="${i}" value="${esc(o)}" placeholder="เพื่อศึกษา / เพื่อเปรียบเทียบ ..."><button type="button" class="btn-x" data-delo="${i}" aria-label="ลบวัตถุประสงค์">ลบ</button></div>`).join('');
+}
+function monthLabels(){
+  const n=Math.max(1,Math.min(24,+$('#months').value||12));
+  const st=$('#start').value; const TH=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  let y=0,mo=-1; if(st){[y,mo]=st.split('-').map(Number);mo--}
+  return Array.from({length:n},(_,i)=>st?TH[(mo+i)%12]:'ด.'+(i+1));
+}
+function renderGantt(){
+  const L=monthLabels();
+  $('#gantt').innerHTML=`<thead><tr><th>กิจกรรม</th>${L.map(l=>`<th style="text-align:center">${l}</th>`).join('')}<th></th></tr></thead><tbody>`+
+   S.acts.map((a,i)=>`<tr><td class="act"><input type="text" id="act_${i}" data-act="${i}" value="${esc(a.n)}" placeholder="เช่น ทบทวนวรรณกรรม"></td>${L.map((_,m)=>`<td class="m"><button type="button" aria-label="เดือนที่ ${m+1}" class="${a.m.includes(m)?'on':''}" data-cell="${i}-${m}"></button></td>`).join('')}<td><button type="button" class="btn-x" data-dela="${i}">ลบ</button></td></tr>`).join('')+'</tbody>';
+}
+const fmt=n=>(+n||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+function renderBudget(){
+  let h=`<thead><tr><th>รายการ</th><th style="text-align:right">จำนวนเงิน (บาท)</th><th></th></tr></thead><tbody>`;
+  BUDGET_CATS.forEach(c=>{
+    const sub=S.budget[c.k].reduce((a,r)=>a+(+r.a||0),0);
+    h+=`<tr class="cat"><td colspan="3"><div style="display:flex;justify-content:space-between;gap:10px"><span>${c.t}</span><span id="sub_${c.k}" style="font-variant-numeric:tabular-nums">${fmt(sub)}</span></div></td></tr>`;
+    S.budget[c.k].forEach((r,i)=>{h+=`<tr><td><input type="text" id="b_${c.k}_n_${i}" data-b="${c.k}" data-i="${i}" data-k="n" value="${esc(r.n)}" placeholder="${c.ph}"></td><td class="amt"><input type="number" min="0" step="0.01" id="b_${c.k}_a_${i}" data-b="${c.k}" data-i="${i}" data-k="a" value="${esc(r.a)}"></td><td><button type="button" class="btn-x" data-delb="${c.k}-${i}">ลบ</button></td></tr>`});
+    h+=`<tr><td colspan="3"><button type="button" class="btn-x" style="color:var(--green)" data-addb="${c.k}">+ เพิ่มรายการใน${c.t}</button></td></tr>`;
+  });
+  $('#budget').innerHTML=h+'</tbody>'; updateTotal();
+}
+function total(){return BUDGET_CATS.reduce((s,c)=>s+S.budget[c.k].reduce((a,r)=>a+(+r.a||0),0),0)}
+function updateTotal(){
+  BUDGET_CATS.forEach(c=>{const el=$('#sub_'+c.k); if(el) el.textContent=fmt(S.budget[c.k].reduce((a,r)=>a+(+r.a||0),0))});
+  const t=total(); $('#grand').textContent=fmt(t)+' บาท'; $('#bahtText').textContent=t?`(${bahtText(t)})`:'—';
+}
+function bahtText(num){
+  const D=['','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า'],P=['','สิบ','ร้อย','พัน','หมื่น','แสน'];
+  const rd=s=>{ if(+s===0) return ''; let out='';const len=s.length;
+    for(let i=0;i<len;i++){const d=+s[i],p=len-i-1; if(!d) continue;
+      if(p===1&&d===1) out+='สิบ'; else if(p===1&&d===2) out+='ยี่สิบ';
+      else if(p===0&&d===1&&len>1) out+='เอ็ด'; else out+=D[d]+P[p];}
+    return out};
+  const rdBig=s=>{ if(s.length>6){return rdBig(s.slice(0,-6))+'ล้าน'+rd(s.slice(-6))} return rd(s) };
+  const [b,st]=(+num).toFixed(2).split('.');
+  let r=(+b?rdBig(b)+'บาท':''); r+= +st? rd(st)+'สตางค์' : 'ถ้วน'; return r;
+}
+function driveId(u){const m=String(u).match(/\/(?:d|folders)\/([\w-]{15,})/)||String(u).match(/[?&]id=([\w-]{15,})/);return m?m[1]:''}
+function linkState(u){
+  u=(u||'').trim(); if(!u) return {c:'',t:'ยังไม่ได้แนบ'};
+  if(!/^https?:\/\/\S+$/.test(u)) return {c:'bad',t:'ลิงก์ไม่ถูกต้อง'};
+  if(/(drive|docs)\.google\.com/.test(u)) return driveId(u)?{c:'ok',t:'ลิงก์ Google Drive'}:{c:'warn',t:'ตรวจรูปแบบลิงก์ Drive'};
+  return {c:'warn',t:'ลิงก์ภายนอก (ไม่ใช่ Drive)'};
+}
+function renderDocs(){
+  $('#docs').innerHTML=S.links.map((l,i)=>{
+    const meta=DOC_TYPES.find(d=>d.t===l.type&&l.fixed), st=linkState(l.url), ok=st.c==='ok'||st.c==='warn';
+    return `<div class="doc ${!l.saved&&l.url.trim()?'dirty':''}" id="doc_${i}"><div class="doc-h">${meta?`<span>${esc(l.type)}</span>${meta.req?'<span class="badge">จำเป็น</span>':''}<span class="hint">${meta.h}</span>`:`<input type="text" id="doc_t_${i}" data-doc="${i}" data-k="type" value="${esc(l.type)}" placeholder="ชื่อเอกสาร เช่น หนังสือยินยอมพื้นที่วิจัย" aria-label="ชื่อเอกสาร">`}
+      <span class="st ${st.c}" id="doc_st_${i}">${st.t}</span></div>
+      <div class="doc-row"><input type="text" inputmode="url" id="doc_u_${i}" data-doc="${i}" data-k="url" value="${esc(l.url)}" placeholder="https://drive.google.com/file/d/..." aria-label="ลิงก์ ${esc(l.type)}">
+      <a class="btn btn-g btn-s" id="doc_a_${i}" href="${ok?esc(l.url.trim()):'#'}" target="_blank" rel="noopener" aria-disabled="${!ok}">เปิดดู ↗</a>
+      <button type="button" class="btn btn-s btn-save ${l.saved?'saved':''}" id="doc_s_${i}" data-saved="${i}" ${l.url.trim()?'':'disabled'}>${l.saved?'✓ บันทึกแล้ว':'บันทึก'}</button>
+      ${meta?'':`<button type="button" class="btn-x" data-deld="${i}">ลบ</button>`}</div>
+      <div class="fname" id="doc_f_${i}">${l.name?'✓ '+esc(l.name):''}</div></div>`}).join('');
+}
+function setDocSaved(i,on){
+  const l=S.links[i]; if(!l) return; l.saved=on;
+  const b=$('#doc_s_'+i), box=$('#doc_'+i); if(!b) return;
+  b.disabled=!l.url.trim(); b.classList.toggle('saved',on); b.textContent=on?'✓ บันทึกแล้ว':'บันทึก';
+  box.classList.toggle('dirty',!on&&!!l.url.trim());
+}
+const unsavedDocs=()=>S.links.some(l=>l.url.trim()&&!l.saved);
+async function saveDocs(idx){
+  const list=idx==null?S.links.map((_,i)=>i).filter(i=>S.links[i].url.trim()):[idx];
+  if(!list.length){toast('ยังไม่มีลิงก์ให้บันทึก');return}
+  const bad=list.filter(i=>linkState(S.links[i].url).c==='bad');
+  if(bad.length){toast('ลิงก์บางรายการไม่ถูกต้อง กรุณาตรวจสอบก่อนบันทึก');return}
+  list.forEach(i=>{const b=$('#doc_s_'+i); if(b){b.disabled=true;b.textContent='กำลังบันทึก...'}});
+  const where=await persist();
+  list.forEach(i=>setDocSaved(i,true));
+  const tm=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  $('#docSaveNote').textContent=`บันทึกเอกสารแนบล่าสุด ${tm} น. (${where})`;
+  toast(idx==null?'บันทึกเอกสารแนบทั้งหมดแล้ว':`บันทึก “${S.links[idx].type||'เอกสาร'}” แล้ว`);
+}
+function updateDoc(i){
+  const l=S.links[i], st=linkState(l.url), ok=st.c==='ok'||st.c==='warn', el=$('#doc_st_'+i), a=$('#doc_a_'+i);
+  el.className='st '+st.c; el.textContent=st.t; a.href=ok?l.url.trim():'#'; a.setAttribute('aria-disabled',!ok);
+  l.name=''; $('#doc_f_'+i).textContent=''; setDocSaved(i,false);
+}
+function checkDoc(i){
+  const l=S.links[i]; if(!LIVE||linkState(l.url).c!=='ok') return;
+  const el=$('#doc_st_'+i); el.textContent='กำลังตรวจสอบสิทธิ์...';
+  api('checkLink',{url:l.url.trim()}).then(r=>{
+    if(r.ok){l.name=r.name;el.className='st ok';el.textContent='คณะเปิดอ่านได้';$('#doc_f_'+i).textContent='✓ '+r.name}
+    else{el.className='st bad';el.textContent='คณะยังเปิดไม่ได้ ตรวจการแชร์'}
+  }).catch(()=>{el.className='st warn';el.textContent='ตรวจสอบไม่ได้ในขณะนี้'});
+}
+const DEPTS=['การพยาบาลอนามัยชุมชน','การพยาบาลผู้ใหญ่และผู้สูงอายุ','การพยาบาลเด็กและวัยรุ่น','การพยาบาลมารดา ทารก และการผดุงครรภ์','การพยาบาลสุขภาพจิตและจิตเวช','การบริหารการพยาบาลและพื้นฐานวิชาชีพ'];
+let FACULTY=[];
+const fullName=f=>`${f.prefix} ${f.name}`.trim();
+function setFaculty(list){
+  FACULTY=(list||[]).filter(f=>f.name);
+  const depts=[...new Set(DEPTS.concat(FACULTY.map(f=>f.dept).filter(Boolean)))], cur=$('#leadDept').value;
+  $('#leadDept').innerHTML='<option value="">— เลือกสาขาวิชา —</option>'+depts.map(d=>`<option>${esc(d)}</option>`).join('');
+  $('#leadDept').value=cur; fillDeptList();
+  $('#allFaculty').innerHTML=FACULTY.map(f=>`<option value="${esc(fullName(f))}">${esc(f.dept)}</option>`).join('');
+}
+function fillDeptList(){
+  const d=$('#leadDept').value, L=FACULTY.filter(f=>!d||f.dept===d);
+  $('#deptFaculty').innerHTML=L.map(f=>`<option value="${esc(f.name)}">${esc(f.prefix)}</option>`).join('');
+}
+function matchLead(){
+  const v=$('#leadName').value.trim(), f=FACULTY.find(x=>x.name===v||fullName(x)===v);
+  $('#leadMatch').textContent=f?`✓ อาจารย์ประจำ${f.dept}`:'';
+  if(!f) return;
+  $('#leadName').value=f.name;
+  if(f.prefix) $('#leadPrefix').value=f.prefix;
+  if(f.dept) $('#leadDept').value=f.dept;
+  if(f.email) $('#leadEmail').value=f.email;
+  if(f.tel) $('#leadTel').value=f.tel;
+  ['leadName','leadEmail','leadTel','leadDept'].forEach(id=>$('#'+id).classList.remove('invalid'));
+}
+function renderKw(){
+  $$('#kwBox .tag').forEach(t=>t.remove());
+  S.keywords.forEach((k,i)=>{const s=document.createElement('span');s.className='tag';s.innerHTML=`${esc(k)}<button type="button" data-delk="${i}" aria-label="ลบ ${esc(k)}">×</button>`;$('#kwBox').insertBefore(s,$('#kwInput'))});
+}
+function counters(){$$('.count').forEach(c=>{const t=$('#'+c.dataset.for);c.textContent=`${t.value.length.toLocaleString()} / ${(+t.maxLength).toLocaleString()}`})}
+
+/* ---------- data ---------- */
+function collect(){
+  const f=new FormData($('#form')), o={};
+  for(const [k,v] of f.entries()){ if(o[k]!==undefined){o[k]=[].concat(o[k],v)} else o[k]=v }
+  MULTI.forEach(n=>o[n]=f.getAll(n));
+  Object.keys(o).forEach(k=>/^(m_|obj_|act_|b_)/.test(k)&&delete o[k]);
+  return {...o,keywords:S.keywords,members:S.members,objectives:S.objectives.filter(x=>x.trim()),
+    activities:S.acts.filter(a=>a.n.trim()).map(a=>({name:a.n,months:a.m.map(m=>m+1)})),
+    budget:S.budget,total:total(),
+    links:S.links.filter(l=>l.url.trim()).map(l=>({type:l.type||'เอกสารอื่น ๆ',url:l.url.trim(),name:l.name||'',saved:!!l.saved}))};
+}
+function apply(d){
+  Object.entries(d).forEach(([k,v])=>{
+    const els=$$(`[name="${k}"]`); if(!els.length) return;
+    els.forEach(el=>{ if(el.type==='radio'||el.type==='checkbox') el.checked=[].concat(v).includes(el.value); else el.value=v });
+  });
+  MULTI.forEach(n=>$$(`[name="${n}"]`).forEach(el=>el.checked=(d[n]||[]).includes(el.value)));
+  S.keywords=d.keywords||[]; S.members=d.members||[]; S.objectives=d.objectives?.length?d.objectives:[''];
+  S.acts=d.activities?.length?d.activities.map(a=>({n:a.name,m:a.months.map(x=>x-1)})):[{n:'',m:[]}];
+  S.budget=d.budget||S.budget;
+  S.links=defaultLinks(); (d.links||[]).forEach(l=>{const f=S.links.find(x=>x.fixed&&x.type===l.type&&!x.url); if(f){f.url=l.url;f.name=l.name||'';f.saved=!!l.saved} else S.links.push({type:l.type,url:l.url,name:l.name||'',saved:!!l.saved})});
+}
+const REQ=[
+ [0,'titleTh','ชื่อโครงการ (ภาษาไทย)'],[0,'titleEn','ชื่อโครงการ (ภาษาอังกฤษ)'],[0,'fund','แหล่งทุน'],[0,'projType','ประเภทโครงการ'],[0,'resType','ประเภทการวิจัย'],[0,'field','สาขาการพยาบาล'],
+ [1,'leadDept','สาขาวิชาของหัวหน้าโครงการ'],[1,'leadName','ชื่อหัวหน้าโครงการ'],[1,'leadShare','สัดส่วนงานหัวหน้าโครงการ'],[1,'leadTel','โทรศัพท์'],[1,'leadEmail','อีเมล'],
+ [2,'background','ความเป็นมาและความสำคัญ'],[2,'start','เดือนเริ่มโครงการ'],[2,'months','ระยะเวลา'],
+ [3,'equityLevel','ระดับการลดความเหลื่อมล้ำทางสุขภาพ'],[3,'benefit','ประโยชน์ที่คาดว่าจะได้รับ'],[3,'ethics','จริยธรรมการวิจัยในมนุษย์']
+];
+function val(name){const els=$$(`[name="${name}"]`);if(!els.length)return'';if(els[0].type==='radio')return(els.find(e=>e.checked)||{}).value||'';return els[0].value.trim()}
+function problems(step){
+  const out=REQ.filter(r=>(step==null||r[0]===step)&&!val(r[1])).map(r=>({s:r[0],t:r[2],n:r[1]}));
+  const add=(s,t)=>{if(step==null||step===s)out.push({s,t})};
+  if(val('leadEmail')&&!/^\S+@\S+\.\S+$/.test(val('leadEmail'))) add(1,'รูปแบบอีเมลไม่ถูกต้อง');
+  const sum=(+val('leadShare')||0)+S.members.reduce((a,m)=>a+(+m.share||0),0);
+  if(sum!==100) add(1,`สัดส่วนผู้วิจัยรวม ${sum}% (ต้องเท่ากับ 100%)`);
+  if(!S.objectives.some(o=>o.trim())) add(2,'วัตถุประสงค์อย่างน้อย 1 ข้อ');
+  if(!$$('[name="outputs"]:checked').length) add(3,'เป้าหมายการเผยแพร่อย่างน้อย 1 รายการ');
+  const main=S.links.find(l=>l.fixed&&l.type===DOC_TYPES[0].t);
+  if(!main||!main.url.trim()) add(5,'ลิงก์โครงร่างวิจัยฉบับสมบูรณ์');
+  S.links.forEach(l=>{if(l.url.trim()&&linkState(l.url).c==='bad') add(5,`ลิงก์ “${l.type||'เอกสารอื่น ๆ'}” ไม่ถูกต้อง`)});
+  if(!total()) add(4,'งบประมาณ (ถ้าไม่ขอทุน ให้ระบุ 0 ในรายการ “ไม่ขอรับทุน”)');
+  return out;
+}
+function isStepDone(i){return problems(i).length===0}
+function progress(){
+  const totalChecks=REQ.length+5, bad=problems(null).length;
+  const p=Math.round((totalChecks-Math.min(bad,totalChecks))/totalChecks*100);
+  $('#pct').textContent=p+'%'; $('#pctBar').style.width=p+'%';
+}
+
+/* ---------- review ---------- */
+function review(){
+  const d=collect(), miss=problems(null);
+  $('#missBox').innerHTML=miss.length?`<div class="miss"><b>ยังขาดข้อมูล ${miss.length} รายการ</b><ul>${miss.map(m=>`<li><a href="#" data-go="${m.s}" style="color:inherit">${STEPS[m.s].t}: ${m.t}</a></li>`).join('')}</ul></div>`:'';
+  const row=(k,v)=>`<dt>${k}</dt><dd>${v?esc(v):'<span class="hint">—</span>'}</dd>`;
+  const sec=(i,body)=>`<h3>${STEPS[i].t}<button type="button" class="btn-x" data-go="${i}">แก้ไข</button></h3><dl>${body}</dl>`;
+  $('#reviewBody').innerHTML=
+   sec(0,row('ชื่อโครงการ (ไทย)',d.titleTh)+row('ชื่อโครงการ (อังกฤษ)',d.titleEn)+row('ปีงบประมาณ',d.fy)+row('แหล่งทุน',d.fund)+row('ประเภท',[d.projType,d.resType].filter(Boolean).join(' · '))+row('สาขา',d.field)+row('คำสำคัญ',d.keywords.join(', ')))+
+   sec(1,row('หัวหน้าโครงการ',`${d.leadPrefix} ${d.leadName||''} (${d.leadShare||0}%)`)+row('สาขาวิชา',d.leadDept)+row('ติดต่อ',[d.leadTel,d.leadEmail].filter(Boolean).join(' · '))+row('ผู้ร่วมวิจัย',d.members.map(m=>`${m.name||'-'} (${m.share||0}%)`).join(', ')))+
+   sec(2,row('วัตถุประสงค์',d.objectives.map((o,i)=>`${i+1}) ${o}`).join('  '))+row('รูปแบบการวิจัย',d.design)+row('กลุ่มตัวอย่าง',[d.sample,d.n?d.n+' คน':''].filter(Boolean).join(' · '))+row('ระยะเวลา',d.months?`${d.months} เดือน เริ่ม ${d.start||'-'}`:''))+
+   sec(3,row('ยุทธศาสตร์',d.strategy)+row('SDGs',d.sdgs.map(s=>s.split(' ').slice(0,2).join(' ')).join(', '))+row('การลดความเหลื่อมล้ำ',d.equityLevel)+row('ภาวะสุขภาพที่มุ่งแก้ไข',d.healthIssues.join(', '))+row('กลุ่มเปราะบาง',d.equityGroups.join(', '))+row('แนวทางลดความเหลื่อมล้ำ',d.equityDims.join(', '))+row('คำอธิบาย',d.equityDesc)+row('การเผยแพร่',d.outputs.join(', '))+row('จริยธรรม',d.ethics))+
+   sec(4,row('งบประมาณรวม',`${fmt(d.total)} บาท`))+
+   `<h3>${STEPS[5].t}<button type="button" class="btn-x" data-go="5">แก้ไข</button></h3><dl>${d.links.length?d.links.map(l=>`<dt>${esc(l.type)}</dt><dd><a class="lnk" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.name||l.url)}</a></dd>`).join(''):'<dt>ลิงก์เอกสาร</dt><dd><span class="hint">—</span></dd>'}</dl>`;
+}
+
+/* ---------- navigation ---------- */
+function go(i,noScroll){
+  if(cur===5&&i!==5&&unsavedDocs()){saveDocs(null)}
+  cur=Math.max(0,Math.min(STEPS.length-1,i)); maxSeen=Math.max(maxSeen,cur);
+  $$('.panel').forEach(p=>p.classList.toggle('show',+p.dataset.step===cur));
+  $('#eb').textContent=`ขั้นตอนที่ ${cur+1} จาก ${STEPS.length}`;
+  $('#ph').textContent=STEPS[cur].t; $('#pd').textContent=STEPS[cur].d;
+  $('#prev').style.visibility=cur?'visible':'hidden';
+  const last=cur===STEPS.length-1;
+  $('#next').textContent=last?'ส่งโครงร่างวิจัย':'ถัดไป →'; $('#next').className='btn '+(last?'btn-o':'btn-p');
+  if(cur===2) renderGantt();
+  if(last) review();
+  buildSteps(); progress();
+  if(!noScroll) $('#main').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2600)}
+async function persist(){
+  saveDraft(true);
+  let where='ในเครื่องนี้';
+  const d=collect();
+  if(LIVE&&/^\S+@\S+\.\S+$/.test(d.leadEmail||'')){
+    try{await api('saveDraft',d); where='ในเครื่องนี้และในระบบของคณะ'}catch(e){where='ในเครื่องนี้ (ส่งเข้าระบบคณะไม่สำเร็จ)'}
+  }
+  return where;
+}
+function saveDraft(silent){
+  try{localStorage.setItem('nurs-proposal-draft',JSON.stringify(collect()));
+    const tm=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    $('#saveNote').textContent=`บันทึกร่างในเครื่องนี้ล่าสุด ${tm} น.`; if(!silent) toast('บันทึกร่างแล้ว');
+  }catch(e){ if(!silent) toast('เบราว์เซอร์นี้ไม่อนุญาตให้บันทึกร่าง') }
+}
+function submit(){
+  const miss=problems(null);
+  if(miss.length){toast(`ยังขาดข้อมูล ${miss.length} รายการ`);review();return}
+  if(!$('#certify').checked){toast('กรุณาทำเครื่องหมายรับรองข้อมูลก่อนส่ง');return}
+  const d=collect(); const btn=$('#next'); btn.disabled=true; btn.textContent='กำลังส่ง...';
+  const done=ref=>{
+    try{localStorage.removeItem('nurs-proposal-draft')}catch(e){}
+    $('#form').innerHTML=`<div class="done-card"><div class="seal">✓</div><h2>ส่งโครงร่างวิจัยเรียบร้อย</h2><div class="ref">${esc(ref)}</div><p class="hint">เก็บเลขที่นี้ไว้ติดตามสถานะ งานวิจัยคณะจะแจ้งผลการพิจารณาทางอีเมล ${esc(d.leadEmail)}</p>${LIVE?'':'<p class="hint">(โหมดทดลอง: ข้อมูลยังไม่ถูกบันทึก)</p>'}<button class="btn btn-p" type="button" onclick="location.reload()">เสนอโครงการใหม่</button></div>`;
+  };
+  if(LIVE){
+    api('submit',d).then(done).catch(e=>{btn.disabled=false;btn.textContent='ส่งโครงร่างวิจัย';toast('ส่งไม่สำเร็จ: '+e.message)});
+  } else setTimeout(()=>done('NUR-'+d.fy+'-'+String(Math.floor(Math.random()*900)+100)),700);
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-go],[data-delm],[data-delo],[data-dela],[data-cell],[data-delb],[data-addb],[data-delk],[data-deld],[data-saved]'); if(!t) return;
+  if(t.dataset.go!=null){e.preventDefault();go(+t.dataset.go)}
+  else if(t.dataset.delm!=null){S.members.splice(+t.dataset.delm,1);renderMembers()}
+  else if(t.dataset.delo!=null){S.objectives.splice(+t.dataset.delo,1);if(!S.objectives.length)S.objectives=[''];renderObjectives()}
+  else if(t.dataset.dela!=null){S.acts.splice(+t.dataset.dela,1);if(!S.acts.length)S.acts=[{n:'',m:[]}];renderGantt()}
+  else if(t.dataset.cell){const [a,m]=t.dataset.cell.split('-').map(Number);const arr=S.acts[a].m;const k=arr.indexOf(m);k>-1?arr.splice(k,1):arr.push(m);t.classList.toggle('on')}
+  else if(t.dataset.delb){const [c,i]=t.dataset.delb.split('-');S.budget[c].splice(+i,1);if(!S.budget[c].length)S.budget[c]=[{n:'',a:''}];renderBudget()}
+  else if(t.dataset.addb){S.budget[t.dataset.addb].push({n:'',a:''});renderBudget()}
+  else if(t.dataset.delk!=null){S.keywords.splice(+t.dataset.delk,1);renderKw()}
+  else if(t.dataset.saved!=null){saveDocs(+t.dataset.saved);return}
+  else if(t.dataset.deld!=null){S.links.splice(+t.dataset.deld,1);renderDocs()}
+  progress();
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.m!=null){S.members[+t.dataset.m][t.dataset.k]=t.value; if(t.dataset.k==='share') updateShare()}
+  else if(t.dataset.obj!=null) S.objectives[+t.dataset.obj]=t.value;
+  else if(t.dataset.doc!=null){S.links[+t.dataset.doc][t.dataset.k]=t.value; if(t.dataset.k==='url') updateDoc(+t.dataset.doc)}
+  else if(t.dataset.act!=null) S.acts[+t.dataset.act].n=t.value;
+  else if(t.dataset.b){S.budget[t.dataset.b][+t.dataset.i][t.dataset.k]=t.value; if(t.dataset.k==='a') updateTotal()}
+  if(t.id==='leadShare') updateShare();
+  if(t.id==='leadName') matchLead();
+  if(t.id==='leadDept') fillDeptList();
+  if(t.id==='fy') $('#fyHead').textContent=t.value;
+  if(t.classList.contains('invalid')&&t.value) t.classList.remove('invalid');
+  counters(); progress(); clearTimeout(saveDraft.t); saveDraft.t=setTimeout(()=>saveDraft(true),1500);
+});
+document.addEventListener('change',e=>{if(e.target.dataset.doc!=null&&e.target.dataset.k==='url') checkDoc(+e.target.dataset.doc);if(e.target.id==='months'||e.target.id==='start') renderGantt(); progress()});
+$('#kwInput').addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===',')&&e.target.value.trim()){e.preventDefault();S.keywords.push(e.target.value.trim().replace(/,$/,''));e.target.value='';renderKw();progress()}
+  else if(e.key==='Enter') e.preventDefault();
+  else if(e.key==='Backspace'&&!e.target.value&&S.keywords.length){S.keywords.pop();renderKw()}
+});
+$('#addMember').onclick=()=>{S.members.push({name:'',aff:'คณะพยาบาลศาสตร์',share:''});renderMembers()};
+$('#addObj').onclick=()=>{S.objectives.push('');renderObjectives();$('#obj_'+(S.objectives.length-1)).focus()};
+$('#addDoc').onclick=()=>{S.links.push({type:'',url:''});renderDocs();$('#doc_t_'+(S.links.length-1)).focus()};
+$('#addAct').onclick=()=>{S.acts.push({n:'',m:[]});renderGantt()};
+$('#prev').onclick=()=>go(cur-1);
+$('#next').onclick=()=>{
+  if(cur===STEPS.length-1) return submit();
+  const p=problems(cur).filter(x=>x.n);
+  p.forEach(x=>$$(`[name="${x.n}"]`).forEach(el=>el.type!=='radio'&&el.classList.add('invalid')));
+  if(problems(cur).length) toast(`ขั้นตอนนี้ยังขาด ${problems(cur).length} รายการ (ไปต่อได้ กลับมาแก้ภายหลังได้)`);
+  saveDraft(true); go(cur+1);
+};
+$('#saveDraft').onclick=async()=>{const w=await persist();S.links.forEach((l,i)=>l.url.trim()&&setDocSaved(i,true));toast('บันทึกร่างแล้ว ('+w+')')};
+$('#saveDocs').onclick=()=>saveDocs(null);
+window.addEventListener('beforeunload',e=>{if(unsavedDocs()){e.preventDefault();e.returnValue=''}});
+$('#form').addEventListener('submit',e=>e.preventDefault());
+
+/* ---------- sample (design preview only) ---------- */
+const SAMPLE={titleTh:'ผลของโปรแกรมส่งเสริมการรับรู้ความสามารถของตนเองต่อพฤติกรรมการดูแลผู้สูงอายุติดเตียงของอาสาสมัครสาธารณสุขประจำหมู่บ้าน จังหวัดศรีสะเกษ',titleEn:'Effects of a Self-Efficacy Enhancement Program on Bedridden Elderly Care Behaviors among Village Health Volunteers, Sisaket Province',fy:'2570',fund:'ทุนงบประมาณรายได้ คณะพยาบาลศาสตร์',projType:'โครงการเดี่ยว',resType:'วิจัยกึ่งทดลอง',field:'การพยาบาลอนามัยชุมชน',target:'อสม. ที่ดูแลผู้สูงอายุติดเตียง',keywords:['การรับรู้ความสามารถของตนเอง','อสม.','ผู้สูงอายุติดเตียง'],
+ leadPrefix:'อาจารย์',leadName:'(ตัวอย่าง) สมใจ ใจดี',leadShare:'70',leadDept:'การพยาบาลอนามัยชุมชน',leadTel:'081-234-5678',leadEmail:'somjai.j@sskru.ac.th',
+ members:[{name:'ผู้ช่วยศาสตราจารย์ (ตัวอย่าง) สมชาย รักษ์ดี',aff:'คณะพยาบาลศาสตร์',share:'30'}],
+ background:'จังหวัดศรีสะเกษมีสัดส่วนผู้สูงอายุติดเตียงเพิ่มขึ้นต่อเนื่อง อสม. เป็นกำลังหลักในการดูแลที่บ้าน แต่ยังขาดความมั่นใจในทักษะการดูแล เช่น การพลิกตะแคงตัว การป้องกันแผลกดทับ และการดูแลสายให้อาหาร (ข้อความตัวอย่าง)',
+ objectives:['เพื่อเปรียบเทียบพฤติกรรมการดูแลผู้สูงอายุติดเตียงของ อสม. ก่อนและหลังเข้าร่วมโปรแกรม','เพื่อเปรียบเทียบการรับรู้ความสามารถของตนเองระหว่างกลุ่มทดลองและกลุ่มควบคุม'],
+ framework:'ทฤษฎีการรับรู้ความสามารถของตนเองของแบนดูรา',design:'กึ่งทดลองแบบสองกลุ่มวัดก่อน–หลัง',area:'อำเภอเมืองศรีสะเกษ จังหวัดศรีสะเกษ',sample:'อสม. ที่ดูแลผู้สูงอายุติดเตียง สุ่มแบบหลายขั้นตอน กลุ่มละ 30 คน',n:'60',tools:'แบบสอบถามการรับรู้ความสามารถตนเอง แบบสังเกตพฤติกรรม วิเคราะห์ด้วย paired t-test และ independent t-test',start:'2026-10',months:'12',
+ activities:[{name:'ทบทวนวรรณกรรมและพัฒนาเครื่องมือ',months:[1,2,3]},{name:'ขอรับรองจริยธรรม',months:[3,4]},{name:'ดำเนินโปรแกรมและเก็บข้อมูล',months:[5,6,7,8]},{name:'วิเคราะห์ข้อมูลและเขียนรายงาน',months:[9,10,11,12]}],
+ strategy:'การพัฒนาท้องถิ่น',sdgs:['SDG 3 สุขภาพและความเป็นอยู่ที่ดี','SDG 10 ลดความเหลื่อมล้ำ'],outputs:['บทความวารสาร TCI กลุ่ม 1','คู่มือ / ต้นแบบการดูแล'],equityLevel:'เป็นเป้าหมายหลักของโครงการ',healthIssues:['ผู้สูงอายุและภาวะพึ่งพิง','การดูแลระยะยาวและประคับประคอง'],equityGroups:['ผู้สูงอายุติดบ้าน ติดเตียง','ผู้อยู่ในพื้นที่ห่างไกล ชนบท ชายแดน','ผู้ดูแลในครอบครัว (Caregiver) และ อสม.'],equityDims:['เพิ่มการเข้าถึงบริการสุขภาพ','เสริมพลังชุมชนและเครือข่าย'],equityDesc:'ผู้สูงอายุติดเตียงในชุมชนห่างไกลได้รับการดูแลที่บ้านจาก อสม. ที่ผ่านการพัฒนาทักษะ ลดการเดินทางและค่าใช้จ่ายของครอบครัว (ข้อความตัวอย่าง)',benefit:'ได้โปรแกรมต้นแบบสำหรับพัฒนาศักยภาพ อสม. ที่หน่วยบริการปฐมภูมินำไปใช้ได้',ethics:'ต้องยื่นขอรับรอง',
+ links:[{type:'โครงร่างวิจัยฉบับสมบูรณ์',url:'https://drive.google.com/file/d/1ExampleProposalFileIdForPreview/view?usp=sharing'}],
+ budget:{comp:[{n:'ค่าตอบแทนผู้ทรงคุณวุฒิตรวจเครื่องมือ 3 ท่าน',a:'3000'}],use:[{n:'ค่าเดินทางเก็บข้อมูลภาคสนาม',a:'8000'},{n:'ค่าอาหารว่างผู้เข้าร่วมโปรแกรม',a:'6000'}],mat:[{n:'ค่าถ่ายเอกสารแบบสอบถามและคู่มือ',a:'2500'}]}};
+
+/* ---------- init ---------- */
+const SAMPLE_FACULTY=[
+ {dept:'การพยาบาลอนามัยชุมชน',prefix:'อาจารย์',name:'(ตัวอย่าง) สมใจ ใจดี',email:'somjai.j@sskru.ac.th',tel:'081-234-5678'},
+ {dept:'การพยาบาลอนามัยชุมชน',prefix:'ผู้ช่วยศาสตราจารย์',name:'(ตัวอย่าง) สมชาย รักษ์ดี',email:'somchai.r@sskru.ac.th',tel:'082-345-6789'},
+ {dept:'การพยาบาลผู้ใหญ่และผู้สูงอายุ',prefix:'อาจารย์ ดร.',name:'(ตัวอย่าง) วันดี มีสุข',email:'wandee.m@sskru.ac.th',tel:'083-456-7890'},
+ {dept:'การพยาบาลเด็กและวัยรุ่น',prefix:'อาจารย์',name:'(ตัวอย่าง) กานดา ดวงดี',email:'kanda.d@sskru.ac.th',tel:'084-567-8901'}];
+setFaculty(LIVE?[]:SAMPLE_FACULTY);
+if(LIVE) api('faculty').then(setFaculty).catch(()=>toast('โหลดรายชื่ออาจารย์ไม่สำเร็จ'));
+chipsFrom($('#sdgs'),SDG,'sdgs',true); chipsFrom($('#outputs'),OUTPUTS,'outputs');
+chipsFrom($('#healthIssues'),HEALTH_ISSUES,'healthIssues'); chipsFrom($('#equityGroups'),EQUITY_GROUPS,'equityGroups'); chipsFrom($('#equityDims'),EQUITY_DIMS,'equityDims');
+let draft=null; try{draft=JSON.parse(localStorage.getItem('nurs-proposal-draft')||'null')}catch(e){}
+if(draft){apply(draft);$('#saveNote').textContent='เปิดร่างที่บันทึกไว้ในเครื่องนี้'}
+else if(!LIVE){apply(SAMPLE);$('#demoBar').hidden=false}
+$('#clearAll').onclick=()=>{$('#form').reset();apply({links:[],keywords:[],members:[],objectives:[''],activities:[],budget:{comp:[{n:'',a:''}],use:[{n:'',a:''}],mat:[{n:'',a:''}]}});
+  try{localStorage.removeItem('nurs-proposal-draft')}catch(e){} $('#demoBar').hidden=true; init2(); go(0); toast('ล้างข้อมูลแล้ว พร้อมกรอกจริง')};
+function init2(){renderKw();renderMembers();renderObjectives();renderGantt();renderBudget();renderDocs();counters();$('#fyHead').textContent=$('#fy').value}
+init2(); go(0,true);
+</script>
+</body>
+</html>
