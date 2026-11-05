@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>สรุปภาพรวมงานวิจัย | คณะพยาบาลศาสตร์ มรภ.ศรีสะเกษ</title>
+<link rel="icon" href="logo.jpg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+.head{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;padding-block:22px 12px}
+.head h2{font-size:clamp(20px,2.6vw,26px)}
+.head p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.head .sp{flex:1}
+.head select{width:auto;padding:8px 12px;font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{padding:16px 18px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi span{font-size:13px;color:var(--muted)}
+.kpi b{font-family:var(--f-display);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:anywhere}
+.kpi small{font-size:12.5px;color:var(--muted)}
+.kpi.accent{border-top:4px solid var(--gold)}
+.panel{padding:18px 20px;min-width:0}
+.panel h3{font-size:16px;margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.panel h3 small{font-family:var(--f-body);font-weight:400;font-size:12.5px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;height:18px;border-radius:99px;overflow:hidden;background:var(--soft);gap:2px}
+.stack i{display:block;height:100%;background:var(--c)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;font-size:13.5px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.legend span::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--c)}
+.legend b{font-variant-numeric:tabular-nums}
+.bars{display:flex;flex-direction:column;gap:9px}
+.brow{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.brow .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow .tr{height:12px;background:var(--soft);border-radius:99px;overflow:hidden}
+.brow .tr i{display:block;height:100%;background:var(--green);border-radius:99px;min-width:3px}
+.brow .tr.gold i{background:var(--gold)}
+.brow .v{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.brow .v small{color:var(--muted);margin-left:6px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.projects{margin-top:14px}
+.ptools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.ptools input{flex:1 1 240px}
+.ptools select{width:auto;flex:0 0 auto}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:760px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--soft);font-size:12.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td .sub{color:var(--muted);font-size:12.5px}
+.ref{font-family:var(--f-display);font-weight:600;color:var(--orange);white-space:nowrap}
+.loading{padding:60px 0;text-align:center;color:var(--muted)}
+.updated{font-size:12.5px;color:var(--muted);margin-top:10px;text-align:right}
+</style>
+</head>
+<body>
+<header class="crest">
+  <div class="wrap">
+    <img src="logo.jpg" alt="ตราคณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ">
+    <div><h1>ระบบเสนอโครงร่างงานวิจัย</h1><p>คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</p></div>
+    <nav class="topnav" aria-label="เมนูหลัก"><a href="./">เสนอโครงร่าง</a><a href="track.html">ติดตามสถานะ</a><a href="dashboard.html" aria-current="page">สรุปภาพรวม</a><a href="admin.html">ผู้ดูแล</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="head">
+    <div><h2>สรุปภาพรวมโครงร่างงานวิจัย</h2><p>จำนวนโครงการ งบประมาณ และผลการพิจารณา แยกตามสาขาและปีงบประมาณ</p></div>
+    <span class="sp"></span>
+    <label class="hint" for="fyF">ปีงบประมาณ</label>
+    <select id="fyF"><option value="">ทุกปี</option></select>
+  </div>
+  <p class="mode" id="demoNote" hidden>โหมดตัวอย่าง: แสดงข้อมูลสมมติ ยังไม่ได้เชื่อมต่อฐานข้อมูล</p>
+  <div id="out"><div class="loading">กำลังโหลดข้อมูล…</div></div>
+  <footer>งานวิจัยและบริการวิชาการ คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</footer>
+</main>
+
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const API_URL=((window.APP_CONFIG||{}).API_URL||'').trim();
+const DEMO=new URLSearchParams(location.search).has('demo')||!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(API_URL);
+const esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const baht=n=>(Number(n)||0).toLocaleString('th-TH',{maximumFractionDigits:0});
+const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?esc(s):d.toLocaleDateString('th-TH',{dateStyle:'medium'})};
+const ST_COLORS={'รอพิจารณา':'var(--s-wait)','กำลังพิจารณา':'var(--s-review)','ให้แก้ไข':'var(--s-fix)','ผ่านการพิจารณา':'var(--s-pass)','ไม่ผ่านการพิจารณา':'var(--s-fail)'};
+let DATA={statuses:Object.keys(ST_COLORS),proposals:[]};
+
+function sample(){
+  const F=['การพยาบาลอนามัยชุมชน','การพยาบาลผู้ใหญ่และผู้สูงอายุ','การพยาบาลเด็กและวัยรุ่น','การพยาบาลมารดา ทารก และการผดุงครรภ์','การพยาบาลสุขภาพจิตและจิตเวช'];
+  const S=['รอพิจารณา','กำลังพิจารณา','ให้แก้ไข','ผ่านการพิจารณา','ผ่านการพิจารณา','ไม่ผ่านการพิจารณา','กำลังพิจารณา'];
+  const FU=['ทุนงบประมาณรายได้ คณะพยาบาลศาสตร์','ทุนกองทุนส่งเสริมวิทยาศาสตร์ วิจัยและนวัตกรรม (ววน./FF)','ทุนงบประมาณรายได้ มหาวิทยาลัย (บ.กศ.)'];
+  return S.map((s,i)=>({'เลขที่':`NUR-${i<5?2570:2569}-00${i+1}`,'วันเวลาที่ส่ง':new Date(Date.UTC(2026,9,1+i*4)).toISOString(),'สถานะ':s,'ปีงบประมาณ':i<5?'2570':'2569',
+    'ชื่อโครงการ (ไทย)':'(ตัวอย่าง) โครงการวิจัยที่ '+(i+1),'แหล่งทุน':FU[i%3],'ประเภทการวิจัย':['วิจัยกึ่งทดลอง','วิจัยและพัฒนา (R&D)','วิจัยประยุกต์'][i%3],'สาขา':F[i%5],
+    'คำนำหน้า':'อาจารย์','หัวหน้าโครงการ':'(ตัวอย่าง) ผู้วิจัย '+(i+1),'SDGs':'SDG 3 สุขภาพและความเป็นอยู่ที่ดี'+(i%2?', SDG 10 ลดความเหลื่อมล้ำ':''),
+    'การลดความเหลื่อมล้ำทางสุขภาพ':['เป็นเป้าหมายหลักของโครงการ','มีส่วนเกี่ยวข้อง','ไม่เกี่ยวข้องโดยตรง'][i%3],'งบประมาณรวม':[19500,48000,35000,22000,60000,15000,28000][i]}));
+}
+
+const P=()=>DATA.proposals.filter(p=>!$('#fyF').value||String(p['ปีงบประมาณ'])===$('#fyF').value);
+function group(list,keyFn){const m=new Map();list.forEach(p=>[].concat(keyFn(p)).filter(Boolean).forEach(k=>{const g=m.get(k)||{n:0,b:0};g.n++;g.b+=Number(p['งบประมาณรวม'])||0;m.set(k,g)}));return [...m.entries()].sort((a,b)=>b[1].n-a[1].n||b[1].b-a[1].b)}
+function bars(entries,opt={}){
+  if(!entries.length) return '<div class="empty">ยังไม่มีข้อมูล</div>';
+  const max=Math.max(...entries.map(([,g])=>opt.byBudget?g.b:g.n),1);
+  return `<div class="bars">${entries.slice(0,opt.limit||8).map(([k,g])=>{const v=opt.byBudget?g.b:g.n;return `<div class="brow" title="${esc(k)}"><span class="lb">${esc(k)}</span><span class="tr${opt.byBudget?' gold':''}"><i style="width:${v/max*100}%"></i></span><span class="v">${opt.byBudget?baht(g.b)+' บาท':g.n+' เรื่อง'}${opt.byBudget?'':`<small>${baht(g.b)} บาท</small>`}</span></div>`}).join('')}</div>`;
+}
+
+function render(){
+  const L=P(), total=L.reduce((a,p)=>a+(Number(p['งบประมาณรวม'])||0),0);
+  const cnt=s=>L.filter(p=>p['สถานะ']===s).length;
+  const pass=cnt('ผ่านการพิจารณา'), open=cnt('รอพิจารณา')+cnt('กำลังพิจารณา')+cnt('ให้แก้ไข');
+  const passBudget=L.filter(p=>p['สถานะ']==='ผ่านการพิจารณา').reduce((a,p)=>a+(Number(p['งบประมาณรวม'])||0),0);
+  const fy=$('#fyF').value?'ปีงบประมาณ '+$('#fyF').value:'ทุกปีงบประมาณ';
+  const stack=DATA.statuses.map(s=>({s,n:cnt(s)}));
+  const byField=group(L,p=>p['สาขา']);
+  $('#out').innerHTML=`
+  <div class="kpis">
+    <div class="card kpi accent"><span>โครงร่างทั้งหมด</span><b>${L.length}</b><small>${fy}</small></div>
+    <div class="card kpi"><span>งบประมาณที่เสนอรวม</span><b>${baht(total)}</b><small>บาท · เฉลี่ย ${baht(L.length?total/L.length:0)} บาท/เรื่อง</small></div>
+    <div class="card kpi"><span>ผ่านการพิจารณา</span><b>${pass}</b><small>${L.length?Math.round(pass/L.length*100):0}% · ${baht(passBudget)} บาท</small></div>
+    <div class="card kpi"><span>อยู่ระหว่างดำเนินการ</span><b>${open}</b><small>รอ ${cnt('รอพิจารณา')} · พิจารณา ${cnt('กำลังพิจารณา')} · แก้ไข ${cnt('ให้แก้ไข')}</small></div>
+  </div>
+  <div class="card panel" style="margin-top:14px"><h3>ผลการพิจารณา <small>${L.length} เรื่อง</small></h3>
+    ${L.length?`<div class="stack">${stack.filter(x=>x.n).map(x=>`<i style="--c:${ST_COLORS[x.s]};width:${x.n/L.length*100}%" title="${esc(x.s)} ${x.n}"></i>`).join('')}</div>
+    <div class="legend">${stack.map(x=>`<span style="--c:${ST_COLORS[x.s]}">${esc(x.s)} <b>${x.n}</b></span>`).join('')}</div>`:'<div class="empty">ยังไม่มีโครงร่างที่ส่งเข้ามา</div>'}
+  </div>
+  <div class="grid2">
+    <div class="card panel"><h3>จำนวนโครงการตามสาขา <small>เรื่อง · งบประมาณ</small></h3>${bars(byField)}</div>
+    <div class="card panel"><h3>งบประมาณตามสาขา <small>บาท</small></h3>${bars(byField.slice().sort((a,b)=>b[1].b-a[1].b),{byBudget:true})}</div>
+    <div class="card panel"><h3>จำนวนโครงการตามปีงบประมาณ <small>ทุกปี</small></h3>${bars(group(DATA.proposals,p=>p['ปีงบประมาณ']?'ปีงบประมาณ '+p['ปีงบประมาณ']:'').sort((a,b)=>b[0].localeCompare(a[0])))}</div>
+    <div class="card panel"><h3>งบประมาณตามปีงบประมาณ <small>บาท</small></h3>${bars(group(DATA.proposals,p=>p['ปีงบประมาณ']?'ปีงบประมาณ '+p['ปีงบประมาณ']:'').sort((a,b)=>b[0].localeCompare(a[0])),{byBudget:true})}</div>
+    <div class="card panel"><h3>ตามแหล่งทุน</h3>${bars(group(L,p=>p['แหล่งทุน']))}</div>
+    <div class="card panel"><h3>ประเภทการวิจัย</h3>${bars(group(L,p=>p['ประเภทการวิจัย']))}</div>
+    <div class="card panel"><h3>การลดความเหลื่อมล้ำทางสุขภาพ</h3>${bars(group(L,p=>p['การลดความเหลื่อมล้ำทางสุขภาพ']))}</div>
+    <div class="card panel"><h3>เป้าหมาย SDGs <small>นับซ้ำได้</small></h3>${bars(group(L,p=>String(p['SDGs']||'').split(/,\s*/).map(s=>s.trim()).filter(Boolean)))}</div>
+  </div>
+  <section class="card panel projects">
+    <h3>รายชื่อโครงการ <small id="pcount"></small></h3>
+    <div class="ptools">
+      <input type="search" id="q" placeholder="ค้นหาชื่อโครงการ เลขที่ หรือหัวหน้าโครงการ" aria-label="ค้นหาโครงการ">
+      <select id="stF" aria-label="กรองสถานะ"><option value="">ทุกสถานะ</option>${DATA.statuses.map(s=>`<option>${esc(s)}</option>`).join('')}</select>
+      <select id="fdF" aria-label="กรองสาขา"><option value="">ทุกสาขา</option>${[...new Set(L.map(p=>p['สาขา']).filter(Boolean))].sort().map(f=>`<option>${esc(f)}</option>`).join('')}</select>
+    </div>
+    <div class="tbl"><table><thead><tr><th>เลขที่</th><th>ชื่อโครงการ</th><th>หัวหน้าโครงการ</th><th>สาขา</th><th style="text-align:right">งบประมาณ (บาท)</th><th>สถานะ</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </section>
+  ${DATA.updated?`<p class="updated">ข้อมูล ณ ${new Date(DATA.updated).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})}</p>`:''}`;
+  ['q','stF','fdF'].forEach(id=>$('#'+id).addEventListener('input',rows));
+  rows();
+}
+function rows(){
+  const q=$('#q').value.trim().toLowerCase(), st=$('#stF').value, fd=$('#fdF').value;
+  const L=P().filter(p=>(!st||p['สถานะ']===st)&&(!fd||p['สาขา']===fd)&&(!q||[p['เลขที่'],p['ชื่อโครงการ (ไทย)'],p['หัวหน้าโครงการ']].join(' ').toLowerCase().includes(q)))
+    .sort((a,b)=>String(b['วันเวลาที่ส่ง']).localeCompare(String(a['วันเวลาที่ส่ง'])));
+  $('#pcount').textContent=`${L.length} เรื่อง · ${baht(L.reduce((a,p)=>a+(Number(p['งบประมาณรวม'])||0),0))} บาท`;
+  $('#rows').innerHTML=L.map(p=>`<tr><td class="ref">${esc(p['เลขที่'])}</td><td>${esc(p['ชื่อโครงการ (ไทย)'])}<div class="sub">${esc(p['แหล่งทุน']||'')} · ส่งเมื่อ ${fmtDate(p['วันเวลาที่ส่ง'])}</div></td><td>${esc(((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||'')).trim())}</td><td>${esc(p['สาขา']||'')}</td><td class="num">${baht(p['งบประมาณรวม'])}</td><td><span class="pill s-${esc(p['สถานะ'])}">${esc(p['สถานะ'])}</span></td></tr>`).join('')
+    ||'<tr><td colspan="6" class="empty">ไม่พบโครงการตามเงื่อนไข</td></tr>';
+}
+function fillFY(){
+  const fys=[...new Set(DATA.proposals.map(p=>String(p['ปีงบประมาณ'])).filter(v=>v&&v!=='undefined'))].sort().reverse();
+  $('#fyF').innerHTML='<option value="">ทุกปี</option>'+fys.map(f=>`<option>${esc(f)}</option>`).join('');
+}
+$('#fyF').addEventListener('change',render);
+
+(async()=>{
+  if(DEMO){DATA={statuses:Object.keys(ST_COLORS),proposals:sample()};$('#demoNote').hidden=false;fillFY();render();return}
+  try{
+    const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'summary'})});
+    const j=await r.json(); if(!j.ok) throw new Error(j.error||'โหลดข้อมูลไม่สำเร็จ');
+    DATA=j.result; fillFY(); render();
+  }catch(e){$('#out').innerHTML=`<div class="err">โหลดข้อมูลไม่สำเร็จ: ${esc(e.message)} — กรุณาลองใหม่อีกครั้ง</div>`}
+})();
+</script>
+</body>
+</html>
