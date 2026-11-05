@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ผู้ดูแลระบบโครงร่างวิจัย | คณะพยาบาลศาสตร์ มรภ.ศรีสะเกษ</title>
+<link rel="icon" href="logo.jpg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+.login{max-width:420px;margin:48px auto;padding:26px;display:flex;flex-direction:column;gap:14px}
+.login h2{font-size:21px}
+.bar-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-block:18px 6px}
+.tabs{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:12px}
+.tabs a{text-decoration:none;color:var(--muted);font-weight:600;font-size:14px;padding:8px 16px;border-radius:9px}
+.tabs a[aria-selected="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.bar-top .sp{flex:1}
+.bar-top select{width:auto;padding:7px 10px;font-size:14px}
+.view{padding-block:10px 20px}
+/* dashboard */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{padding:16px 18px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi span{font-size:13px;color:var(--muted)}
+.kpi b{font-family:var(--f-display);font-size:28px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:anywhere}
+.kpi small{font-size:12.5px;color:var(--muted)}
+.kpi.accent{border-top:4px solid var(--gold)}
+.panel{padding:18px 20px;min-width:0}
+.panel h3{font-size:16px;margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.panel h3 small{font-family:var(--f-body);font-weight:400;font-size:12.5px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;height:16px;border-radius:99px;overflow:hidden;background:var(--soft)}
+.stack i{display:block;height:100%;background:var(--c)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:13px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.legend span::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--c)}
+.legend b{font-variant-numeric:tabular-nums}
+.bars{display:flex;flex-direction:column;gap:9px}
+.brow{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.brow .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow .tr{height:12px;background:var(--soft);border-radius:99px;overflow:hidden}
+.brow .tr i{display:block;height:100%;background:var(--green);border-radius:99px;min-width:3px}
+.brow .v{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.brow .v small{color:var(--muted);margin-left:6px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+/* list */
+.filters{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+@media (max-width:760px){.filters{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.filters .q{grid-column:1/-1}}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:820px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--soft);font-size:12.5px;color:var(--muted);font-weight:600;white-space:nowrap;position:sticky;top:0}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:color-mix(in srgb,var(--green) 5%,var(--paper))}
+tbody tr:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td .t{font-weight:500;line-height:1.45}
+td .sub{color:var(--muted);font-size:12.5px}
+.ref{font-family:var(--f-display);font-weight:600;color:var(--orange);white-space:nowrap}
+.count{font-size:13px;color:var(--muted);margin:0 0 8px}
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,20,14,.45);z-index:30}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(720px,100%);background:var(--bg);z-index:31;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.18);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.d-head{padding:16px 20px;border-bottom:1px solid var(--line);background:var(--paper);display:flex;gap:12px;align-items:flex-start}
+.d-head h2{font-size:18px;margin-top:2px}
+.d-head .x{margin-left:auto;flex:none}
+.d-body{overflow-y:auto;padding:16px 20px 30px;display:flex;flex-direction:column;gap:14px}
+@media (max-width:560px){.d-head,.d-body{padding-left:16px;padding-right:16px}}
+.sform{padding:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px;border:1.5px solid var(--gold)}
+.sform h3{grid-column:1/-1;font-size:15px}
+.sform .row{grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.sform .chk{display:flex;gap:8px;align-items:center;font-size:14px}
+.sform .chk input{width:18px;height:18px;accent-color:var(--green)}
+@media (max-width:560px){.sform{grid-template-columns:minmax(0,1fr)}}
+.sec{padding:14px 16px}
+.sec h3{font-size:15px;color:var(--green);margin-bottom:8px}
+dl.kv{display:grid;grid-template-columns:170px minmax(0,1fr);gap:6px 14px;margin:0;font-size:14px}
+dl.kv dt{color:var(--muted)}
+dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+@media (max-width:560px){dl.kv{grid-template-columns:minmax(0,1fr)}dl.kv dt{margin-top:6px}}
+.mini{width:100%;border-collapse:collapse;font-size:13.5px;min-width:0}
+.mini td,.mini th{padding:6px 8px;position:static}
+.files a{color:var(--green);overflow-wrap:anywhere}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.hist li{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hist time{color:var(--muted);font-variant-numeric:tabular-nums;min-width:140px}
+</style>
+</head>
+<body>
+<header class="crest">
+  <div class="wrap">
+    <img src="logo.jpg" alt="ตราคณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ">
+    <div><h1>ผู้ดูแลระบบโครงร่างวิจัย</h1><p>คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</p></div>
+    <nav class="topnav" aria-label="เมนูหลัก"><a href="./">เสนอโครงร่าง</a><a href="track.html">ติดตามสถานะ</a><a href="admin.html" aria-current="page">ผู้ดูแล</a><button type="button" id="logout" hidden>ออกจากระบบ</button></nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <form class="card login" id="login" hidden>
+    <h2>เข้าสู่ระบบผู้ดูแล</h2>
+    <p class="hint" style="margin:0">ใช้รหัสผู้ดูแลที่ได้รับจากผู้ดูแลระบบ</p>
+    <label class="f">รหัสผู้ดูแล<input type="password" id="key" autocomplete="current-password" required></label>
+    <div id="loginErr"></div>
+    <button class="btn btn-p" type="submit" id="loginBtn">เข้าสู่ระบบ</button>
+  </form>
+
+  <div id="app" hidden>
+    <p class="mode" id="demoNote" hidden style="margin-top:16px">โหมดตัวอย่าง: แสดงข้อมูลสมมติเพื่อดูหน้าตา ยังไม่ได้เชื่อมต่อฐานข้อมูล</p>
+    <div class="bar-top">
+      <div class="tabs" role="tablist">
+        <a href="#dashboard" role="tab" id="t-dashboard">แดชบอร์ด</a>
+        <a href="#list" role="tab" id="t-list">รายการโครงร่าง</a>
+      </div>
+      <span class="sp"></span>
+      <label class="hint" for="fyF">ปีงบประมาณ</label>
+      <select id="fyF"><option value="">ทั้งหมด</option></select>
+      <button class="btn btn-g btn-s" type="button" id="reload">รีเฟรช</button>
+      <button class="btn btn-g btn-s" type="button" id="csv">ดาวน์โหลด CSV</button>
+      <a class="btn btn-g btn-s" id="sheetLink" target="_blank" rel="noopener" href="#">Google Sheets ↗</a>
+      <a class="btn btn-g btn-s" id="folderLink" target="_blank" rel="noopener" href="#" hidden>โฟลเดอร์ไฟล์ ↗</a>
+    </div>
+
+    <section class="view" id="v-dashboard"></section>
+    <section class="view" id="v-list" hidden>
+      <div class="filters">
+        <input class="q" type="search" id="q" placeholder="ค้นหาเลขที่ ชื่อโครงการ หรือชื่อผู้วิจัย" aria-label="ค้นหา">
+        <select id="stF" aria-label="กรองสถานะ"><option value="">ทุกสถานะ</option></select>
+        <select id="fdF" aria-label="กรองสาขา"><option value="">ทุกสาขา</option></select>
+        <select id="sort" aria-label="เรียงลำดับ"><option value="new">ส่งล่าสุดก่อน</option><option value="old">ส่งก่อนขึ้นก่อน</option><option value="budget">งบประมาณมากไปน้อย</option></select>
+      </div>
+      <p class="count" id="count"></p>
+      <div class="tbl"><table><thead><tr><th>เลขที่</th><th>ชื่อโครงการ</th><th>หัวหน้าโครงการ</th><th>สาขา</th><th style="text-align:right">งบประมาณ (บาท)</th><th>สถานะ</th><th>วันที่ส่ง</th></tr></thead><tbody id="rows"></tbody></table></div>
+    </section>
+  </div>
+  <footer>งานวิจัยและบริการวิชาการ คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</footer>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-modal="true" role="dialog" aria-labelledby="dTitle"></aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const API_URL=((window.APP_CONFIG||{}).API_URL||'').trim();
+const DEMO=new URLSearchParams(location.search).has('demo')||!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(API_URL);
+const esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const baht=n=>(Number(n)||0).toLocaleString('th-TH',{maximumFractionDigits:0});
+const fmtDate=(s,t)=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?esc(s):d.toLocaleString('th-TH',t?{dateStyle:'medium',timeStyle:'short'}:{dateStyle:'medium'})};
+const ST_COLORS={'รอพิจารณา':'var(--s-wait)','กำลังพิจารณา':'var(--s-review)','ให้แก้ไข':'var(--s-fix)','ผ่านการพิจารณา':'var(--s-pass)','ไม่ผ่านการพิจารณา':'var(--s-fail)'};
+let KEY='', DATA={statuses:Object.keys(ST_COLORS),proposals:[]}, current=null;
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2800)}
+async function api(action,data){
+  const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,key:KEY,data:data||{}})});
+  const j=await r.json(); if(!j.ok) throw new Error(j.error||'เกิดข้อผิดพลาด'); return j.result;
+}
+const ss={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}},del(k){try{sessionStorage.removeItem(k)}catch(e){}}};
+
+/* ---------- sample data for preview ---------- */
+function sample(){
+  const F=['การพยาบาลอนามัยชุมชน','การพยาบาลผู้ใหญ่และผู้สูงอายุ','การพยาบาลเด็กและวัยรุ่น','การพยาบาลมารดา ทารก และการผดุงครรภ์','การพยาบาลสุขภาพจิตและจิตเวช'];
+  const T=['ผลของโปรแกรมส่งเสริมการรับรู้ความสามารถตนเองต่อการดูแลผู้สูงอายุติดเตียงของ อสม.','การพัฒนาระบบการดูแลระยะยาวสำหรับผู้สูงอายุที่มีภาวะพึ่งพิง','ปัจจัยที่สัมพันธ์กับพัฒนาการสมวัยของเด็กในศูนย์พัฒนาเด็กเล็ก','ความรอบรู้ด้านสุขภาพของหญิงตั้งครรภ์วัยรุ่น','รูปแบบการป้องกันการกลับเสพซ้ำในชุมชน','ละครพื้นบ้านเพื่อป้องกันโรคหัวใจขาดเลือดในผู้สูงอายุ','ผลของการสอนแบบสถานการณ์จำลองต่อสมรรถนะนักศึกษาพยาบาล'];
+  const S=['รอพิจารณา','กำลังพิจารณา','ให้แก้ไข','ผ่านการพิจารณา','ผ่านการพิจารณา','ไม่ผ่านการพิจารณา','กำลังพิจารณา'];
+  const FU=['ทุนงบประมาณรายได้ คณะพยาบาลศาสตร์','ทุนกองทุนส่งเสริมวิทยาศาสตร์ วิจัยและนวัตกรรม (ววน./FF)','ทุนงบประมาณรายได้ มหาวิทยาลัย (บ.กศ.)'];
+  const R=['วิจัยกึ่งทดลอง','วิจัยและพัฒนา (R&D)','วิจัยประยุกต์','วิจัยเชิงปฏิบัติการแบบมีส่วนร่วม (PAR)'];
+  return T.map((t,i)=>({'เลขที่':`NUR-${i<5?2570:2569}-00${i+1}`,'วันเวลาที่ส่ง':new Date(Date.UTC(2026,9,1+i*4)).toISOString(),'สถานะ':S[i],'ปีงบประมาณ':i<5?'2570':'2569',
+    'ชื่อโครงการ (ไทย)':'(ตัวอย่าง) '+t,'ชื่อโครงการ (อังกฤษ)':'(Sample) Research title '+(i+1),'แหล่งทุน':FU[i%3],'ประเภทการวิจัย':R[i%4],'สาขา':F[i%5],
+    'คำนำหน้า':'อาจารย์','หัวหน้าโครงการ':'(ตัวอย่าง) ผู้วิจัย '+(i+1),'อีเมล':`researcher${i+1}@sskru.ac.th`,'โทรศัพท์':'08x-xxx-xxxx','งบประมาณรวม':[19500,48000,35000,22000,60000,15000,28000][i],
+    'ค่าตอบแทน':3000,'ค่าใช้สอย':12000,'ค่าวัสดุ':4500,'SDGs':'SDG 3 สุขภาพและความเป็นอยู่ที่ดี'+(i%2?', SDG 10 ลดความเหลื่อมล้ำ':''),'การลดความเหลื่อมล้ำทางสุขภาพ':['เป็นเป้าหมายหลักของโครงการ','มีส่วนเกี่ยวข้อง','ไม่เกี่ยวข้องโดยตรง'][i%3],
+    'วัตถุประสงค์':'1) เพื่อศึกษา…\n2) เพื่อเปรียบเทียบ…','หมายเหตุผู้พิจารณา':S[i]==='ให้แก้ไข'?'เพิ่มการคำนวณขนาดกลุ่มตัวอย่าง':'','อัปเดตสถานะเมื่อ':'',
+    files:[{type:'โครงร่างวิจัยฉบับสมบูรณ์',name:'proposal.pdf',url:'https://drive.google.com/',access:'เปิดได้'}],members:[{role:'หัวหน้าโครงการ',name:'อาจารย์ (ตัวอย่าง) ผู้วิจัย '+(i+1),aff:'คณะพยาบาลศาสตร์',share:100}],
+    budgetItems:[{cat:'ค่าตอบแทน',item:'ผู้ทรงคุณวุฒิตรวจเครื่องมือ',amount:3000}],history:[{status:'รอพิจารณา',note:'ได้รับโครงร่าง',at:new Date(Date.UTC(2026,9,1+i*4)).toISOString()}]}));
+}
+
+/* ---------- auth ---------- */
+async function boot(){
+  if(DEMO){DATA={statuses:Object.keys(ST_COLORS),proposals:sample(),sheetUrl:'#'};$('#demoNote').hidden=false;showApp();return}
+  KEY=ss.get('nurs-admin-key')||'';
+  if(KEY){try{await load();showApp();return}catch(e){ss.del('nurs-admin-key');KEY=''}}
+  $('#login').hidden=false;
+}
+$('#login').addEventListener('submit',async e=>{
+  e.preventDefault(); KEY=$('#key').value.trim(); const b=$('#loginBtn'); b.disabled=true; b.textContent='กำลังตรวจสอบ…'; $('#loginErr').innerHTML='';
+  try{await api('adminLogin');ss.set('nurs-admin-key',KEY);await load();$('#login').hidden=true;showApp()}
+  catch(err){$('#loginErr').innerHTML=`<div class="err">${esc(err.message)}</div>`}
+  finally{b.disabled=false;b.textContent='เข้าสู่ระบบ'}
+});
+$('#logout').onclick=()=>{ss.del('nurs-admin-key');location.reload()};
+async function load(){DATA=await api('adminList')}
+function showApp(){
+  $('#app').hidden=false; $('#logout').hidden=DEMO;
+  $('#sheetLink').href=DATA.sheetUrl||'#';
+  if(DATA.uploadFolder){$('#folderLink').hidden=false;$('#folderLink').href='https://drive.google.com/drive/folders/'+DATA.uploadFolder}
+  fillFilters(); route();
+}
+$('#reload').onclick=async()=>{if(DEMO){toast('โหมดตัวอย่าง');return}const b=$('#reload');b.disabled=true;try{await load();fillFilters();route();toast('อัปเดตข้อมูลล่าสุดแล้ว')}catch(e){toast(e.message)}finally{b.disabled=false}};
+
+/* ---------- helpers ---------- */
+const P=()=>DATA.proposals.filter(p=>!$('#fyF').value||String(p['ปีงบประมาณ'])===$('#fyF').value);
+function group(list,keyFn){const m=new Map();list.forEach(p=>[].concat(keyFn(p)).filter(Boolean).forEach(k=>{const g=m.get(k)||{n:0,b:0};g.n++;g.b+=Number(p['งบประมาณรวม'])||0;m.set(k,g)}));return [...m.entries()].sort((a,b)=>b[1].n-a[1].n||b[1].b-a[1].b)}
+function bars(entries,opt={}){
+  if(!entries.length) return '<div class="empty">ยังไม่มีข้อมูล</div>';
+  const max=Math.max(...entries.map(([,g])=>opt.byBudget?g.b:g.n),1);
+  return `<div class="bars">${entries.slice(0,opt.limit||8).map(([k,g])=>{const v=opt.byBudget?g.b:g.n;return `<div class="brow" title="${esc(k)}"><span class="lb">${esc(k)}</span><span class="tr"><i style="width:${v/max*100}%"></i></span><span class="v">${opt.byBudget?baht(g.b)+' บาท':g.n+' เรื่อง'}${opt.byBudget?'':`<small>${baht(g.b)} บาท</small>`}</span></div>`}).join('')}</div>`;
+}
+function fillFilters(){
+  const fys=[...new Set(DATA.proposals.map(p=>String(p['ปีงบประมาณ'])).filter(Boolean))].sort().reverse(), cur=$('#fyF').value;
+  $('#fyF').innerHTML='<option value="">ทั้งหมด</option>'+fys.map(f=>`<option>${esc(f)}</option>`).join(''); $('#fyF').value=fys.includes(cur)?cur:'';
+  $('#stF').innerHTML='<option value="">ทุกสถานะ</option>'+DATA.statuses.map(s=>`<option>${esc(s)}</option>`).join('');
+  const fds=[...new Set(DATA.proposals.map(p=>p['สาขา']).filter(Boolean))].sort();
+  $('#fdF').innerHTML='<option value="">ทุกสาขา</option>'+fds.map(f=>`<option>${esc(f)}</option>`).join('');
+}
+
+/* ---------- dashboard ---------- */
+function renderDash(){
+  const L=P(), total=L.reduce((a,p)=>a+(Number(p['งบประมาณรวม'])||0),0);
+  const cnt=s=>L.filter(p=>p['สถานะ']===s).length;
+  const pass=cnt('ผ่านการพิจารณา'), open=cnt('รอพิจารณา')+cnt('กำลังพิจารณา')+cnt('ให้แก้ไข');
+  const passBudget=L.filter(p=>p['สถานะ']==='ผ่านการพิจารณา').reduce((a,p)=>a+(Number(p['งบประมาณรวม'])||0),0);
+  const fy=$('#fyF').value?'ปีงบประมาณ '+$('#fyF').value:'ทุกปีงบประมาณ';
+  const stack=DATA.statuses.map(s=>({s,n:cnt(s)}));
+  $('#v-dashboard').innerHTML=`
+  <div class="kpis">
+    <div class="card kpi accent"><span>โครงร่างทั้งหมด</span><b>${L.length}</b><small>${fy}</small></div>
+    <div class="card kpi"><span>งบประมาณที่เสนอรวม</span><b>${baht(total)}</b><small>บาท · เฉลี่ย ${baht(L.length?total/L.length:0)} บาท/เรื่อง</small></div>
+    <div class="card kpi"><span>ผ่านการพิจารณา</span><b>${pass}</b><small>${L.length?Math.round(pass/L.length*100):0}% · ${baht(passBudget)} บาท</small></div>
+    <div class="card kpi"><span>รอดำเนินการ</span><b>${open}</b><small>รอ ${cnt('รอพิจารณา')} · กำลังพิจารณา ${cnt('กำลังพิจารณา')} · ให้แก้ไข ${cnt('ให้แก้ไข')}</small></div>
+  </div>
+  <div class="card panel" style="margin-top:14px"><h3>สถานะการพิจารณา <small>${L.length} เรื่อง</small></h3>
+    ${L.length?`<div class="stack">${stack.filter(x=>x.n).map(x=>`<i style="--c:${ST_COLORS[x.s]};width:${x.n/L.length*100}%" title="${esc(x.s)} ${x.n}"></i>`).join('')}</div>
+    <div class="legend">${stack.map(x=>`<span style="--c:${ST_COLORS[x.s]}">${esc(x.s)} <b>${x.n}</b></span>`).join('')}</div>`:'<div class="empty">ยังไม่มีโครงร่างที่ส่งเข้ามา</div>'}
+  </div>
+  <div class="grid2">
+    <div class="card panel"><h3>จำนวนโครงร่างตามสาขา <small>จำนวนเรื่อง · งบประมาณ</small></h3>${bars(group(L,p=>p['สาขา']))}</div>
+    <div class="card panel"><h3>งบประมาณตามสาขา <small>บาท</small></h3>${bars(group(L,p=>p['สาขา']).sort((a,b)=>b[1].b-a[1].b),{byBudget:true})}</div>
+    <div class="card panel"><h3>ตามปีงบประมาณ <small>ทุกปี</small></h3>${bars(group(DATA.proposals,p=>p['ปีงบประมาณ']?'ปีงบประมาณ '+p['ปีงบประมาณ']:'').sort((a,b)=>b[0].localeCompare(a[0])))}</div>
+    <div class="card panel"><h3>ตามแหล่งทุน</h3>${bars(group(L,p=>p['แหล่งทุน']))}</div>
+    <div class="card panel"><h3>ประเภทการวิจัย</h3>${bars(group(L,p=>p['ประเภทการวิจัย']))}</div>
+    <div class="card panel"><h3>การลดความเหลื่อมล้ำทางสุขภาพ</h3>${bars(group(L,p=>p['การลดความเหลื่อมล้ำทางสุขภาพ']))}</div>
+    <div class="card panel"><h3>เป้าหมาย SDGs ที่สอดคล้อง <small>นับซ้ำได้</small></h3>${bars(group(L,p=>String(p['SDGs']||'').split(/,\s*/).map(s=>s.trim()).filter(Boolean)),{limit:8})}</div>
+    <div class="card panel"><h3>ส่งเข้ามาล่าสุด</h3>${L.length?`<div class="bars">${L.slice().sort((a,b)=>String(b['วันเวลาที่ส่ง']).localeCompare(String(a['วันเวลาที่ส่ง']))).slice(0,6).map(p=>`<div class="brow" style="grid-template-columns:auto minmax(0,1fr) auto;cursor:pointer" data-open="${esc(p['เลขที่'])}"><span class="ref">${esc(p['เลขที่'])}</span><span class="lb">${esc(p['ชื่อโครงการ (ไทย)'])}</span><span class="pill s-${esc(p['สถานะ'])}">${esc(p['สถานะ'])}</span></div>`).join('')}</div>`:'<div class="empty">ยังไม่มีข้อมูล</div>'}</div>
+  </div>`;
+}
+
+/* ---------- list ---------- */
+function renderList(){
+  const q=$('#q').value.trim().toLowerCase(), st=$('#stF').value, fd=$('#fdF').value, so=$('#sort').value;
+  let L=P().filter(p=>(!st||p['สถานะ']===st)&&(!fd||p['สาขา']===fd)&&(!q||[p['เลขที่'],p['ชื่อโครงการ (ไทย)'],p['ชื่อโครงการ (อังกฤษ)'],p['หัวหน้าโครงการ'],p['ผู้ร่วมวิจัย']].join(' ').toLowerCase().includes(q)));
+  L.sort((a,b)=>so==='budget'?(b['งบประมาณรวม']||0)-(a['งบประมาณรวม']||0):so==='old'?String(a['วันเวลาที่ส่ง']).localeCompare(String(b['วันเวลาที่ส่ง'])):String(b['วันเวลาที่ส่ง']).localeCompare(String(a['วันเวลาที่ส่ง'])));
+  $('#count').textContent=`แสดง ${L.length} จาก ${P().length} เรื่อง · งบประมาณรวม ${baht(L.reduce((a,p)=>a+(Number(p['งบประมาณรวม'])||0),0))} บาท`;
+  $('#rows').innerHTML=L.map(p=>`<tr tabindex="0" data-open="${esc(p['เลขที่'])}"><td class="ref">${esc(p['เลขที่'])}</td><td><div class="t">${esc(p['ชื่อโครงการ (ไทย)'])}</div><div class="sub">${esc(p['แหล่งทุน']||'')}</div></td><td>${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</td><td>${esc(p['สาขา']||'')}</td><td class="num">${baht(p['งบประมาณรวม'])}</td><td><span class="pill s-${esc(p['สถานะ'])}">${esc(p['สถานะ'])}</span></td><td style="white-space:nowrap">${fmtDate(p['วันเวลาที่ส่ง'])}</td></tr>`).join('')||`<tr><td colspan="7" class="empty">${DATA.proposals.length?'ไม่พบโครงร่างตามเงื่อนไข':'ยังไม่มีโครงร่างที่ส่งเข้ามา'}</td></tr>`;
+}
+['q','stF','fdF','sort'].forEach(id=>$('#'+id).addEventListener('input',renderList));
+$('#fyF').addEventListener('change',()=>route());
+
+/* ---------- detail drawer ---------- */
+const SECTIONS=[
+ ['ข้อมูลโครงการ',['ชื่อโครงการ (อังกฤษ)','ปีงบประมาณ','แหล่งทุน','ประเภทโครงการ','ประเภทการวิจัย','สาขา','กลุ่มเป้าหมาย','คำสำคัญ']],
+ ['ติดต่อหัวหน้าโครงการ',['หัวหน้าโครงการ','สาขาวิชา','โทรศัพท์','อีเมล']],
+ ['สาระสำคัญ',['ความเป็นมา','วัตถุประสงค์','กรอบแนวคิด','รูปแบบการวิจัย','พื้นที่','กลุ่มตัวอย่าง','ขนาดตัวอย่าง','เครื่องมือ/การวิเคราะห์','เดือนเริ่ม','ระยะเวลา (เดือน)','แผนการดำเนินงาน']],
+ ['ความสอดคล้องและผลผลิต',['ยุทธศาสตร์','SDGs','การลดความเหลื่อมล้ำทางสุขภาพ','ภาวะสุขภาพที่มุ่งแก้ไข','กลุ่มเปราะบางที่ได้รับประโยชน์','แนวทางลดความเหลื่อมล้ำ','คำอธิบายการลดความเหลื่อมล้ำ','เป้าหมายการเผยแพร่','ประโยชน์ที่คาดว่าจะได้รับ','จริยธรรมการวิจัย']]
+];
+function openDetail(ref){
+  const p=DATA.proposals.find(x=>x['เลขที่']===ref); if(!p) return; current=p;
+  const kv=keys=>`<dl class="kv">${keys.filter(k=>p[k]!==''&&p[k]!=null).map(k=>`<dt>${esc(k)}</dt><dd>${k==='อีเมล'?`<a href="mailto:${esc(p[k])}">${esc(p[k])}</a>`:esc(p[k])}</dd>`).join('')||'<dd class="hint">—</dd>'}</dl>`;
+  $('#drawer').innerHTML=`
+  <div class="d-head"><div style="min-width:0"><div class="ref">${esc(p['เลขที่'])}</div><h2 id="dTitle">${esc(p['ชื่อโครงการ (ไทย)'])}</h2><div class="hint">ส่งเมื่อ ${fmtDate(p['วันเวลาที่ส่ง'],1)} · ${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</div></div>
+    <button class="btn btn-g btn-s x" type="button" id="dClose">ปิด</button></div>
+  <div class="d-body">
+    <form class="card sform" id="sForm">
+      <h3>เปลี่ยนสถานะการพิจารณา <span class="pill s-${esc(p['สถานะ'])}" style="margin-left:6px">${esc(p['สถานะ'])}</span></h3>
+      <label class="f">สถานะใหม่<select id="sNew">${DATA.statuses.map(s=>`<option ${s===p['สถานะ']?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
+      <label class="f">ความเห็นถึงผู้วิจัย (ผู้วิจัยเห็นข้อความนี้)<textarea id="sNote" style="min-height:70px">${esc(p['หมายเหตุผู้พิจารณา']||'')}</textarea></label>
+      <div class="row"><label class="chk"><input type="checkbox" id="sMail" checked> ส่งอีเมลแจ้งผลถึง ${esc(p['อีเมล']||'ผู้วิจัย')}</label>
+      <button class="btn btn-p" type="submit" id="sSave">บันทึกสถานะ</button></div>
+    </form>
+    ${SECTIONS.map(([h,keys])=>`<section class="card sec"><h3>${h}</h3>${kv(keys)}</section>`).join('')}
+    <section class="card sec"><h3>คณะผู้วิจัย</h3>${(p.members||[]).length?`<table class="mini"><tbody>${p.members.map(m=>`<tr><td>${esc(m.role)}</td><td>${esc(m.name)}</td><td>${esc(m.aff)}</td><td class="num">${esc(m.share)}%</td></tr>`).join('')}</tbody></table>`:`<p class="hint">${esc(p['ผู้ร่วมวิจัย']||'—')}</p>`}</section>
+    <section class="card sec"><h3>งบประมาณ · ${baht(p['งบประมาณรวม'])} บาท</h3>${(p.budgetItems||[]).length?`<table class="mini"><tbody>${p.budgetItems.map(b=>`<tr><td>${esc(b.cat)}</td><td>${esc(b.item)}</td><td class="num">${baht(b.amount)}</td></tr>`).join('')}</tbody></table>`:'<p class="hint">—</p>'}</section>
+    <section class="card sec files"><h3>เอกสารแนบ</h3>${(p.files||[]).length?`<dl class="kv">${p.files.map(f=>`<dt>${esc(f.type)}</dt><dd><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name||f.url)}</a> <span class="hint">· ${esc(f.access||'')}</span></dd>`).join('')}</dl>`:'<p class="hint">ไม่มีเอกสารแนบ</p>'}</section>
+    <section class="card sec"><h3>ประวัติสถานะ</h3><ol class="hist">${(p.history||[]).slice().reverse().map(h=>`<li><time>${fmtDate(h.at,1)}</time><span class="pill s-${esc(h.status)}">${esc(h.status)}</span><span>${esc(h.note||'')}</span>${h.mailed?`<span class="hint">· ${esc(h.mailed)}</span>`:''}</li>`).join('')||'<li class="hint">—</li>'}</ol></section>
+  </div>`;
+  $('#drawer').hidden=false; $('#scrim').hidden=false; $('#dClose').focus();
+  $('#dClose').onclick=closeDetail;
+  $('#sForm').onsubmit=async e=>{
+    e.preventDefault(); const b=$('#sSave'); const d={ref:p['เลขที่'],status:$('#sNew').value,note:$('#sNote').value.trim(),notify:$('#sMail').checked};
+    if(DEMO){Object.assign(p,{'สถานะ':d.status,'หมายเหตุผู้พิจารณา':d.note});p.history.push({status:d.status,note:d.note,at:new Date().toISOString(),mailed:'โหมดตัวอย่าง'});toast('บันทึกแล้ว (โหมดตัวอย่าง)');openDetail(p['เลขที่']);route();return}
+    b.disabled=true; b.textContent='กำลังบันทึก…';
+    try{const r=await api('adminStatus',d);Object.assign(p,{'สถานะ':r.status,'หมายเหตุผู้พิจารณา':d.note,'อัปเดตสถานะเมื่อ':r.updated});(p.history=p.history||[]).push({status:r.status,note:d.note,at:r.updated,mailed:r.mailed});
+      toast(d.notify?'บันทึกสถานะและส่งอีเมลแจ้งผลแล้ว':'บันทึกสถานะแล้ว');openDetail(p['เลขที่']);route()}
+    catch(err){toast('บันทึกไม่สำเร็จ: '+err.message);b.disabled=false;b.textContent='บันทึกสถานะ'}
+  };
+}
+function closeDetail(){$('#drawer').hidden=true;$('#scrim').hidden=true;current=null}
+$('#scrim').onclick=closeDetail;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDetail();if(e.key==='Enter'&&e.target.matches('tr[data-open]'))openDetail(e.target.dataset.open)});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-open]');if(t&&!t.closest('#drawer'))openDetail(t.dataset.open)});
+
+/* ---------- CSV ---------- */
+$('#csv').onclick=()=>{
+  const L=P(); if(!L.length){toast('ยังไม่มีข้อมูล');return}
+  const keys=Object.keys(L[0]).filter(k=>!['files','members','budgetItems','history'].includes(k));
+  const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const csv='﻿'+[keys.map(cell).join(','),...L.map(p=>keys.map(k=>cell(p[k])).join(','))].join('\r\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=`โครงร่างวิจัย_${$('#fyF').value||'ทั้งหมด'}.csv`; document.body.appendChild(a); a.click(); a.remove();
+};
+
+/* ---------- routing ---------- */
+function route(){
+  const v=location.hash==='#list'?'list':'dashboard';
+  $('#v-dashboard').hidden=v!=='dashboard'; $('#v-list').hidden=v!=='list';
+  $('#t-dashboard').setAttribute('aria-selected',v==='dashboard'); $('#t-list').setAttribute('aria-selected',v==='list');
+  if(v==='dashboard') renderDash(); else renderList();
+}
+window.addEventListener('hashchange',route);
+boot();
+</script>
+</body>
+</html>

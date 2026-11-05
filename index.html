@@ -29,6 +29,7 @@
   --bg:#0E1611; --paper:#152019; --ink:#E5EEE6; --muted:#9DB0A2; --line:#2A3A2F; --soft:#1B2B21;
   --field:#111B15; --danger:#F07A70; --ok:#5CCB8A; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.65;margin:0}
 .wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 /* header */
@@ -40,6 +41,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:1
 .crest .who{margin-left:auto;text-align:right;font-size:12.5px;color:#CFE3D4;line-height:1.5}
 .crest .who b{display:block;color:#F1DFA4;font-weight:600;font-size:13px}
 @media (max-width:720px){.crest .who{display:none}}
+.topnav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.topnav a{color:#F4F1E4;text-decoration:none;font-size:13.5px;padding:7px 12px;border-radius:8px;border:1px solid rgba(241,223,164,.35)}
+.topnav a:hover{background:rgba(255,255,255,.08)}
+.topnav a[aria-current]{background:#F1DFA4;color:#0F4526;border-color:#F1DFA4;font-weight:600}
+@media (max-width:560px){.crest .wrap{flex-wrap:wrap}.topnav{margin-left:0;width:100%}}
+.btn-up{flex:none;position:relative;overflow:hidden}
+.btn-up input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.btn-up.busy{pointer-events:none;opacity:.6}
 .mode{font-size:13px;padding:8px 14px;border-radius:10px;margin:18px 0 0;background:var(--soft);border:1px dashed var(--gold);color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .mode button{margin-left:auto}
 /* main grid */
@@ -210,7 +219,7 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30p
       <h1>ระบบเสนอโครงร่างงานวิจัย</h1>
       <p>คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ · ปีงบประมาณ <span id="fyHead">2570</span></p>
     </div>
-    <div class="who"><b>ผู้ดูแลระบบ</b>อ.ปัณณทัต จันพานิช<br>งานวิจัย คณะพยาบาลศาสตร์</div>
+    <nav class="topnav" aria-label="เมนูหลัก"><a href="./" aria-current="page">เสนอโครงร่าง</a><a href="track.html">ติดตามสถานะ</a></nav>
   </div>
 </header>
 
@@ -435,9 +444,9 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30p
       <!-- STEP 6 -->
       <section class="panel" data-step="5">
         <div class="howto">
-          <div><b>1. อัปโหลดไฟล์</b>อัปโหลดเอกสารไว้ใน Google Drive ของท่าน (ไฟล์ Word หรือ PDF)</div>
-          <div><b>2. ตั้งค่าการแชร์</b>คลิกขวาที่ไฟล์ > แชร์ > เลือก “ทุกคนที่มีลิงก์” หรือ “มหาวิทยาลัยราชภัฏศรีสะเกษ” สิทธิ์ผู้มีสิทธิ์อ่าน</div>
-          <div><b>3. คัดลอกลิงก์มาวาง</b>กด “คัดลอกลิงก์” แล้ววางในช่องด้านล่าง กด “เปิดดู” เพื่อทดสอบว่าเปิดได้</div>
+          <div><b>วิธีที่ 1: อัปโหลดตรง</b>กด “⬆ อัปโหลด” แล้วเลือกไฟล์ (PDF, Word, Excel, JPG, PNG ไม่เกิน 10 MB) ไฟล์จะเข้า Google Drive ของคณะทันที</div>
+          <div><b>วิธีที่ 2: แนบลิงก์</b>อัปโหลดไฟล์ไว้ใน Google Drive ของท่าน ตั้งแชร์เป็น “ทุกคนที่มีลิงก์” สิทธิ์ผู้มีสิทธิ์อ่าน แล้วคัดลอกลิงก์มาวาง</div>
+          <div><b>อย่าลืมบันทึก</b>กด “บันทึก” ในแต่ละรายการ หรือ “บันทึกเอกสารแนบทั้งหมด” ด้านล่าง ระบบบันทึกให้เองเมื่ออัปโหลดเสร็จ</div>
         </div>
         <fieldset><legend>ลิงก์เอกสารประกอบการพิจารณา</legend>
           <div class="docs" id="docs"></div>
@@ -587,6 +596,7 @@ function renderDocs(){
     return `<div class="doc ${!l.saved&&l.url.trim()?'dirty':''}" id="doc_${i}"><div class="doc-h">${meta?`<span>${esc(l.type)}</span>${meta.req?'<span class="badge">จำเป็น</span>':''}<span class="hint">${meta.h}</span>`:`<input type="text" id="doc_t_${i}" data-doc="${i}" data-k="type" value="${esc(l.type)}" placeholder="ชื่อเอกสาร เช่น หนังสือยินยอมพื้นที่วิจัย" aria-label="ชื่อเอกสาร">`}
       <span class="st ${st.c}" id="doc_st_${i}">${st.t}</span></div>
       <div class="doc-row"><input type="text" inputmode="url" id="doc_u_${i}" data-doc="${i}" data-k="url" value="${esc(l.url)}" placeholder="https://drive.google.com/file/d/..." aria-label="ลิงก์ ${esc(l.type)}">
+      <label class="btn btn-g btn-s btn-up" id="doc_up_${i}" title="อัปโหลดไฟล์เข้า Google Drive ของคณะ (PDF, Word, Excel, JPG, PNG ไม่เกิน 10 MB)">⬆ อัปโหลด<input type="file" data-up="${i}" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" aria-label="อัปโหลดไฟล์ ${esc(l.type||'เอกสาร')}"></label>
       <a class="btn btn-g btn-s" id="doc_a_${i}" href="${ok?esc(l.url.trim()):'#'}" target="_blank" rel="noopener" aria-disabled="${!ok}">เปิดดู ↗</a>
       <button type="button" class="btn btn-s btn-save ${l.saved?'saved':''}" id="doc_s_${i}" data-saved="${i}" ${l.url.trim()?'':'disabled'}>${l.saved?'✓ บันทึกแล้ว':'บันทึก'}</button>
       ${meta?'':`<button type="button" class="btn-x" data-deld="${i}">ลบ</button>`}</div>
@@ -615,6 +625,27 @@ function updateDoc(i){
   const l=S.links[i], st=linkState(l.url), ok=st.c==='ok'||st.c==='warn', el=$('#doc_st_'+i), a=$('#doc_a_'+i);
   el.className='st '+st.c; el.textContent=st.t; a.href=ok?l.url.trim():'#'; a.setAttribute('aria-disabled',!ok);
   l.name=''; $('#doc_f_'+i).textContent=''; setDocSaved(i,false);
+}
+const UP_TYPES={'pdf':'application/pdf','doc':'application/msword','docx':'application/vnd.openxmlformats-officedocument.wordprocessingml.document','xls':'application/vnd.ms-excel','xlsx':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','jpg':'image/jpeg','jpeg':'image/jpeg','png':'image/png'};
+async function uploadDoc(i,file){
+  const l=S.links[i], lab=$('#doc_up_'+i), st=$('#doc_st_'+i);
+  const ext=(file.name.split('.').pop()||'').toLowerCase(), mime=UP_TYPES[ext];
+  if(!mime){toast('รองรับเฉพาะไฟล์ PDF, Word, Excel, JPG และ PNG');return}
+  if(file.size>10*1024*1024){toast('ไฟล์ใหญ่เกิน 10 MB กรุณาลดขนาดไฟล์หรือแนบเป็นลิงก์แทน');return}
+  const email=$('#leadEmail').value.trim();
+  if(!/^\S+@\S+\.\S+$/.test(email)){toast('กรุณากรอกอีเมลหัวหน้าโครงการในขั้นตอนที่ 2 ก่อนอัปโหลด');return}
+  if(!LIVE){toast('โหมดทดลอง: ระบบยังไม่ได้เชื่อมต่อ Google Drive');return}
+  lab.classList.add('busy'); st.className='st'; st.textContent='กำลังอัปโหลด 0%';
+  try{
+    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.onprogress=e=>{if(e.total)st.textContent='กำลังอ่านไฟล์ '+Math.round(e.loaded/e.total*100)+'%'};r.readAsDataURL(file)});
+    st.textContent='กำลังส่งเข้า Google Drive…';
+    const res=await api('upload',{email,type:l.type||'เอกสารอื่น ๆ',name:file.name,mimeType:mime,base64});
+    l.url=res.url; $('#doc_u_'+i).value=res.url; updateDoc(i);
+    l.name=res.name; st.className='st ok'; st.textContent='อัปโหลดเข้า Drive ของคณะแล้ว';
+    $('#doc_f_'+i).textContent='✓ '+res.name;
+    await saveDocs(i);
+  }catch(e){st.className='st bad';st.textContent='อัปโหลดไม่สำเร็จ';toast('อัปโหลดไม่สำเร็จ: '+e.message)}
+  finally{lab.classList.remove('busy')}
 }
 function checkDoc(i){
   const l=S.links[i]; if(!LIVE||linkState(l.url).c!=='ok') return;
@@ -758,7 +789,7 @@ function submit(){
   const d=collect(); const btn=$('#next'); btn.disabled=true; btn.textContent='กำลังส่ง...';
   const done=ref=>{
     try{localStorage.removeItem('nurs-proposal-draft')}catch(e){}
-    $('#form').innerHTML=`<div class="done-card"><div class="seal">✓</div><h2>ส่งโครงร่างวิจัยเรียบร้อย</h2><div class="ref">${esc(ref)}</div><p class="hint">เก็บเลขที่นี้ไว้ติดตามสถานะ งานวิจัยคณะจะแจ้งผลการพิจารณาทางอีเมล ${esc(d.leadEmail)}</p>${LIVE?'':'<p class="hint">(โหมดทดลอง: ข้อมูลยังไม่ถูกบันทึก)</p>'}<button class="btn btn-p" type="button" onclick="location.reload()">เสนอโครงการใหม่</button></div>`;
+    $('#form').innerHTML=`<div class="done-card"><div class="seal">✓</div><h2>ส่งโครงร่างวิจัยเรียบร้อย</h2><div class="ref">${esc(ref)}</div><p class="hint">เก็บเลขที่นี้ไว้ติดตามสถานะ งานวิจัยคณะจะแจ้งผลการพิจารณาทางอีเมล ${esc(d.leadEmail)}</p><p><a class="btn btn-g" href="track.html?ref=${encodeURIComponent(ref)}">ติดตามสถานะ</a></p>${LIVE?'':'<p class="hint">(โหมดทดลอง: ข้อมูลยังไม่ถูกบันทึก)</p>'}<button class="btn btn-p" type="button" onclick="location.reload()">เสนอโครงการใหม่</button></div>`;
   };
   if(LIVE){
     api('submit',d).then(done).catch(e=>{btn.disabled=false;btn.textContent='ส่งโครงร่างวิจัย';toast('ส่งไม่สำเร็จ: '+e.message)});
@@ -794,7 +825,7 @@ document.addEventListener('input',e=>{
   if(t.classList.contains('invalid')&&t.value) t.classList.remove('invalid');
   counters(); progress(); clearTimeout(saveDraft.t); saveDraft.t=setTimeout(()=>saveDraft(true),1500);
 });
-document.addEventListener('change',e=>{if(e.target.dataset.doc!=null&&e.target.dataset.k==='url') checkDoc(+e.target.dataset.doc);if(e.target.id==='months'||e.target.id==='start') renderGantt(); progress()});
+document.addEventListener('change',e=>{if(e.target.dataset.up!=null&&e.target.files[0]){uploadDoc(+e.target.dataset.up,e.target.files[0]);e.target.value='';return}if(e.target.dataset.doc!=null&&e.target.dataset.k==='url') checkDoc(+e.target.dataset.doc);if(e.target.id==='months'||e.target.id==='start') renderGantt(); progress()});
 $('#kwInput').addEventListener('keydown',e=>{
   if((e.key==='Enter'||e.key===',')&&e.target.value.trim()){e.preventDefault();S.keywords.push(e.target.value.trim().replace(/,$/,''));e.target.value='';renderKw();progress()}
   else if(e.key==='Enter') e.preventDefault();
