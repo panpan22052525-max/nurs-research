@@ -22,7 +22,7 @@
 .meta div{background:var(--soft);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted);min-width:0}
 .meta b{display:block;color:var(--ink);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 @media (max-width:560px){.meta{grid-template-columns:1fr}}
-.track{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:8px 0 20px;position:relative}
+.track{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:8px 0 20px;position:relative}
 .track .st{text-align:center;font-size:12.5px;color:var(--muted);position:relative;padding-top:30px}
 .track .st::before{content:"";position:absolute;top:8px;left:50%;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--paper);border:2px solid var(--line);z-index:1}
 .track .st::after{content:"";position:absolute;top:16px;left:-50%;width:100%;height:2px;background:var(--line)}
@@ -32,6 +32,16 @@
 .track .st.on::after{background:var(--green)}
 .track .st.end-fix::before{background:var(--s-fix);border-color:var(--s-fix)}
 .track .st.end-fail::before{background:var(--s-fail);border-color:var(--s-fail)}
+.light{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:12px;margin:0 0 16px;font-size:14.5px;border:1px solid var(--line);background:var(--field)}
+.light .lamp{width:22px;height:22px;border-radius:50%;flex:none;background:#C9D2CB;box-shadow:inset 0 -2px 4px rgba(0,0,0,.15)}
+.light.on{border-color:color-mix(in srgb,var(--ok) 40%,var(--line));background:color-mix(in srgb,var(--ok) 9%,var(--paper))}
+.light.on .lamp{background:#22B35E;box-shadow:0 0 0 4px color-mix(in srgb,#22B35E 25%,transparent),0 0 14px #22B35E}
+.light small{display:block;color:var(--muted);font-size:12.5px}
+.prog{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.prog .bar{height:12px;border-radius:99px;background:var(--soft);overflow:hidden;margin:8px 0}
+.prog .bar i{display:block;height:100%;background:var(--green);border-radius:99px}
+.prog ul{list-style:none;margin:10px 0 14px;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.prog li{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .note{border-left:3px solid var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--paper));padding:12px 14px;border-radius:0 10px 10px 0;margin-bottom:18px;white-space:pre-wrap}
 .hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 .hist li{display:grid;grid-template-columns:150px 1fr;gap:12px;font-size:14px}
@@ -44,7 +54,7 @@
   <div class="wrap">
     <img src="logo.jpg" alt="ตราคณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ">
     <div><h1>ติดตามสถานะโครงร่างวิจัย</h1><p>คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</p></div>
-    <nav class="topnav" aria-label="เมนูหลัก"><a href="./">เสนอโครงร่าง</a><a href="track.html" aria-current="page">ติดตามสถานะ</a><a href="dashboard.html">สรุปภาพรวม</a></nav>
+    <nav class="topnav" aria-label="เมนูหลัก"><a href="./">เสนอโครงร่าง</a><a href="track.html" aria-current="page">ติดตามสถานะ</a><a href="progress.html">รายงานความก้าวหน้า</a><a href="dashboard.html">สรุปภาพรวม</a></nav>
   </div>
 </header>
 
@@ -73,7 +83,7 @@ async function api(action,data){
   const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,data:data||{}})});
   const j=await r.json(); if(!j.ok) throw new Error(j.error||'เกิดข้อผิดพลาด'); return j.result;
 }
-const SAMPLE={ref:'NUR-2570-001',submitted:'2026-11-03T02:10:00Z',status:'ให้แก้ไข',fy:'2570',title:'(ตัวอย่าง) ผลของโปรแกรมส่งเสริมการรับรู้ความสามารถของตนเองต่อพฤติกรรมการดูแลผู้สูงอายุติดเตียงของ อสม.',lead:'อาจารย์ (ตัวอย่าง) สมใจ ใจดี',total:19500,note:'กรุณาเพิ่มรายละเอียดการคำนวณขนาดกลุ่มตัวอย่าง และแนบแบบสอบถามฉบับสมบูรณ์',updated:'2026-11-04T07:30:00Z',history:[{status:'รอพิจารณา',note:'ได้รับโครงร่าง',at:'2026-11-03T02:10:00Z'},{status:'กำลังพิจารณา',note:'ส่งผู้ทรงคุณวุฒิ',at:'2026-11-03T09:00:00Z'},{status:'ให้แก้ไข',note:'กรุณาเพิ่มรายละเอียดการคำนวณขนาดกลุ่มตัวอย่าง และแนบแบบสอบถามฉบับสมบูรณ์',at:'2026-11-04T07:30:00Z'}]};
+const SAMPLE={ref:'NUR-2570-001',submitted:'2026-11-03T02:10:00Z',status:'ให้แก้ไข',fy:'2570',title:'(ตัวอย่าง) ผลของโปรแกรมส่งเสริมการรับรู้ความสามารถของตนเองต่อพฤติกรรมการดูแลผู้สูงอายุติดเตียงของ อสม.',lead:'อาจารย์ (ตัวอย่าง) สมใจ ใจดี',total:19500,note:'กรุณาเพิ่มรายละเอียดการคำนวณขนาดกลุ่มตัวอย่าง และแนบแบบสอบถามฉบับสมบูรณ์',updated:'2026-11-04T07:30:00Z',ack:'2026-11-03T04:00:00Z',progress:[],history:[{status:'รอพิจารณา',note:'ได้รับโครงร่าง',at:'2026-11-03T02:10:00Z'},{status:'กำลังพิจารณา',note:'ส่งผู้ทรงคุณวุฒิ',at:'2026-11-03T09:00:00Z'},{status:'ให้แก้ไข',note:'กรุณาเพิ่มรายละเอียดการคำนวณขนาดกลุ่มตัวอย่าง และแนบแบบสอบถามฉบับสมบูรณ์',at:'2026-11-04T07:30:00Z'}]};
 function render(r){
   const st=r.status, idx={'รอพิจารณา':0,'กำลังพิจารณา':1}[st]??2;
   const endCls=st==='ให้แก้ไข'?'end-fix':st==='ไม่ผ่านการพิจารณา'?'end-fail':'';
@@ -81,14 +91,24 @@ function render(r){
   $('#out').innerHTML=`<section class="card result">
     <div class="r-head"><div><div class="r-ref">${esc(r.ref)}</div><h3 class="r-title">${esc(r.title)}</h3></div><span class="pill s-${esc(st)}">${esc(st)}</span></div>
     <div class="meta"><div>หัวหน้าโครงการ<b>${esc(r.lead)}</b></div><div>วันที่ส่ง<b>${fmtDate(r.submitted)}</b></div><div>งบประมาณที่เสนอ<b>${Number(r.total||0).toLocaleString('th-TH')} บาท</b></div></div>
+    <div class="light ${r.ack?'on':''}"><span class="lamp" aria-hidden="true"></span><div>${r.ack?`<b>คณะได้รับโครงร่างของท่านแล้ว</b><small>ตรวจรับเมื่อ ${fmtDate(r.ack)}</small>`:`<b>รอคณะตรวจรับโครงร่าง</b><small>ไฟจะเป็นสีเขียวเมื่องานวิจัยคณะกดรับโครงร่างของท่าน</small>`}</div></div>
     <div class="track" aria-label="ขั้นตอนการพิจารณา">
-      <div class="st on">ได้รับโครงร่าง</div><div class="st ${idx>=1?'on':''}">กำลังพิจารณา</div><div class="st ${idx>=2?'on '+endCls:''}">${esc(endLabel)}</div>
+      <div class="st on">ส่งโครงร่าง</div><div class="st ${r.ack||idx>=1?'on':''}">คณะรับโครงร่าง</div><div class="st ${idx>=1?'on':''}">กำลังพิจารณา</div><div class="st ${idx>=2?'on '+endCls:''}">${esc(endLabel)}</div>
     </div>
     ${r.note?`<div class="note"><b>ความเห็นผู้พิจารณา</b>\n${esc(r.note)}</div>`:''}
     <h3 style="font-size:16px;margin-bottom:10px">ประวัติการดำเนินการ</h3>
     <ol class="hist">${(r.history||[]).slice().reverse().map(h=>`<li><time>${fmtDate(h.at)}</time><div><span class="pill s-${esc(h.status)}">${esc(h.status)}</span>${h.note?` <span class="hint">${esc(h.note)}</span>`:''}</div></li>`).join('')||'<li class="hint">ยังไม่มีประวัติ</li>'}</ol>
+    ${st==='ผ่านการพิจารณา'?progressBlock(r):''}
     ${st==='ให้แก้ไข'?`<p class="hint" style="margin-top:16px">แก้ไขตามความเห็นแล้ว ให้ส่งเอกสารฉบับแก้ไขถึงงานวิจัยคณะ หรือติดต่อผู้ดูแลระบบ</p>`:''}
   </section>`;
+}
+function progressBlock(r){
+  const L=r.progress||[], last=L[L.length-1];
+  const thM=k=>{const m=/^(\d{4})-(\d{2})/.exec(k||'');return m?new Date(+m[1],+m[2]-1,1).toLocaleDateString('th-TH',{month:'long',year:'numeric'}):esc(k)};
+  return `<div class="prog"><h3 style="font-size:16px">ความก้าวหน้าการวิจัย</h3>
+    ${last?`<div class="bar"><i style="width:${last.percent}%"></i></div><p class="hint" style="margin:0">ล่าสุด ${last.percent}% · รายงานแล้ว ${L.length} เดือน</p>
+    <ul>${L.slice().reverse().slice(0,6).map(p=>`<li><b>${thM(p.month)}</b><span>${p.percent}%</span><span class="hint">${p.rating?'ผลติดตาม: '+esc(p.rating):'รอผู้ติดตามประเมิน'}</span></li>`).join('')}</ul>`:'<p class="hint">ยังไม่มีรายงานความก้าวหน้า กรุณารายงานผลการดำเนินงานทุกเดือน</p>'}
+    <a class="btn btn-p" href="progress.html?ref=${encodeURIComponent(r.ref)}">รายงานความก้าวหน้าประจำเดือน →</a></div>`;
 }
 $('#f').addEventListener('submit',async e=>{
   e.preventDefault();

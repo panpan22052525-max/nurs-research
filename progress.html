@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>รายงานความก้าวหน้าการวิจัย | คณะพยาบาลศาสตร์ มรภ.ศรีสะเกษ</title>
+<link rel="icon" href="logo.jpg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+.main{max-width:860px;margin:0 auto;padding-block:28px 10px;display:flex;flex-direction:column;gap:18px}
+.lookup{padding:22px 24px;display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+.lookup h2{grid-column:1/-1;font-size:21px}
+.lookup p{grid-column:1/-1;margin:-6px 0 4px}
+@media (max-width:640px){.lookup{grid-template-columns:1fr;padding:18px 16px}}
+.box{padding:22px 24px}
+@media (max-width:640px){.box{padding:18px 16px}}
+.box h3{font-size:17px;margin-bottom:12px}
+.r-ref{font-family:var(--f-display);color:var(--orange);font-weight:600;letter-spacing:.03em}
+.r-title{font-size:19px;margin-top:2px}
+.r-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+.meta div{background:var(--soft);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted);min-width:0}
+.meta b{display:block;color:var(--ink);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+@media (max-width:560px){.meta{grid-template-columns:1fr}}
+.cmp{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.cmp .row{display:grid;grid-template-columns:150px minmax(0,1fr) 52px;gap:10px;align-items:center;font-size:13.5px}
+.cmp .tr{height:12px;border-radius:99px;background:var(--soft);overflow:hidden}
+.cmp .tr i{display:block;height:100%;border-radius:99px;background:var(--green)}
+.cmp .tr.plan i{background:var(--gold)}
+.cmp b{font-variant-numeric:tabular-nums;text-align:right}
+@media (max-width:560px){.cmp .row{grid-template-columns:110px minmax(0,1fr) 46px}}
+.months{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin-top:16px}
+.mo{border:1.5px solid var(--line);border-radius:10px;padding:7px 6px;text-align:center;font-size:12px;color:var(--muted);background:var(--paper);cursor:pointer;font:inherit;line-height:1.35}
+.mo b{display:block;font-size:13px;color:var(--ink)}
+.mo.done{border-color:var(--green);background:color-mix(in srgb,var(--green) 10%,var(--paper))}
+.mo.done b{color:var(--green)}
+.mo.miss{border-color:var(--danger);border-style:dashed}
+.mo.miss b{color:var(--danger)}
+.mo.now{box-shadow:0 0 0 3px color-mix(in srgb,var(--orange) 35%,transparent)}
+.mo.future{opacity:.55;cursor:default}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:10px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1.5px solid var(--c);background:var(--b,transparent)}
+form.rep{display:flex;flex-direction:column;gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.pct{display:flex;gap:12px;align-items:center}
+.pct input[type=range]{flex:1;accent-color:var(--green)}
+.pct input[type=number]{width:90px}
+.acts{width:100%;border-collapse:collapse;font-size:14px}
+.acts th,.acts td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.acts th{font-size:12.5px;color:var(--muted);font-weight:600;background:var(--soft)}
+.acts tr.plan td:first-child{box-shadow:inset 3px 0 0 var(--orange)}
+.acts select{padding:6px 8px;font-size:14px}
+.acts .pm{font-size:12px;color:var(--muted)}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,var(--paper));border-radius:99px;padding:1px 8px;margin-left:6px}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.evi{display:flex;gap:8px}
+.evi input{flex:1}
+.req{color:var(--danger)}
+input[type=number]{font:inherit;font-size:15px;color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;width:100%;min-width:0}
+.pct input[type=range]{height:24px;min-width:0;margin:0;padding:0;background:transparent;border:0}
+.lbl{display:flex;gap:4px}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+.actions .hint{margin-right:auto}
+.notice{padding:14px 16px;border-radius:12px;background:color-mix(in srgb,var(--gold) 12%,var(--paper));border:1px solid color-mix(in srgb,var(--gold) 40%,var(--line))}
+.reports{display:flex;flex-direction:column;gap:12px}
+.rp{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--paper)}
+.rp-h{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.rp-h .m{font-family:var(--f-display);font-weight:600;font-size:16px}
+.rp-h .p{font-variant-numeric:tabular-nums;font-weight:600;color:var(--green)}
+.rp-h .sp{flex:1}
+.rp dl{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 12px;margin:10px 0 0;font-size:14px}
+.rp dt{color:var(--muted)}
+.rp dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+@media (max-width:560px){.rp dl{grid-template-columns:minmax(0,1fr)}.rp dt{margin-top:6px}}
+.eval{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--soft);font-size:14px}
+.r-ok{--c:var(--s-pass)}.r-fast{--c:var(--s-review)}.r-slow{--c:var(--s-fix)}.r-bad{--c:var(--s-fail)}.r-wait{--c:var(--muted)}
+</style>
+</head>
+<body>
+<header class="crest">
+  <div class="wrap">
+    <img src="logo.jpg" alt="ตราคณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ">
+    <div><h1>รายงานความก้าวหน้าการวิจัย</h1><p>คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</p></div>
+    <nav class="topnav" aria-label="เมนูหลัก"><a href="./">เสนอโครงร่าง</a><a href="track.html">ติดตามสถานะ</a><a href="progress.html" aria-current="page">รายงานความก้าวหน้า</a><a href="dashboard.html">สรุปภาพรวม</a></nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <main class="main">
+    <form class="card lookup" id="f">
+      <h2>รายงานผลการดำเนินงานรายเดือน</h2>
+      <p class="hint">สำหรับโครงการที่ผ่านการพิจารณาแล้ว กรอกเลขที่โครงร่างและอีเมลหัวหน้าโครงการ แล้วรายงานสิ่งที่ทำในแต่ละเดือน</p>
+      <label class="f">เลขที่โครงร่าง<input type="text" id="ref" autocomplete="off" placeholder="NUR-2570-001" required></label>
+      <label class="f">อีเมลหัวหน้าโครงการ<input type="email" id="email" autocomplete="email" placeholder="name@sskru.ac.th" required></label>
+      <button class="btn btn-p" id="go" type="submit">เปิดโครงการ</button>
+    </form>
+    <div id="out" aria-live="polite"></div>
+  </main>
+  <footer>งานวิจัยและบริการวิชาการ คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const API_URL=((window.APP_CONFIG||{}).API_URL||'').trim();
+const LIVE=/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(API_URL);
+const esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const baht=n=>(Number(n)||0).toLocaleString('th-TH',{maximumFractionDigits:0});
+const fmtDate=s=>{if(!s)return'—';const d=new Date(s);return isNaN(d)?esc(s):d.toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})};
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),3000)}
+async function api(action,data){
+  const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,data:data||{}})});
+  const j=await r.json(); if(!j.ok) throw new Error(j.error||'เกิดข้อผิดพลาด'); return j.result;
+}
+const ss={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}};
+
+/* ---------- เดือน ---------- */
+const nowKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const addM=(k,n)=>{const [y,m]=k.split('-').map(Number);const d=new Date(y,m-1+n,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const diffM=(a,b)=>{const [y1,m1]=a.split('-').map(Number),[y2,m2]=b.split('-').map(Number);return (y2-y1)*12+(m2-m1)};
+const thM=(k,long)=>{if(!/^\d{4}-\d{2}$/.test(k||''))return k||'—';const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('th-TH',{month:long?'long':'short',year:'numeric'})};
+const RCLS={'เป็นไปตามแผน':'r-ok','เร็วกว่าแผน':'r-fast','ล่าช้าเล็กน้อย':'r-slow','ล่าช้ามาก ต้องเร่งรัด':'r-bad'};
+
+let P=null, AUTH=null;
+
+/* ---------- ข้อมูลตัวอย่าง (เมื่อยังไม่เชื่อมฐานข้อมูล) ---------- */
+function sample(ref){
+  const s=addM(nowKey(),-3);
+  return {ref,title:'(ตัวอย่าง) ผลของโปรแกรมส่งเสริมการรับรู้ความสามารถของตนเองต่อพฤติกรรมการดูแลผู้สูงอายุติดเตียงของ อสม.',lead:'อาจารย์ (ตัวอย่าง) สมใจ ใจดี',status:'ผ่านการพิจารณา',fy:'2570',total:19500,start:s,months:12,canReport:true,actStatuses:['ยังไม่เริ่ม','กำลังดำเนินการ','เสร็จแล้ว'],
+    activities:[{name:'ทบทวนวรรณกรรมและพัฒนาเครื่องมือ',months:[1,2,3]},{name:'ขอรับรองจริยธรรม',months:[3,4]},{name:'ดำเนินโปรแกรมและเก็บข้อมูล',months:[5,6,7,8]},{name:'วิเคราะห์ข้อมูลและเขียนรายงาน',months:[9,10,11,12]}],
+    reports:[{month:s,percent:8,sent:new Date(Date.now()-80*864e5).toISOString(),acts:[{name:'ทบทวนวรรณกรรมและพัฒนาเครื่องมือ',status:'กำลังดำเนินการ'}],done:'ทบทวนวรรณกรรม 25 เรื่อง ร่างแบบสอบถาม',problems:'',next:'ส่งผู้ทรงคุณวุฒิตรวจเครื่องมือ',spent:0,evidence:'',rating:'เป็นไปตามแผน',comment:'ดำเนินการได้ดี',reviewed:new Date().toISOString()},
+      {month:addM(s,1),percent:15,sent:new Date(Date.now()-50*864e5).toISOString(),acts:[{name:'ทบทวนวรรณกรรมและพัฒนาเครื่องมือ',status:'กำลังดำเนินการ'}],done:'ผู้ทรงคุณวุฒิตรวจเครื่องมือครบ 3 ท่าน ปรับแก้ตามข้อเสนอแนะ',problems:'ผู้ทรงคุณวุฒิส่งกลับล่าช้า 1 ท่าน',next:'ทดลองใช้เครื่องมือและยื่นจริยธรรม',spent:3000,evidence:'',rating:'',comment:'',reviewed:''}]};
+}
+
+/* ---------- แสดงผล ---------- */
+function expected(){if(!P.months||!P.start)return 0;const i=Math.min(Math.max(diffM(P.start,nowKey())+1,0),P.months);return Math.round(i/P.months*100)}
+function latest(){return P.reports.length?P.reports[P.reports.length-1]:null}
+function render(){
+  const last=latest(), exp=expected(), endK=P.months?addM(P.start,P.months-1):'';
+  const spent=P.reports.reduce((a,r)=>a+(+r.spent||0),0);
+  const byM=Object.fromEntries(P.reports.map(r=>[r.month,r]));
+  const months=P.months&&P.start?Array.from({length:P.months},(_,i)=>addM(P.start,i)):[];
+  const now=nowKey();
+  $('#out').innerHTML=`
+  ${LIVE?'':'<p class="mode">โหมดทดลอง: แสดงข้อมูลตัวอย่าง ยังไม่ได้บันทึกจริง</p>'}
+  <section class="card box">
+    <div class="r-head"><div style="min-width:0"><div class="r-ref">${esc(P.ref)}</div><h3 class="r-title">${esc(P.title)}</h3></div><span class="pill s-${esc(P.status)}">${esc(P.status)}</span></div>
+    <div class="meta"><div>หัวหน้าโครงการ<b>${esc(P.lead)}</b></div><div>ระยะเวลาโครงการ<b>${P.months?`${thM(P.start)} – ${thM(endK)} (${P.months} เดือน)`:'—'}</b></div><div>ใช้งบประมาณแล้ว (ตามรายงาน)<b>${baht(spent)} / ${baht(P.total)} บาท</b></div></div>
+    <div class="cmp">
+      <div class="row"><span>ความก้าวหน้าที่รายงาน</span><span class="tr"><i style="width:${last?last.percent:0}%"></i></span><b>${last?last.percent:0}%</b></div>
+      <div class="row"><span>ตามแผน ณ เดือนนี้</span><span class="tr plan"><i style="width:${exp}%"></i></span><b>${exp}%</b></div>
+    </div>
+    ${months.length?`<div class="months">${months.map((k,i)=>{const r=byM[k];const fut=diffM(now,k)>0;const miss=!r&&diffM(k,now)>0;return `<button type="button" class="mo ${r?'done':miss?'miss':''} ${k===now?'now':''} ${fut&&!r?'future':''}" data-m="${k}" ${fut&&!r?'disabled':''} title="${thM(k,1)}">เดือนที่ ${i+1}<b>${r?r.percent+'%':miss?'ยังไม่รายงาน':thM(k)}</b></button>`}).join('')}</div>
+    <div class="legend"><span style="--c:var(--green);--b:color-mix(in srgb,var(--green) 15%,transparent)">รายงานแล้ว</span><span style="--c:var(--danger)">ยังไม่รายงาน</span><span style="--c:var(--orange)">เดือนปัจจุบัน</span></div>`:''}
+  </section>
+  ${P.canReport?formHtml(months):`<div class="notice">รายงานความก้าวหน้าได้เมื่อโครงร่าง<b>ผ่านการพิจารณา</b>แล้ว · สถานะปัจจุบัน: <span class="pill s-${esc(P.status)}">${esc(P.status)}</span></div>`}
+  <section class="card box"><h3>รายงานที่ส่งแล้ว (${P.reports.length})</h3>
+    <div class="reports">${P.reports.slice().reverse().map(r=>`<article class="rp">
+      <div class="rp-h"><span class="m">${thM(r.month,1)}</span><span class="p">${r.percent}%</span><span class="sp"></span>
+        <span class="pill ${RCLS[r.rating]||'r-wait'}">${esc(r.rating||'รอผู้ติดตามประเมิน')}</span>
+        ${P.canReport?`<button class="btn btn-g btn-s" type="button" data-edit="${esc(r.month)}">แก้ไข</button>`:''}</div>
+      <dl>
+        ${(r.acts||[]).length?`<dt>สถานะกิจกรรม</dt><dd>${r.acts.map(a=>`${esc(a.name)} — <b>${esc(a.status)}</b>`).join('\n')}</dd>`:''}
+        <dt>ผลการดำเนินงาน</dt><dd>${esc(r.done||'—')}</dd>
+        ${r.problems?`<dt>ปัญหาและอุปสรรค</dt><dd>${esc(r.problems)}</dd>`:''}
+        ${r.next?`<dt>แผนเดือนถัดไป</dt><dd>${esc(r.next)}</dd>`:''}
+        ${+r.spent?`<dt>งบประมาณที่ใช้</dt><dd>${baht(r.spent)} บาท</dd>`:''}
+        ${r.evidence?`<dt>หลักฐาน</dt><dd><a href="${esc(r.evidence)}" target="_blank" rel="noopener" style="color:var(--green)">${esc(r.evidence)}</a></dd>`:''}
+        <dt>ส่งเมื่อ</dt><dd>${fmtDate(r.sent)}</dd>
+      </dl>
+      ${r.rating?`<div class="eval"><b>ผลการติดตาม:</b> ${esc(r.rating)}${r.comment?`<br>${esc(r.comment).replace(/\n/g,'<br>')}`:''}<div class="hint">ประเมินเมื่อ ${fmtDate(r.reviewed)}</div></div>`:''}
+    </article>`).join('')||'<p class="hint">ยังไม่มีรายงาน</p>'}</div>
+  </section>`;
+  if(P.canReport){bindForm();const def=months.includes(now)?now:(months.filter(k=>diffM(k,now)>=0).pop()||months[0]);loadMonth(def)}
+}
+function formHtml(months){
+  const opts=months.map((k,i)=>`<option value="${k}" ${diffM(nowKey(),k)>0?'disabled':''}>เดือนที่ ${i+1} · ${thM(k,1)}${P.reports.some(r=>r.month===k)?' ✓ รายงานแล้ว':''}</option>`).join('');
+  return `<section class="card box" id="formBox"><h3>รายงานผลการดำเนินงานประจำเดือน</h3>
+  <form class="rep" id="rep">
+    <div class="grid2">
+      <label class="f"><span class="lbl">งวดรายงาน <span class="req">*</span></span><select id="month">${opts}</select></label>
+      <label class="f"><span class="lbl">ความก้าวหน้าโดยรวมของโครงการ (%) <span class="req">*</span></span><span class="pct"><input type="range" id="pr" min="0" max="100" step="1"><input type="number" id="pn" min="0" max="100" step="1" required></span></label>
+    </div>
+    <div><p class="f" style="margin:0 0 6px;font-weight:500;font-size:13.5px">สถานะกิจกรรมตามแผน <span class="hint">· แถบสีส้ม = กิจกรรมตามแผนของเดือนนี้</span></p>
+      <div class="scroll"><table class="acts"><thead><tr><th>กิจกรรม</th><th>เดือนตามแผน</th><th style="width:170px">สถานะ</th></tr></thead><tbody id="acts"></tbody></table></div></div>
+    <label class="f"><span class="lbl">ผลการดำเนินงานในเดือนนี้ <span class="req">*</span></span><textarea id="done" maxlength="4000" placeholder="สิ่งที่ทำได้ในเดือนนี้ เช่น เก็บข้อมูลได้ 30 ราย, ผ่านการรับรองจริยธรรมแล้ว"></textarea></label>
+    <div class="grid2">
+      <label class="f">ปัญหาและอุปสรรค<textarea id="problems" maxlength="3000" style="min-height:80px" placeholder="ถ้าไม่มีให้เว้นว่าง"></textarea></label>
+      <label class="f">แผนการดำเนินงานเดือนถัดไป<textarea id="next" maxlength="3000" style="min-height:80px"></textarea></label>
+    </div>
+    <div class="grid2">
+      <label class="f">งบประมาณที่ใช้ในเดือนนี้ (บาท)<input type="number" id="spent" min="0" step="1" placeholder="0"></label>
+      <label class="f">ลิงก์หลักฐาน (ภาพกิจกรรม, รายงาน, ใบรับรอง)<span class="evi"><input type="text" id="evidence" placeholder="https://drive.google.com/…"><button class="btn btn-g btn-s" type="button" id="up">⬆ อัปโหลด</button><input type="file" id="file" hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"></span></label>
+    </div>
+    <div class="actions"><span class="hint" id="editNote"></span><button class="btn btn-p" type="submit" id="send">ส่งรายงานเดือนนี้</button></div>
+  </form></section>`;
+}
+function loadMonth(k){
+  if(!k) return; $('#month').value=k;
+  const r=P.reports.find(x=>x.month===k), prev=P.reports.filter(x=>x.month<k).pop();
+  const src=r||prev, idx=diffM(P.start,k)+1;
+  $('#pn').value=$('#pr').value=r?r.percent:(prev?prev.percent:0);
+  const st=Object.fromEntries(((src&&src.acts)||[]).map(a=>[a.name,a.status]));
+  $('#acts').innerHTML=(P.activities||[]).map((a,i)=>`<tr class="${(a.months||[]).includes(idx)?'plan':''}"><td>${esc(a.name)}${(a.months||[]).includes(idx)?'<span class="tag">เดือนนี้</span>':''}</td><td class="pm">${(a.months||[]).length?'เดือนที่ '+a.months.join(', '):'—'}</td><td><select data-i="${i}" aria-label="สถานะ ${esc(a.name)}">${P.actStatuses.map(s=>`<option ${s===(st[a.name]||P.actStatuses[0])?'selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')||'<tr><td colspan="3" class="hint">ไม่มีแผนกิจกรรมในโครงร่าง</td></tr>';
+  ['done','problems','next','evidence'].forEach(id=>$('#'+id).value=r?(r[id]||''):'');
+  $('#spent').value=r&&+r.spent?r.spent:'';
+  $('#editNote').textContent=r?`กำลังแก้ไขรายงาน${thM(k,1)} (ส่งเมื่อ ${fmtDate(r.sent)}) — การแก้ไขจะล้างผลประเมินเดิม`:'';
+  $('#send').textContent=r?'บันทึกการแก้ไข':'ส่งรายงานเดือนนี้';
+}
+function bindForm(){
+  $('#month').onchange=e=>loadMonth(e.target.value);
+  $('#pr').oninput=e=>$('#pn').value=e.target.value; $('#pn').oninput=e=>$('#pr').value=e.target.value;
+  $('#up').onclick=()=>$('#file').click();
+  $('#file').onchange=async e=>{
+    const f=e.target.files[0]; e.target.value=''; if(!f) return;
+    if(f.size>10*1024*1024){toast('ไฟล์ใหญ่เกิน 10 MB');return}
+    if(!LIVE){$('#evidence').value='https://drive.google.com/file/d/ตัวอย่าง/view';toast('โหมดทดลอง: ไม่ได้อัปโหลดจริง');return}
+    const b=$('#up'); b.disabled=true; b.textContent='กำลังอัปโหลด…';
+    try{const base64=await new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=no;r.readAsDataURL(f)});
+      const res=await api('upload',{email:AUTH.email,type:`หลักฐานความก้าวหน้า ${P.ref} ${$('#month').value}`,name:f.name,mimeType:f.type,base64});
+      $('#evidence').value=res.url; toast('อัปโหลดแล้ว: '+res.name)}
+    catch(err){toast('อัปโหลดไม่สำเร็จ: '+err.message)}
+    finally{b.disabled=false;b.textContent='⬆ อัปโหลด'}
+  };
+  $$('[data-edit]').forEach(b=>b.onclick=()=>{loadMonth(b.dataset.edit);$('#formBox').scrollIntoView({behavior:'smooth',block:'start'})});
+  $$('.mo[data-m]:not([disabled])').forEach(b=>b.onclick=()=>{loadMonth(b.dataset.m);$('#formBox').scrollIntoView({behavior:'smooth',block:'start'})});
+  $('#rep').onsubmit=async e=>{
+    e.preventDefault();
+    const d={ref:P.ref,email:AUTH.email,month:$('#month').value,percent:+$('#pn').value,
+      acts:(P.activities||[]).map((a,i)=>({name:a.name,status:(document.querySelector(`#acts select[data-i="${i}"]`)||{}).value})),
+      done:$('#done').value.trim(),problems:$('#problems').value.trim(),next:$('#next').value.trim(),spent:+$('#spent').value||0,evidence:$('#evidence').value.trim()};
+    if(!d.done){toast('กรุณากรอกผลการดำเนินงานในเดือนนี้');$('#done').focus();return}
+    if(!(d.percent>=0&&d.percent<=100)){toast('ความก้าวหน้ารวมต้องอยู่ระหว่าง 0–100%');return}
+    const b=$('#send'); b.disabled=true; b.textContent='กำลังส่ง…';
+    try{
+      if(LIVE){P.reports=(await api('progressSubmit',d)).reports}
+      else{const r={...d,sent:new Date().toISOString(),rating:'',comment:'',reviewed:''};P.reports=P.reports.filter(x=>x.month!==d.month).concat(r).sort((a,b)=>a.month.localeCompare(b.month))}
+      render(); toast(`ส่งรายงาน${thM(d.month,1)}แล้ว`); loadMonth(d.month);
+    }catch(err){toast('ส่งไม่สำเร็จ: '+err.message);b.disabled=false;b.textContent='ส่งรายงานเดือนนี้'}
+  };
+}
+
+/* ---------- เปิดโครงการ ---------- */
+async function open(ref,email){
+  const b=$('#go'); b.disabled=true; b.textContent='กำลังเปิด…';
+  try{
+    P=LIVE?await api('progressInfo',{ref,email}):sample(ref.toUpperCase());
+    AUTH={ref:P.ref,email}; ss.set('nurs-progress',JSON.stringify(AUTH)); render();
+  }catch(err){$('#out').innerHTML=`<div class="err">${esc(err.message)}</div>`}
+  finally{b.disabled=false;b.textContent='เปิดโครงการ'}
+}
+$('#f').addEventListener('submit',e=>{e.preventDefault();const ref=$('#ref').value.trim(),email=$('#email').value.trim();if(ref&&email)open(ref,email)});
+const q=new URLSearchParams(location.search);
+let saved=null; try{saved=JSON.parse(ss.get('nurs-progress')||'null')}catch(e){}
+if(q.get('ref')) $('#ref').value=q.get('ref');
+if(saved&&(!q.get('ref')||q.get('ref').toUpperCase()===saved.ref)){$('#ref').value=saved.ref;$('#email').value=saved.email;open(saved.ref,saved.email)}
+</script>
+</body>
+</html>

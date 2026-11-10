@@ -87,6 +87,35 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
 .hist li{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .hist time{color:var(--muted);font-variant-numeric:tabular-nums;min-width:140px}
+/* ไฟเขียวรับโครงร่าง */
+.lamp{display:inline-block;width:12px;height:12px;border-radius:50%;background:#C9D2CB;vertical-align:-1px;flex:none}
+.lamp.on{background:#22B35E;box-shadow:0 0 0 3px color-mix(in srgb,#22B35E 22%,transparent),0 0 8px #22B35E}
+.ackc{white-space:nowrap;font-size:13px;display:inline-flex;gap:7px;align-items:center}
+.ack{padding:14px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:1.5px solid var(--line)}
+.ack .lamp{width:26px;height:26px}
+.ack.on{border-color:color-mix(in srgb,var(--ok) 45%,var(--line));background:color-mix(in srgb,var(--ok) 8%,var(--paper))}
+.ack .tx{flex:1;min-width:200px}
+.ack .tx small{display:block;color:var(--muted)}
+.btn-ack{background:#1E8E4E;color:#fff;font-size:15px;padding:11px 20px}
+.btn-ack:hover:not(:disabled){background:#176F3D}
+/* ความก้าวหน้า */
+.pbar{display:flex;align-items:center;gap:8px;min-width:120px}
+.pbar .tr{flex:1;height:10px;background:var(--soft);border-radius:99px;overflow:hidden;position:relative}
+.pbar .tr i{display:block;height:100%;background:var(--green);border-radius:99px}
+.pbar .tr u{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--gold)}
+.pbar b{font-variant-numeric:tabular-nums;font-size:13px;min-width:38px;text-align:right}
+.flag{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;font-weight:600;white-space:nowrap;color:var(--c)}
+.flag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c)}
+.f-ok{--c:var(--s-pass)}.f-late{--c:var(--s-fix)}.f-miss{--c:var(--s-fail)}.f-wait{--c:var(--muted)}.f-done{--c:var(--s-review)}
+.rp{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px}
+.rp-h{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.rp-h .m{font-weight:600}
+.rp dl.kv{margin-top:8px;font-size:13.5px}
+.rv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.rv .row{grid-column:1/-1;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.rv textarea{min-height:56px}
+@media (max-width:560px){.rv{grid-template-columns:minmax(0,1fr)}}
+.r-ok{--c:var(--s-pass)}.r-fast{--c:var(--s-review)}.r-slow{--c:var(--s-fix)}.r-bad{--c:var(--s-fail)}.r-wait{--c:var(--muted)}
 </style>
 </head>
 <body>
@@ -94,7 +123,7 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
   <div class="wrap">
     <img src="logo.jpg" alt="ตราคณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ">
     <div><h1>ผู้ดูแลระบบโครงร่างวิจัย</h1><p>คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</p></div>
-    <nav class="topnav" aria-label="เมนูหลัก"><a href="./">เสนอโครงร่าง</a><a href="track.html">ติดตามสถานะ</a><a href="dashboard.html">สรุปภาพรวม</a><a href="admin.html" aria-current="page">ผู้ดูแล</a><button type="button" id="logout" hidden>ออกจากระบบ</button></nav>
+    <nav class="topnav" aria-label="เมนูหลัก"><a href="./">เสนอโครงร่าง</a><a href="track.html">ติดตามสถานะ</a><a href="progress.html">รายงานความก้าวหน้า</a><a href="dashboard.html">สรุปภาพรวม</a><a href="admin.html" aria-current="page">ผู้ดูแล</a><button type="button" id="logout" hidden>ออกจากระบบ</button></nav>
   </div>
 </header>
 
@@ -113,6 +142,7 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
       <div class="tabs" role="tablist">
         <a href="#dashboard" role="tab" id="t-dashboard">แดชบอร์ด</a>
         <a href="#list" role="tab" id="t-list">รายการโครงร่าง</a>
+        <a href="#progress" role="tab" id="t-progress">ติดตามความก้าวหน้า</a>
       </div>
       <span class="sp"></span>
       <label class="hint" for="fyF">ปีงบประมาณ</label>
@@ -124,6 +154,7 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
     </div>
 
     <section class="view" id="v-dashboard"></section>
+    <section class="view" id="v-progress" hidden></section>
     <section class="view" id="v-list" hidden>
       <div class="filters">
         <input class="q" type="search" id="q" placeholder="ค้นหาเลขที่ ชื่อโครงการ หรือชื่อผู้วิจัย" aria-label="ค้นหา">
@@ -132,7 +163,7 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
         <select id="sort" aria-label="เรียงลำดับ"><option value="new">ส่งล่าสุดก่อน</option><option value="old">ส่งก่อนขึ้นก่อน</option><option value="budget">งบประมาณมากไปน้อย</option></select>
       </div>
       <p class="count" id="count"></p>
-      <div class="tbl"><table><thead><tr><th>เลขที่</th><th>ชื่อโครงการ</th><th>หัวหน้าโครงการ</th><th>สาขา</th><th style="text-align:right">งบประมาณ (บาท)</th><th>สถานะ</th><th>วันที่ส่ง</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="tbl"><table><thead><tr><th>เลขที่</th><th>ชื่อโครงการ</th><th>หัวหน้าโครงการ</th><th>สาขา</th><th style="text-align:right">งบประมาณ (บาท)</th><th>รับเรื่อง</th><th>สถานะ</th><th>วันที่ส่ง</th></tr></thead><tbody id="rows"></tbody></table></div>
     </section>
   </div>
   <footer>งานวิจัยและบริการวิชาการ คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</footer>
@@ -172,8 +203,14 @@ function sample(){
     'ค่าตอบแทน':3000,'ค่าใช้สอย':12000,'ค่าวัสดุ':4500,'SDGs':'SDG 3 สุขภาพและความเป็นอยู่ที่ดี'+(i%2?', SDG 10 ลดความเหลื่อมล้ำ':''),'การลดความเหลื่อมล้ำทางสุขภาพ':['เป็นเป้าหมายหลักของโครงการ','มีส่วนเกี่ยวข้อง','ไม่เกี่ยวข้องโดยตรง'][i%3],
     'วัตถุประสงค์':'1) เพื่อศึกษา…\n2) เพื่อเปรียบเทียบ…','หมายเหตุผู้พิจารณา':S[i]==='ให้แก้ไข'?'เพิ่มการคำนวณขนาดกลุ่มตัวอย่าง':'','อัปเดตสถานะเมื่อ':'',
     files:[{type:'โครงร่างวิจัยฉบับสมบูรณ์',name:'proposal.pdf',url:'https://drive.google.com/',access:'เปิดได้'}],members:[{role:'หัวหน้าโครงการ',name:'อาจารย์ (ตัวอย่าง) ผู้วิจัย '+(i+1),aff:'คณะพยาบาลศาสตร์',share:100}],
+    'เดือนเริ่ม':sMonth(i),'ระยะเวลา (เดือน)':12,'แผนการดำเนินงาน':'ทบทวนวรรณกรรมและพัฒนาเครื่องมือ: เดือน 1,2,3\nขอรับรองจริยธรรม: เดือน 3,4\nดำเนินโปรแกรมและเก็บข้อมูล: เดือน 5,6,7,8\nวิเคราะห์ข้อมูลและเขียนรายงาน: เดือน 9,10,11,12',
+    'รับโครงร่างเมื่อ':i%3===0?'':new Date(Date.UTC(2026,9,2+i*4)).toISOString(),
+    progress:S[i]==='ผ่านการพิจารณา'?sampleProgress(i):[],
     budgetItems:[{cat:'ค่าตอบแทน',item:'ผู้ทรงคุณวุฒิตรวจเครื่องมือ',amount:3000}],history:[{status:'รอพิจารณา',note:'ได้รับโครงร่าง',at:new Date(Date.UTC(2026,9,1+i*4)).toISOString()}]}));
 }
+
+function sMonth(i){return addM(nowKey(),i===3?-5:-2)}
+function sampleProgress(i){const s=sMonth(i),n=i===3?5:2;return Array.from({length:n-(i===3?1:0)},(_,k)=>({month:addM(s,k),percent:[8,15,22,30,36][k],sent:new Date().toISOString(),acts:[{name:'ทบทวนวรรณกรรมและพัฒนาเครื่องมือ',status:k>1?'เสร็จแล้ว':'กำลังดำเนินการ'}],done:'(ตัวอย่าง) ดำเนินงานตามแผนเดือนที่ '+(k+1),problems:k===1?'ผู้ทรงคุณวุฒิส่งกลับล่าช้า':'',next:'',spent:k*1500,evidence:'',rating:k===0?'เป็นไปตามแผน':'',comment:'',reviewed:''}))}
 
 /* ---------- auth ---------- */
 async function boot(){
@@ -227,7 +264,7 @@ function renderDash(){
     <div class="card kpi accent"><span>โครงร่างทั้งหมด</span><b>${L.length}</b><small>${fy}</small></div>
     <div class="card kpi"><span>งบประมาณที่เสนอรวม</span><b>${baht(total)}</b><small>บาท · เฉลี่ย ${baht(L.length?total/L.length:0)} บาท/เรื่อง</small></div>
     <div class="card kpi"><span>ผ่านการพิจารณา</span><b>${pass}</b><small>${L.length?Math.round(pass/L.length*100):0}% · ${baht(passBudget)} บาท</small></div>
-    <div class="card kpi"><span>รอดำเนินการ</span><b>${open}</b><small>รอ ${cnt('รอพิจารณา')} · กำลังพิจารณา ${cnt('กำลังพิจารณา')} · ให้แก้ไข ${cnt('ให้แก้ไข')}</small></div>
+    <div class="card kpi"><span>รอดำเนินการ</span><b>${open}</b><small>รอ ${cnt('รอพิจารณา')} · กำลังพิจารณา ${cnt('กำลังพิจารณา')} · ให้แก้ไข ${cnt('ให้แก้ไข')}</small><small style="margin-top:4px"><span class="lamp"></span> ยังไม่กดรับ ${L.filter(p=>!p['รับโครงร่างเมื่อ']).length} เรื่อง</small></div>
   </div>
   <div class="card panel" style="margin-top:14px"><h3>สถานะการพิจารณา <small>${L.length} เรื่อง</small></h3>
     ${L.length?`<div class="stack">${stack.filter(x=>x.n).map(x=>`<i style="--c:${ST_COLORS[x.s]};width:${x.n/L.length*100}%" title="${esc(x.s)} ${x.n}"></i>`).join('')}</div>
@@ -251,10 +288,51 @@ function renderList(){
   let L=P().filter(p=>(!st||p['สถานะ']===st)&&(!fd||p['สาขา']===fd)&&(!q||[p['เลขที่'],p['ชื่อโครงการ (ไทย)'],p['ชื่อโครงการ (อังกฤษ)'],p['หัวหน้าโครงการ'],p['ผู้ร่วมวิจัย']].join(' ').toLowerCase().includes(q)));
   L.sort((a,b)=>so==='budget'?(b['งบประมาณรวม']||0)-(a['งบประมาณรวม']||0):so==='old'?String(a['วันเวลาที่ส่ง']).localeCompare(String(b['วันเวลาที่ส่ง'])):String(b['วันเวลาที่ส่ง']).localeCompare(String(a['วันเวลาที่ส่ง'])));
   $('#count').textContent=`แสดง ${L.length} จาก ${P().length} เรื่อง · งบประมาณรวม ${baht(L.reduce((a,p)=>a+(Number(p['งบประมาณรวม'])||0),0))} บาท`;
-  $('#rows').innerHTML=L.map(p=>`<tr tabindex="0" data-open="${esc(p['เลขที่'])}"><td class="ref">${esc(p['เลขที่'])}</td><td><div class="t">${esc(p['ชื่อโครงการ (ไทย)'])}</div><div class="sub">${esc(p['แหล่งทุน']||'')}</div></td><td>${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</td><td>${esc(p['สาขา']||'')}</td><td class="num">${baht(p['งบประมาณรวม'])}</td><td><span class="pill s-${esc(p['สถานะ'])}">${esc(p['สถานะ'])}</span></td><td style="white-space:nowrap">${fmtDate(p['วันเวลาที่ส่ง'])}</td></tr>`).join('')||`<tr><td colspan="7" class="empty">${DATA.proposals.length?'ไม่พบโครงร่างตามเงื่อนไข':'ยังไม่มีโครงร่างที่ส่งเข้ามา'}</td></tr>`;
+  $('#rows').innerHTML=L.map(p=>`<tr tabindex="0" data-open="${esc(p['เลขที่'])}"><td class="ref">${esc(p['เลขที่'])}</td><td><div class="t">${esc(p['ชื่อโครงการ (ไทย)'])}</div><div class="sub">${esc(p['แหล่งทุน']||'')}</div></td><td>${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</td><td>${esc(p['สาขา']||'')}</td><td class="num">${baht(p['งบประมาณรวม'])}</td><td>${ackCell(p)}</td><td><span class="pill s-${esc(p['สถานะ'])}">${esc(p['สถานะ'])}</span></td><td style="white-space:nowrap">${fmtDate(p['วันเวลาที่ส่ง'])}</td></tr>`).join('')||`<tr><td colspan="8" class="empty">${DATA.proposals.length?'ไม่พบโครงร่างตามเงื่อนไข':'ยังไม่มีโครงร่างที่ส่งเข้ามา'}</td></tr>`;
 }
 ['q','stF','fdF','sort'].forEach(id=>$('#'+id).addEventListener('input',renderList));
 $('#fyF').addEventListener('change',()=>route());
+
+/* ---------- เดือน / ความก้าวหน้า ---------- */
+const nowKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const addM=(k,n)=>{const [y,m]=k.split('-').map(Number);const d=new Date(y,m-1+n,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const diffM=(a,b)=>{const [y1,m1]=a.split('-').map(Number),[y2,m2]=b.split('-').map(Number);return (y2-y1)*12+(m2-m1)};
+const mKey=v=>{if(!v)return'';const s=String(v);if(/^\d{4}-\d{2}/.test(s)&&s.length<=7)return s.slice(0,7);const d=new Date(s);return isNaN(d)?s.slice(0,7):d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const thM=(k,long)=>{if(!/^\d{4}-\d{2}$/.test(k||''))return k||'—';const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('th-TH',{month:long?'long':'short',year:'numeric'})};
+const RATINGS=['เป็นไปตามแผน','เร็วกว่าแผน','ล่าช้าเล็กน้อย','ล่าช้ามาก ต้องเร่งรัด'];
+const RCLS={'เป็นไปตามแผน':'r-ok','เร็วกว่าแผน':'r-fast','ล่าช้าเล็กน้อย':'r-slow','ล่าช้ามาก ต้องเร่งรัด':'r-bad'};
+const ackCell=p=>p['รับโครงร่างเมื่อ']?`<span class="ackc" title="รับเมื่อ ${esc(fmtDate(p['รับโครงร่างเมื่อ'],1))}"><span class="lamp on"></span>รับแล้ว</span>`:`<span class="ackc hint"><span class="lamp"></span>ยังไม่รับ</span>`;
+/** สรุปการติดตามของโครงการหนึ่ง */
+function track(p){
+  const start=mKey(p['เดือนเริ่ม']), months=+p['ระยะเวลา (เดือน)']||0, L=p.progress||[], last=L[L.length-1], now=nowKey();
+  const idx=start?diffM(start,now)+1:0, exp=months?Math.round(Math.min(Math.max(idx,0),months)/months*100):0;
+  const end=start&&months?addM(start,months-1):'', pct=last?+last.percent:0, unrated=L.filter(r=>!r.rating).length;
+  let flag;
+  if(!start||!months) flag=['f-wait','ไม่มีแผนเวลา'];
+  else if(idx<1) flag=['f-wait','ยังไม่ถึงเดือนเริ่ม'];
+  else if(pct>=100) flag=['f-done','เสร็จสิ้นโครงการ'];
+  else if(idx>1&&!L.some(r=>r.month===now||r.month===addM(now,-1))) flag=['f-miss',last?`ไม่ได้รายงาน ${diffM(last.month,now)} เดือน`:'ยังไม่เคยรายงาน'];
+  else if(pct<exp-15) flag=['f-late','ล่าช้ากว่าแผน'];
+  else flag=['f-ok','ตามแผน'];
+  return {start,end,months,idx,exp,pct,last,unrated,flag,reportedNow:L.some(r=>r.month===now)};
+}
+function pbar(t){return `<span class="pbar"><span class="tr"><i style="width:${t.pct}%"></i><u style="left:calc(${t.exp}% - 1px)" title="ตามแผน ${t.exp}%"></u></span><b>${t.pct}%</b></span>`}
+function renderProgress(){
+  const L=P().filter(p=>p['สถานะ']==='ผ่านการพิจารณา').map(p=>({p,t:track(p)}));
+  const active=L.filter(x=>x.t.idx>=1&&x.t.pct<100);
+  const cnt=c=>L.filter(x=>x.t.flag[0]===c).length;
+  $('#v-progress').innerHTML=`
+  <div class="kpis">
+    <div class="card kpi accent"><span>โครงการที่ผ่านการพิจารณา</span><b>${L.length}</b><small>กำลังดำเนินการ ${active.length} เรื่อง</small></div>
+    <div class="card kpi"><span>รายงานเดือนนี้แล้ว</span><b>${active.filter(x=>x.t.reportedNow).length} / ${active.length}</b><small>${thM(nowKey(),1)}</small></div>
+    <div class="card kpi"><span>ต้องติดตาม</span><b>${cnt('f-miss')+cnt('f-late')}</b><small>ไม่ได้รายงาน ${cnt('f-miss')} · ล่าช้า ${cnt('f-late')}</small></div>
+    <div class="card kpi"><span>รายงานรอประเมิน</span><b>${L.reduce((a,x)=>a+x.t.unrated,0)}</b><small>กดที่โครงการเพื่อประเมิน</small></div>
+  </div>
+  <p class="count" style="margin-top:16px">แถบเขียว = ความก้าวหน้าที่รายงาน · เส้นสีทอง = ตามแผน ณ เดือนนี้</p>
+  <div class="tbl"><table><thead><tr><th>เลขที่</th><th>ชื่อโครงการ</th><th>หัวหน้าโครงการ</th><th>ระยะเวลา</th><th>ความก้าวหน้า</th><th>รายงานล่าสุด</th><th>สถานะการติดตาม</th></tr></thead><tbody>${
+    L.sort((a,b)=>({'f-miss':0,'f-late':1,'f-ok':2,'f-wait':3,'f-done':4}[a.t.flag[0]]-{'f-miss':0,'f-late':1,'f-ok':2,'f-wait':3,'f-done':4}[b.t.flag[0]])).map(({p,t})=>`<tr tabindex="0" data-open="${esc(p['เลขที่'])}"><td class="ref">${esc(p['เลขที่'])}</td><td><div class="t">${esc(p['ชื่อโครงการ (ไทย)'])}</div><div class="sub">${esc(p['สาขา']||'')}</div></td><td>${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</td><td style="white-space:nowrap">${t.start?`${thM(t.start)} – ${thM(t.end)}<div class="sub">เดือนที่ ${Math.min(Math.max(t.idx,0),t.months)} / ${t.months}</div>`:'—'}</td><td>${pbar(t)}</td><td style="white-space:nowrap">${t.last?thM(t.last.month):'—'}<div class="sub">${(p.progress||[]).length} รายงาน${t.unrated?` · รอประเมิน ${t.unrated}`:''}</div></td><td><span class="flag ${t.flag[0]}">${esc(t.flag[1])}</span></td></tr>`).join('')
+    ||'<tr><td colspan="7" class="empty">ยังไม่มีโครงการที่ผ่านการพิจารณา</td></tr>'}</tbody></table></div>`;
+}
 
 /* ---------- detail drawer ---------- */
 const SECTIONS=[
@@ -270,6 +348,8 @@ function openDetail(ref){
   <div class="d-head"><div style="min-width:0"><div class="ref">${esc(p['เลขที่'])}</div><h2 id="dTitle">${esc(p['ชื่อโครงการ (ไทย)'])}</h2><div class="hint">ส่งเมื่อ ${fmtDate(p['วันเวลาที่ส่ง'],1)} · ${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</div></div>
     <button class="btn btn-g btn-s x" type="button" id="dClose">ปิด</button></div>
   <div class="d-body">
+    ${p['รับโครงร่างเมื่อ']?`<div class="card ack on"><span class="lamp on"></span><div class="tx"><b>รับโครงร่างแล้ว</b><small>เมื่อ ${fmtDate(p['รับโครงร่างเมื่อ'],1)} · ผู้วิจัยเห็นไฟเขียวในหน้าติดตามสถานะ</small></div></div>`
+      :`<div class="card ack"><span class="lamp"></span><div class="tx"><b>ยังไม่ได้กดรับโครงร่าง</b><small>กดรับเมื่อตรวจว่าได้รับเอกสารครบ ผู้วิจัยจะเห็นไฟเขียวทันที</small><label class="chk" style="margin-top:6px;display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" id="ackMail" checked style="width:17px;height:17px;accent-color:var(--green)"> ส่งอีเมลแจ้งผู้วิจัยว่าคณะได้รับแล้ว</label></div><button class="btn btn-ack" type="button" id="ackBtn">✓ รับโครงร่างแล้ว</button></div>`}
     <form class="card sform" id="sForm">
       <h3>เปลี่ยนสถานะการพิจารณา <span class="pill s-${esc(p['สถานะ'])}" style="margin-left:6px">${esc(p['สถานะ'])}</span></h3>
       <label class="f">สถานะใหม่<select id="sNew">${DATA.statuses.map(s=>`<option ${s===p['สถานะ']?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
@@ -281,10 +361,28 @@ function openDetail(ref){
     <section class="card sec"><h3>คณะผู้วิจัย</h3>${(p.members||[]).length?`<table class="mini"><tbody>${p.members.map(m=>`<tr><td>${esc(m.role)}</td><td>${esc(m.name)}</td><td>${esc(m.aff)}</td><td class="num">${esc(m.share)}%</td></tr>`).join('')}</tbody></table>`:`<p class="hint">${esc(p['ผู้ร่วมวิจัย']||'—')}</p>`}</section>
     <section class="card sec"><h3>งบประมาณ · ${baht(p['งบประมาณรวม'])} บาท</h3>${(p.budgetItems||[]).length?`<table class="mini"><tbody>${p.budgetItems.map(b=>`<tr><td>${esc(b.cat)}</td><td>${esc(b.item)}</td><td class="num">${baht(b.amount)}</td></tr>`).join('')}</tbody></table>`:'<p class="hint">—</p>'}</section>
     <section class="card sec files"><h3>เอกสารแนบ</h3>${(p.files||[]).length?`<dl class="kv">${p.files.map(f=>`<dt>${esc(f.type)}</dt><dd><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name||f.url)}</a> <span class="hint">· ${esc(f.access||'')}</span></dd>`).join('')}</dl>`:'<p class="hint">ไม่มีเอกสารแนบ</p>'}</section>
+    ${p['สถานะ']==='ผ่านการพิจารณา'?progressSection(p):''}
     <section class="card sec"><h3>ประวัติสถานะ</h3><ol class="hist">${(p.history||[]).slice().reverse().map(h=>`<li><time>${fmtDate(h.at,1)}</time><span class="pill s-${esc(h.status)}">${esc(h.status)}</span><span>${esc(h.note||'')}</span>${h.mailed?`<span class="hint">· ${esc(h.mailed)}</span>`:''}</li>`).join('')||'<li class="hint">—</li>'}</ol></section>
   </div>`;
   $('#drawer').hidden=false; $('#scrim').hidden=false; $('#dClose').focus();
   $('#dClose').onclick=closeDetail;
+  if($('#ackBtn')) $('#ackBtn').onclick=async()=>{
+    const b=$('#ackBtn'), notify=$('#ackMail').checked;
+    if(DEMO){p['รับโครงร่างเมื่อ']=new Date().toISOString();p.history.push({status:p['สถานะ'],note:'คณะได้รับโครงร่างแล้ว',at:p['รับโครงร่างเมื่อ'],mailed:'โหมดตัวอย่าง'});toast('รับโครงร่างแล้ว (โหมดตัวอย่าง)');openDetail(p['เลขที่']);route();return}
+    b.disabled=true; b.textContent='กำลังบันทึก…';
+    try{const r=await api('adminAck',{ref:p['เลขที่'],notify});p['รับโครงร่างเมื่อ']=r.ack;if(!r.already)(p.history=p.history||[]).push({status:p['สถานะ'],note:'คณะได้รับโครงร่างแล้ว',at:r.ack,mailed:r.mailed});
+      toast(r.already?'โครงร่างนี้รับไว้แล้ว':notify?'รับโครงร่างและแจ้งอีเมลผู้วิจัยแล้ว':'รับโครงร่างแล้ว');openDetail(p['เลขที่']);route()}
+    catch(err){toast('บันทึกไม่สำเร็จ: '+err.message);b.disabled=false;b.textContent='✓ รับโครงร่างแล้ว'}
+  };
+  $$('form.rv').forEach(f=>f.onsubmit=async e=>{
+    e.preventDefault(); const m=f.dataset.m, rep=(p.progress||[]).find(x=>x.month===m); const b=f.querySelector('button[type=submit]');
+    const d={ref:p['เลขที่'],month:m,rating:f.querySelector('select').value,comment:f.querySelector('textarea').value.trim(),notify:f.querySelector('input[type=checkbox]').checked};
+    if(!d.rating){toast('กรุณาเลือกผลการประเมิน');return}
+    if(DEMO){Object.assign(rep,{rating:d.rating,comment:d.comment,reviewed:new Date().toISOString()});toast('บันทึกผลประเมินแล้ว (โหมดตัวอย่าง)');openDetail(p['เลขที่']);route();return}
+    b.disabled=true;b.textContent='กำลังบันทึก…';
+    try{const r=await api('adminReview',d);Object.assign(rep,{rating:r.rating,comment:r.comment,reviewed:r.reviewed});toast(d.notify?'บันทึกผลประเมินและแจ้งผู้วิจัยแล้ว':'บันทึกผลประเมินแล้ว');openDetail(p['เลขที่']);route()}
+    catch(err){toast('บันทึกไม่สำเร็จ: '+err.message);b.disabled=false;b.textContent='บันทึกผลประเมิน'}
+  });
   $('#sForm').onsubmit=async e=>{
     e.preventDefault(); const b=$('#sSave'); const d={ref:p['เลขที่'],status:$('#sNew').value,note:$('#sNote').value.trim(),notify:$('#sMail').checked};
     if(DEMO){Object.assign(p,{'สถานะ':d.status,'หมายเหตุผู้พิจารณา':d.note});p.history.push({status:d.status,note:d.note,at:new Date().toISOString(),mailed:'โหมดตัวอย่าง'});toast('บันทึกแล้ว (โหมดตัวอย่าง)');openDetail(p['เลขที่']);route();return}
@@ -294,6 +392,17 @@ function openDetail(ref){
     catch(err){toast('บันทึกไม่สำเร็จ: '+err.message);b.disabled=false;b.textContent='บันทึกสถานะ'}
   };
 }
+function progressSection(p){
+  const t=track(p), L=(p.progress||[]).slice().reverse();
+  return `<section class="card sec"><h3>ความก้าวหน้าการวิจัย</h3>
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14px">${pbar(t)}<span class="hint">ตามแผน ${t.exp}% · ${t.start?`${thM(t.start)} – ${thM(t.end)}`:'ไม่มีแผนเวลา'}</span><span class="flag ${t.flag[0]}">${esc(t.flag[1])}</span></div>
+    ${L.map(r=>`<div class="rp"><div class="rp-h"><span class="m">${thM(r.month,1)}</span><b>${r.percent}%</b><span class="hint">ส่งเมื่อ ${fmtDate(r.sent,1)}</span>${r.rating?`<span class="pill ${RCLS[r.rating]||''}">${esc(r.rating)}</span>`:'<span class="pill r-wait">รอประเมิน</span>'}</div>
+      <dl class="kv">${(r.acts||[]).length?`<dt>สถานะกิจกรรม</dt><dd>${r.acts.map(a=>`${esc(a.name)} — ${esc(a.status)}`).join('\n')}</dd>`:''}<dt>ผลการดำเนินงาน</dt><dd>${esc(r.done||'—')}</dd>${r.problems?`<dt>ปัญหาและอุปสรรค</dt><dd>${esc(r.problems)}</dd>`:''}${r.next?`<dt>แผนเดือนถัดไป</dt><dd>${esc(r.next)}</dd>`:''}${+r.spent?`<dt>งบประมาณที่ใช้</dt><dd>${baht(r.spent)} บาท</dd>`:''}${r.evidence?`<dt>หลักฐาน</dt><dd><a href="${esc(r.evidence)}" target="_blank" rel="noopener" style="color:var(--green)">เปิดหลักฐาน ↗</a></dd>`:''}</dl>
+      <form class="rv" data-m="${esc(r.month)}"><label class="f">ผลการประเมิน<select><option value="">— เลือก —</option>${RATINGS.map(x=>`<option ${x===r.rating?'selected':''}>${x}</option>`).join('')}</select></label>
+        <label class="f">ข้อเสนอแนะถึงผู้วิจัย<textarea>${esc(r.comment||'')}</textarea></label>
+        <div class="row"><label class="chk" style="display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" style="width:17px;height:17px;accent-color:var(--green)"> ส่งอีเมลแจ้งผู้วิจัย</label><button class="btn btn-p btn-s" type="submit">บันทึกผลประเมิน</button></div></form></div>`).join('')||'<p class="hint" style="margin-top:10px">ยังไม่มีรายงานความก้าวหน้า</p>'}
+  </section>`;
+}
 function closeDetail(){$('#drawer').hidden=true;$('#scrim').hidden=true;current=null}
 $('#scrim').onclick=closeDetail;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDetail();if(e.key==='Enter'&&e.target.matches('tr[data-open]'))openDetail(e.target.dataset.open)});
@@ -302,7 +411,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-open]');if
 /* ---------- CSV ---------- */
 $('#csv').onclick=()=>{
   const L=P(); if(!L.length){toast('ยังไม่มีข้อมูล');return}
-  const keys=Object.keys(L[0]).filter(k=>!['files','members','budgetItems','history'].includes(k));
+  const keys=Object.keys(L[0]).filter(k=>!['files','members','budgetItems','history','progress'].includes(k));
   const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const csv='﻿'+[keys.map(cell).join(','),...L.map(p=>keys.map(k=>cell(p[k])).join(','))].join('\r\n');
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
@@ -311,10 +420,9 @@ $('#csv').onclick=()=>{
 
 /* ---------- routing ---------- */
 function route(){
-  const v=location.hash==='#list'?'list':'dashboard';
-  $('#v-dashboard').hidden=v!=='dashboard'; $('#v-list').hidden=v!=='list';
-  $('#t-dashboard').setAttribute('aria-selected',v==='dashboard'); $('#t-list').setAttribute('aria-selected',v==='list');
-  if(v==='dashboard') renderDash(); else renderList();
+  const v={'#list':'list','#progress':'progress'}[location.hash]||'dashboard';
+  ['dashboard','list','progress'].forEach(x=>{$('#v-'+x).hidden=v!==x;$('#t-'+x).setAttribute('aria-selected',v===x)});
+  if(v==='dashboard') renderDash(); else if(v==='progress') renderProgress(); else renderList();
 }
 window.addEventListener('hashchange',route);
 boot();
