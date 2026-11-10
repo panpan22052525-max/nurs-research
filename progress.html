@@ -55,6 +55,20 @@ form.rep{display:flex;flex-direction:column;gap:14px}
 .acts tr.plan td:first-child{box-shadow:inset 3px 0 0 var(--orange)}
 .acts select{padding:6px 8px;font-size:14px}
 .acts .pm{font-size:12px;color:var(--muted)}
+.acts{min-width:760px}
+.acts th.mh,.acts td.mc{width:30px;padding:6px 2px;text-align:center;font-size:12px;font-variant-numeric:tabular-nums}
+.acts th.mh.now{color:var(--orange)}
+.acts td.mc{border-left:1px solid var(--line)}
+.acts td.mc.now{background:color-mix(in srgb,var(--orange) 8%,transparent)}
+.mc i{display:block;height:14px;border-radius:3px;margin:0 2px}
+.mc i.on{background:var(--green)}
+.mc button{display:block;width:100%;height:22px;border:1px dashed var(--line);border-radius:4px;background:transparent;cursor:pointer;padding:0}
+.mc button[aria-pressed="true"]{background:var(--green);border:1px solid var(--green)}
+.acts td.nm{min-width:220px}
+.acts td.nm input{padding:6px 8px;font-size:14px}
+.acts .extra td.nm{display:flex;gap:6px;align-items:center}
+.acts .del{border:0;background:transparent;color:var(--danger);font-size:18px;cursor:pointer;padding:0 4px;line-height:1}
+.addact{margin-top:8px}
 .tag{display:inline-block;font-size:11.5px;font-weight:600;color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,var(--paper));border-radius:99px;padding:1px 8px;margin-left:6px}
 .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
 .evi{display:flex;gap:8px}
@@ -195,7 +209,8 @@ function formHtml(months){
       <label class="f"><span class="lbl">ความก้าวหน้าโดยรวมของโครงการ (%) <span class="req">*</span></span><span class="pct"><input type="range" id="pr" min="0" max="100" step="1"><input type="number" id="pn" min="0" max="100" step="1" required></span></label>
     </div>
     <div><p class="f" style="margin:0 0 6px;font-weight:500;font-size:13.5px">สถานะกิจกรรมตามแผน <span class="hint">· แถบสีส้ม = กิจกรรมตามแผนของเดือนนี้</span></p>
-      <div class="scroll"><table class="acts"><thead><tr><th>กิจกรรม</th><th>เดือนตามแผน</th><th style="width:170px">สถานะ</th></tr></thead><tbody id="acts"></tbody></table></div></div>
+      <div class="scroll"><table class="acts"><thead id="actsHead"></thead><tbody id="acts"></tbody></table></div>
+      <button class="btn btn-g btn-s addact" type="button" id="addAct">+ เพิ่มกิจกรรม</button> <span class="hint">เพิ่มกิจกรรมที่ไม่มีในแผน หรือกิจกรรมเดือนที่ 9–12 แล้วแตะช่องเดือนเพื่อกำหนดช่วงเวลา</span></div>
     <label class="f"><span class="lbl">ผลการดำเนินงานในเดือนนี้ <span class="req">*</span></span><textarea id="done" maxlength="4000" placeholder="สิ่งที่ทำได้ในเดือนนี้ เช่น เก็บข้อมูลได้ 30 ราย, ผ่านการรับรองจริยธรรมแล้ว"></textarea></label>
     <div class="grid2">
       <label class="f">ปัญหาและอุปสรรค<textarea id="problems" maxlength="3000" style="min-height:80px" placeholder="ถ้าไม่มีให้เว้นว่าง"></textarea></label>
@@ -213,14 +228,33 @@ function loadMonth(k){
   const r=P.reports.find(x=>x.month===k), prev=P.reports.filter(x=>x.month<k).pop();
   const src=r||prev, idx=diffM(P.start,k)+1;
   $('#pn').value=$('#pr').value=r?r.percent:(prev?prev.percent:0);
-  const st=Object.fromEntries(((src&&src.acts)||[]).map(a=>[a.name,a.status]));
-  $('#acts').innerHTML=(P.activities||[]).map((a,i)=>`<tr class="${(a.months||[]).includes(idx)?'plan':''}"><td>${esc(a.name)}${(a.months||[]).includes(idx)?'<span class="tag">เดือนนี้</span>':''}</td><td class="pm">${(a.months||[]).length?'เดือนที่ '+a.months.join(', '):'—'}</td><td><select data-i="${i}" aria-label="สถานะ ${esc(a.name)}">${P.actStatuses.map(s=>`<option ${s===(st[a.name]||P.actStatuses[0])?'selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')||'<tr><td colspan="3" class="hint">ไม่มีแผนกิจกรรมในโครงร่าง</td></tr>';
+  const planNames=new Set((P.activities||[]).map(a=>a.name));
+  const st={}; ROWS=(P.activities||[]).map(a=>({name:a.name,months:(a.months||[]).slice(),plan:true,status:''}));
+  ((src&&src.acts)||[]).forEach(a=>{const x=parseExtra(a.name);if(planNames.has(a.name))st[a.name]=a.status;else ROWS.push({name:x.name,months:x.months,plan:false,status:a.status})});
+  ROWS.forEach(r=>{if(r.plan)r.status=st[r.name]||P.actStatuses[0]});
+  CUR=idx; renderActs();
   ['done','problems','next','evidence'].forEach(id=>$('#'+id).value=r?(r[id]||''):'');
   $('#spent').value=r&&+r.spent?r.spent:'';
   $('#editNote').textContent=r?`กำลังแก้ไขรายงาน${thM(k,1)} (ส่งเมื่อ ${fmtDate(r.sent)}) — การแก้ไขจะล้างผลประเมินเดิม`:'';
   $('#send').textContent=r?'บันทึกการแก้ไข':'ส่งรายงานเดือนนี้';
 }
+/* ---------- ตารางกิจกรรม 12 เดือน ---------- */
+let ROWS=[], CUR=1;
+const parseExtra=n=>{const m=/^(.*?)\s*\[เดือน ([\d,]+)\]$/.exec(n||'');return m?{name:m[1],months:m[2].split(',').map(Number).filter(Boolean)}:{name:n||'',months:[]}};
+function syncRows(){$$('#acts tr[data-r]').forEach(tr=>{const r=ROWS[+tr.dataset.r];if(!r)return;r.status=tr.querySelector('select').value;const inp=tr.querySelector('input');if(inp)r.name=inp.value})}
+function renderActs(){
+  const N=P.months||12;
+  $('#actsHead').innerHTML=`<tr><th>กิจกรรม</th>${Array.from({length:N},(_,i)=>`<th class="mh ${i+1===CUR?'now':''}" title="${thM(addM(P.start,i),1)}">${i+1}</th>`).join('')}<th style="width:150px">สถานะ</th></tr>`;
+  $('#acts').innerHTML=ROWS.map((r,ri)=>`<tr data-r="${ri}" class="${r.months.includes(CUR)?'plan':''} ${r.plan?'':'extra'}">
+    <td class="nm">${r.plan?`${esc(r.name)}${r.months.includes(CUR)?'<span class="tag">เดือนนี้</span>':''}`:`<input type="text" value="${esc(r.name)}" placeholder="ชื่อกิจกรรม" aria-label="ชื่อกิจกรรมที่เพิ่ม"><button type="button" class="del" data-del="${ri}" aria-label="ลบกิจกรรม">×</button>`}</td>
+    ${Array.from({length:N},(_,i)=>`<td class="mc ${i+1===CUR?'now':''}">${r.plan?`<i class="${r.months.includes(i+1)?'on':''}"></i>`:`<button type="button" data-tog="${ri}:${i+1}" aria-pressed="${r.months.includes(i+1)}" aria-label="เดือนที่ ${i+1}"></button>`}</td>`).join('')}
+    <td><select aria-label="สถานะ ${esc(r.name)}">${P.actStatuses.map(s=>`<option ${s===(r.status||P.actStatuses[0])?'selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')
+    ||`<tr><td colspan="${N+2}" class="hint">ไม่มีแผนกิจกรรมในโครงร่าง กด “+ เพิ่มกิจกรรม” เพื่อเพิ่ม</td></tr>`;
+  $$('#acts [data-tog]').forEach(b=>b.onclick=()=>{syncRows();const [ri,m]=b.dataset.tog.split(':').map(Number);const r=ROWS[ri];r.months=r.months.includes(m)?r.months.filter(x=>x!==m):r.months.concat(m).sort((a,b)=>a-b);renderActs()});
+  $$('#acts [data-del]').forEach(b=>b.onclick=()=>{syncRows();ROWS.splice(+b.dataset.del,1);renderActs()});
+}
 function bindForm(){
+  $('#addAct').onclick=()=>{syncRows();ROWS.push({name:'',months:[CUR],plan:false,status:P.actStatuses[1]});renderActs();const ins=$$('#acts input');ins[ins.length-1].focus()};
   $('#month').onchange=e=>loadMonth(e.target.value);
   $('#pr').oninput=e=>$('#pn').value=e.target.value; $('#pn').oninput=e=>$('#pr').value=e.target.value;
   $('#up').onclick=()=>$('#file').click();
@@ -240,7 +274,7 @@ function bindForm(){
   $('#rep').onsubmit=async e=>{
     e.preventDefault();
     const d={ref:P.ref,email:AUTH.email,month:$('#month').value,percent:+$('#pn').value,
-      acts:(P.activities||[]).map((a,i)=>({name:a.name,status:(document.querySelector(`#acts select[data-i="${i}"]`)||{}).value})),
+      acts:(syncRows(),ROWS.filter(r=>r.name.trim()).map(r=>({name:r.plan?r.name:`${r.name.trim().replace(/[\[\]:]/g,' ')}${r.months.length?` [เดือน ${r.months.join(',')}]`:''}`,status:r.status||P.actStatuses[0]}))),
       done:$('#done').value.trim(),problems:$('#problems').value.trim(),next:$('#next').value.trim(),spent:+$('#spent').value||0,evidence:$('#evidence').value.trim()};
     if(!d.done){toast('กรุณากรอกผลการดำเนินงานในเดือนนี้');$('#done').focus();return}
     if(!(d.percent>=0&&d.percent<=100)){toast('ความก้าวหน้ารวมต้องอยู่ระหว่าง 0–100%');return}
