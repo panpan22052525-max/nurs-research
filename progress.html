@@ -30,7 +30,9 @@
 .cmp .tr.plan i{background:var(--gold)}
 .cmp b{font-variant-numeric:tabular-nums;text-align:right}
 @media (max-width:560px){.cmp .row{grid-template-columns:110px minmax(0,1fr) 46px}}
-.months{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin-top:16px}
+.months{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:16px}
+@media (max-width:640px){.months{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:380px){.months{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .mo{border:1.5px solid var(--line);border-radius:10px;padding:7px 6px;text-align:center;font-size:12px;color:var(--muted);background:var(--paper);cursor:pointer;font:inherit;line-height:1.35}
 .mo b{display:block;font-size:13px;color:var(--ink)}
 .mo.done{border-color:var(--green);background:color-mix(in srgb,var(--green) 10%,var(--paper))}
@@ -136,9 +138,17 @@ function sample(ref){
 }
 
 /* ---------- แสดงผล ---------- */
+/* ปีงบ/ทุนส่วนใหญ่ 1 ปี: แสดงอย่างน้อย 12 เดือนเสมอ (ถ้าโครงการยาวกว่า แสดงตามจริง) */
+const MIN_MONTHS=12;
+function normalize(){
+  P.planMonths=+P.months||0;
+  P.months=Math.max(P.planMonths,MIN_MONTHS);
+  if(!/^\d{4}-\d{2}$/.test(P.start||'')) P.start=(P.reports[0]&&P.reports[0].month)||nowKey();
+}
 function expected(){if(!P.months||!P.start)return 0;const i=Math.min(Math.max(diffM(P.start,nowKey())+1,0),P.months);return Math.round(i/P.months*100)}
 function latest(){return P.reports.length?P.reports[P.reports.length-1]:null}
 function render(){
+  normalize();
   const last=latest(), exp=expected(), endK=P.months?addM(P.start,P.months-1):'';
   const spent=P.reports.reduce((a,r)=>a+(+r.spent||0),0);
   const byM=Object.fromEntries(P.reports.map(r=>[r.month,r]));

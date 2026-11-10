@@ -304,7 +304,7 @@ const RCLS={'เป็นไปตามแผน':'r-ok','เร็วกว่
 const ackCell=p=>p['รับโครงร่างเมื่อ']?`<span class="ackc" title="รับเมื่อ ${esc(fmtDate(p['รับโครงร่างเมื่อ'],1))}"><span class="lamp on"></span>รับแล้ว</span>`:`<span class="ackc hint"><span class="lamp"></span>ยังไม่รับ</span>`;
 /** สรุปการติดตามของโครงการหนึ่ง */
 function track(p){
-  const start=mKey(p['เดือนเริ่ม']), months=+p['ระยะเวลา (เดือน)']||0, L=p.progress||[], last=L[L.length-1], now=nowKey();
+  const L=p.progress||[], last=L[L.length-1], now=nowKey(), months=Math.max(+p['ระยะเวลา (เดือน)']||0,12), start=mKey(p['เดือนเริ่ม'])||(L[0]&&L[0].month)||'';
   const idx=start?diffM(start,now)+1:0, exp=months?Math.round(Math.min(Math.max(idx,0),months)/months*100):0;
   const end=start&&months?addM(start,months-1):'', pct=last?+last.percent:0, unrated=L.filter(r=>!r.rating).length;
   let flag;
