@@ -116,6 +116,8 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .rv textarea{min-height:56px}
 @media (max-width:560px){.rv{grid-template-columns:minmax(0,1fr)}}
 .r-ok{--c:var(--s-pass)}.r-fast{--c:var(--s-review)}.r-slow{--c:var(--s-fix)}.r-bad{--c:var(--s-fail)}.r-wait{--c:var(--muted)}
+.danger{border-color:#f0c4c0;background:#fff8f7}.danger h3{color:#b4332b}
+.btn-del{background:#b4332b;color:#fff;border:0}.btn-del:hover{background:#962820}.btn-del:disabled{opacity:.6}
 </style>
 </head>
 <body>
@@ -363,6 +365,12 @@ function openDetail(ref){
     <section class="card sec files"><h3>เอกสารแนบ</h3>${(p.files||[]).length?`<dl class="kv">${p.files.map(f=>`<dt>${esc(f.type)}</dt><dd><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name||f.url)}</a> <span class="hint">· ${esc(f.access||'')}</span></dd>`).join('')}</dl>`:'<p class="hint">ไม่มีเอกสารแนบ</p>'}</section>
     ${p['สถานะ']==='ผ่านการพิจารณา'?progressSection(p):''}
     <section class="card sec"><h3>ประวัติสถานะ</h3><ol class="hist">${(p.history||[]).slice().reverse().map(h=>`<li><time>${fmtDate(h.at,1)}</time><span class="pill s-${esc(h.status)}">${esc(h.status)}</span><span>${esc(h.note||'')}</span>${h.mailed?`<span class="hint">· ${esc(h.mailed)}</span>`:''}</li>`).join('')||'<li class="hint">—</li>'}</ol></section>
+    <section class="card sec danger"><h3>ลบโครงการนี้</h3>
+      <p class="hint" style="margin:0 0 10px">ใช้ลบโครงการทดสอบหรือส่งผิด ข้อมูลทุกส่วนของเลขที่ ${esc(p['เลขที่'])} (โครงร่าง คณะผู้วิจัย งบประมาณ เอกสาร ประวัติ รายงานความก้าวหน้า) จะหายจากระบบ แต่มีสำเนาเก็บไว้ในแผ่นงาน “ข้อมูลที่ลบ” ของ Google Sheets · ไฟล์แนบใน Drive ไม่ถูกลบ</p>
+      <form id="delForm" class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <label class="f" style="flex:1;min-width:180px;margin:0">รหัสยืนยันการลบ<input type="password" id="delPin" autocomplete="off" required></label>
+        <button class="btn btn-del" type="submit" id="delBtn">ลบโครงการ</button>
+      </form></section>
   </div>`;
   $('#drawer').hidden=false; $('#scrim').hidden=false; $('#dClose').focus();
   $('#dClose').onclick=closeDetail;
@@ -373,6 +381,16 @@ function openDetail(ref){
     try{const r=await api('adminAck',{ref:p['เลขที่'],notify});p['รับโครงร่างเมื่อ']=r.ack;if(!r.already)(p.history=p.history||[]).push({status:p['สถานะ'],note:'คณะได้รับโครงร่างแล้ว',at:r.ack,mailed:r.mailed});
       toast(r.already?'โครงร่างนี้รับไว้แล้ว':notify?'รับโครงร่างและแจ้งอีเมลผู้วิจัยแล้ว':'รับโครงร่างแล้ว');openDetail(p['เลขที่']);route()}
     catch(err){toast('บันทึกไม่สำเร็จ: '+err.message);b.disabled=false;b.textContent='✓ รับโครงร่างแล้ว'}
+  };
+  $('#delForm').onsubmit=async e=>{
+    e.preventDefault(); const b=$('#delBtn'), pin=$('#delPin').value.trim(), ref=p['เลขที่'];
+    if(!pin){toast('กรุณาใส่รหัสยืนยันการลบ');return}
+    if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent='กดอีกครั้งเพื่อยืนยันการลบ '+ref;setTimeout(()=>{if(b.isConnected&&!b.disabled){b.dataset.sure='';b.textContent='ลบโครงการ'}},6000);return}
+    const drop=()=>{DATA.proposals=DATA.proposals.filter(x=>x['เลขที่']!==ref);closeDetail();route()};
+    if(DEMO){drop();toast(`ลบ ${ref} แล้ว (โหมดตัวอย่าง)`);return}
+    b.disabled=true; b.textContent='กำลังลบ…';
+    try{await api('adminDelete',{ref,pin});drop();toast(`ลบโครงการ ${ref} แล้ว`)}
+    catch(err){toast('ลบไม่สำเร็จ: '+err.message);b.disabled=false;b.dataset.sure='';b.textContent='ลบโครงการ';$('#delPin').select()}
   };
   $$('form.rv').forEach(f=>f.onsubmit=async e=>{
     e.preventDefault(); const m=f.dataset.m, rep=(p.progress||[]).find(x=>x.month===m); const b=f.querySelector('button[type=submit]');
