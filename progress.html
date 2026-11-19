@@ -108,9 +108,8 @@ textarea{resize:vertical;overflow-y:auto}
   <main class="main">
     <form class="card lookup" id="f">
       <h2>รายงานผลการดำเนินงานรายเดือน</h2>
-      <p class="hint">สำหรับโครงการที่ผ่านการพิจารณาแล้ว กรอกเลขที่โครงร่างและอีเมลหัวหน้าโครงการ แล้วรายงานสิ่งที่ทำในแต่ละเดือน</p>
+      <p class="hint">สำหรับโครงการที่ผ่านการพิจารณาแล้ว กรอกเลขที่โครงร่าง แล้วรายงานสิ่งที่ทำในแต่ละเดือน</p>
       <label class="f">เลขที่โครงร่าง<input type="text" id="ref" autocomplete="off" placeholder="NUR-2570-001" required></label>
-      <label class="f">อีเมลหัวหน้าโครงการ<input type="email" id="email" autocomplete="email" placeholder="name@sskru.ac.th" required></label>
       <button class="btn btn-p" id="go" type="submit">เปิดโครงการ</button>
     </form>
     <div id="out" aria-live="polite"></div>
@@ -285,7 +284,7 @@ function bindForm(){
     if(!LIVE){$('#evidence').value='https://drive.google.com/file/d/ตัวอย่าง/view';toast('โหมดทดลอง: ไม่ได้อัปโหลดจริง');return}
     const b=$('#up'); b.disabled=true; b.textContent='กำลังอัปโหลด…';
     try{const base64=await new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=no;r.readAsDataURL(f)});
-      const res=await api('upload',{email:AUTH.email,type:`หลักฐานความก้าวหน้า ${P.ref} ${$('#month').value}`,name:f.name,mimeType:f.type,base64});
+      const res=await api('upload',{ref:P.ref,type:`หลักฐานความก้าวหน้า ${P.ref} ${$('#month').value}`,name:f.name,mimeType:f.type,base64});
       $('#evidence').value=res.url; pDirty=true; saveLocal(); toast('อัปโหลดแล้ว: '+res.name)}
     catch(err){toast('อัปโหลดไม่สำเร็จ: '+err.message)}
     finally{b.disabled=false;b.textContent='⬆ อัปโหลด'}
@@ -294,7 +293,7 @@ function bindForm(){
   $$('.mo[data-m]:not([disabled])').forEach(b=>b.onclick=()=>{loadMonth(b.dataset.m);$('#formBox').scrollIntoView({behavior:'smooth',block:'start'})});
   $('#rep').onsubmit=async e=>{
     e.preventDefault();
-    const d={ref:P.ref,email:AUTH.email,month:$('#month').value,percent:+$('#pn').value,
+    const d={ref:P.ref,month:$('#month').value,percent:+$('#pn').value,
       acts:(syncRows(),ROWS.filter(r=>r.name.trim()).map(r=>({name:r.plan?r.name:`${r.name.trim().replace(/[\[\]:]/g,' ')}${r.months.length?` [เดือน ${r.months.join(',')}]`:''}`,status:r.status||P.actStatuses[0]}))),
       done:$('#done').value.trim(),problems:$('#problems').value.trim(),next:$('#next').value.trim(),spent:+$('#spent').value||0,evidence:$('#evidence').value.trim()};
     if(!d.done){toast('กรุณากรอกผลการดำเนินงานในเดือนนี้');$('#done').focus();return}
@@ -309,22 +308,23 @@ function bindForm(){
 }
 
 /* ---------- เปิดโครงการ ---------- */
-async function open(ref,email){
+async function open(ref){
   const b=$('#go'); b.disabled=true; b.textContent='กำลังเปิด…';
   try{
-    P=LIVE?await api('progressInfo',{ref,email}):sample(ref.toUpperCase());
-    AUTH={ref:P.ref,email}; ss.set('nurs-progress',JSON.stringify(AUTH)); try{localStorage.setItem('nurs-progress-last',JSON.stringify(AUTH))}catch(e){} render();
+    P=LIVE?await api('progressInfo',{ref}):sample(ref.toUpperCase());
+    AUTH={ref:P.ref}; ss.set('nurs-progress',JSON.stringify(AUTH)); try{localStorage.setItem('nurs-progress-last',JSON.stringify(AUTH))}catch(e){} render();
   }catch(err){$('#out').innerHTML=`<div class="err">${esc(err.message)}</div>`}
   finally{b.disabled=false;b.textContent='เปิดโครงการ'}
 }
-$('#f').addEventListener('submit',e=>{e.preventDefault();const ref=$('#ref').value.trim(),email=$('#email').value.trim();if(ref&&email)open(ref,email)});
+$('#f').addEventListener('submit',e=>{e.preventDefault();const ref=$('#ref').value.trim().toUpperCase().replace(/\s+/g,'');if(ref)open(ref)});
 const q=new URLSearchParams(location.search);
 let saved=null; try{saved=JSON.parse(ss.get('nurs-progress')||'null')}catch(e){}
 if(q.get('ref')) $('#ref').value=q.get('ref');
-else{try{const l=JSON.parse(localStorage.getItem('nurs-progress-last')||'null');if(l){$('#ref').value=l.ref;$('#email').value=l.email}}catch(e){}}
+else{try{const l=JSON.parse(localStorage.getItem('nurs-progress-last')||'null');if(l&&l.ref){$('#ref').value=l.ref}}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&$('#rep'))saveLocal()});
 window.addEventListener('pagehide',()=>{if($('#rep'))saveLocal()});
-if(saved&&(!q.get('ref')||q.get('ref').toUpperCase()===saved.ref)){$('#ref').value=saved.ref;$('#email').value=saved.email;open(saved.ref,saved.email)}
+if(saved&&(!q.get('ref')||q.get('ref').toUpperCase()===saved.ref)){$('#ref').value=saved.ref;open(saved.ref)}
+else if(q.get('ref')) open(q.get('ref').trim().toUpperCase());
 </script>
 </body>
 </html>
