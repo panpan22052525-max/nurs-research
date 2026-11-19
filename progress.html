@@ -92,6 +92,7 @@ input[type=number]{font:inherit;font-size:15px;color:var(--ink);background:var(-
 @media (max-width:560px){.rp dl{grid-template-columns:minmax(0,1fr)}.rp dt{margin-top:6px}}
 .eval{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--soft);font-size:14px}
 .r-ok{--c:var(--s-pass)}.r-fast{--c:var(--s-review)}.r-slow{--c:var(--s-fix)}.r-bad{--c:var(--s-fail)}.r-wait{--c:var(--muted)}
+textarea{resize:vertical;overflow-y:auto}
 </style>
 </head>
 <body>
@@ -211,20 +212,29 @@ function formHtml(months){
     <div><p class="f" style="margin:0 0 6px;font-weight:500;font-size:13.5px">สถานะกิจกรรมตามแผน <span class="hint">· แถบสีส้ม = กิจกรรมตามแผนของเดือนนี้</span></p>
       <div class="scroll"><table class="acts"><thead id="actsHead"></thead><tbody id="acts"></tbody></table></div>
       <button class="btn btn-g btn-s addact" type="button" id="addAct">+ เพิ่มกิจกรรม</button> <span class="hint">เพิ่มกิจกรรมที่ไม่มีในแผน หรือกิจกรรมเดือนที่ 9–12 แล้วแตะช่องเดือนเพื่อกำหนดช่วงเวลา</span></div>
-    <label class="f"><span class="lbl">ผลการดำเนินงานในเดือนนี้ <span class="req">*</span></span><textarea id="done" maxlength="4000" placeholder="สิ่งที่ทำได้ในเดือนนี้ เช่น เก็บข้อมูลได้ 30 ราย, ผ่านการรับรองจริยธรรมแล้ว"></textarea></label>
+    <label class="f"><span class="lbl">ผลการดำเนินงานในเดือนนี้ <span class="req">*</span></span><textarea id="done" placeholder="สิ่งที่ทำได้ในเดือนนี้ เช่น เก็บข้อมูลได้ 30 ราย, ผ่านการรับรองจริยธรรมแล้ว"></textarea></label>
     <div class="grid2">
-      <label class="f">ปัญหาและอุปสรรค<textarea id="problems" maxlength="3000" style="min-height:80px" placeholder="ถ้าไม่มีให้เว้นว่าง"></textarea></label>
-      <label class="f">แผนการดำเนินงานเดือนถัดไป<textarea id="next" maxlength="3000" style="min-height:80px"></textarea></label>
+      <label class="f">ปัญหาและอุปสรรค<textarea id="problems" style="min-height:80px" placeholder="ถ้าไม่มีให้เว้นว่าง"></textarea></label>
+      <label class="f">แผนการดำเนินงานเดือนถัดไป<textarea id="next" style="min-height:80px"></textarea></label>
     </div>
     <div class="grid2">
       <label class="f">งบประมาณที่ใช้ในเดือนนี้ (บาท)<input type="number" id="spent" min="0" step="1" placeholder="0"></label>
       <label class="f">ลิงก์หลักฐาน (ภาพกิจกรรม, รายงาน, ใบรับรอง)<span class="evi"><input type="text" id="evidence" placeholder="https://drive.google.com/…"><button class="btn btn-g btn-s" type="button" id="up">⬆ อัปโหลด</button><input type="file" id="file" hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"></span></label>
     </div>
-    <div class="actions"><span class="hint" id="editNote"></span><button class="btn btn-p" type="submit" id="send">ส่งรายงานเดือนนี้</button></div>
+    <div class="actions"><span class="hint"><span id="editNote"></span> <span id="autoNote" style="color:var(--brand,#1e7a45)"></span></span><button class="btn btn-p" type="submit" id="send">ส่งรายงานเดือนนี้</button></div>
   </form></section>`;
 }
+/* ---------- ร่างรายงาน: จำข้อความที่กรอกไว้ในเครื่อง ไม่ให้หาย ---------- */
+const dKey=k=>`nurs-progress-draft:${P.ref}:${k}`;
+function formState(){syncRows();return {pn:$('#pn').value,done:$('#done').value,problems:$('#problems').value,next:$('#next').value,spent:$('#spent').value,evidence:$('#evidence').value,rows:ROWS,at:Date.now()}}
+let CURM='', pDirty=false;
+function saveLocal(){const k=CURM;if(!k||!P||!pDirty||!$('#rep'))return;try{localStorage.setItem(dKey(k),JSON.stringify(formState()));pDirty=false;const tm=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});$('#autoNote').textContent=`✓ บันทึกร่างอัตโนมัติ ${tm} น.`}catch(e){}}
+function schedule(){pDirty=true;clearTimeout(schedule.t);schedule.t=setTimeout(saveLocal,700)}
+function readLocal(k){try{return JSON.parse(localStorage.getItem(dKey(k))||'null')}catch(e){return null}}
+function dropLocal(k){try{localStorage.removeItem(dKey(k))}catch(e){}}
+function grow(t){if(!t||t.tagName!=='TEXTAREA')return;t.style.height='auto';t.style.height=Math.min(t.scrollHeight+4,Math.max(innerHeight*.7,320))+'px'}
 function loadMonth(k){
-  if(!k) return; $('#month').value=k;
+  if(!k) return; clearTimeout(schedule.t); saveLocal(); CURM=k; pDirty=false; $('#month').value=k;
   const r=P.reports.find(x=>x.month===k), prev=P.reports.filter(x=>x.month<k).pop();
   const src=r||prev, idx=diffM(P.start,k)+1;
   $('#pn').value=$('#pr').value=r?r.percent:(prev?prev.percent:0);
@@ -237,6 +247,13 @@ function loadMonth(k){
   $('#spent').value=r&&+r.spent?r.spent:'';
   $('#editNote').textContent=r?`กำลังแก้ไขรายงาน${thM(k,1)} (ส่งเมื่อ ${fmtDate(r.sent)}) — การแก้ไขจะล้างผลประเมินเดิม`:'';
   $('#send').textContent=r?'บันทึกการแก้ไข':'ส่งรายงานเดือนนี้';
+  const dr=readLocal(k), sentT=r&&r.sent?new Date(r.sent).getTime():0;
+  if(dr&&dr.at>sentT){
+    $('#pn').value=$('#pr').value=dr.pn; ['done','problems','next','spent','evidence'].forEach(id=>$('#'+id).value=dr[id]||'');
+    if(Array.isArray(dr.rows)&&dr.rows.length){ROWS=dr.rows;renderActs()}
+    $('#autoNote').textContent='✓ กู้คืนข้อความที่กรอกค้างไว้แล้ว'; toast('กู้คืนข้อความที่กรอกค้างไว้ กรอกต่อได้เลย');
+  } else { if(dr) dropLocal(k); $('#autoNote').textContent=''; }
+  $$('#rep textarea').forEach(grow);
 }
 /* ---------- ตารางกิจกรรม 12 เดือน ---------- */
 let ROWS=[], CUR=1;
@@ -256,6 +273,10 @@ function renderActs(){
 function bindForm(){
   $('#addAct').onclick=()=>{syncRows();ROWS.push({name:'',months:[CUR],plan:false,status:P.actStatuses[1]});renderActs();const ins=$$('#acts input');ins[ins.length-1].focus()};
   $('#month').onchange=e=>loadMonth(e.target.value);
+  $('#rep').addEventListener('input',e=>{grow(e.target);schedule()});
+  $('#rep').addEventListener('change',e=>{if(e.target.id!=='month')schedule()});
+  $('#rep').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.type!=='submit'&&b.id!=='up')setTimeout(schedule,0)});
+  $('#rep').addEventListener('focusout',()=>{clearTimeout(schedule.t);saveLocal()});
   $('#pr').oninput=e=>$('#pn').value=e.target.value; $('#pn').oninput=e=>$('#pr').value=e.target.value;
   $('#up').onclick=()=>$('#file').click();
   $('#file').onchange=async e=>{
@@ -265,7 +286,7 @@ function bindForm(){
     const b=$('#up'); b.disabled=true; b.textContent='กำลังอัปโหลด…';
     try{const base64=await new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=no;r.readAsDataURL(f)});
       const res=await api('upload',{email:AUTH.email,type:`หลักฐานความก้าวหน้า ${P.ref} ${$('#month').value}`,name:f.name,mimeType:f.type,base64});
-      $('#evidence').value=res.url; toast('อัปโหลดแล้ว: '+res.name)}
+      $('#evidence').value=res.url; pDirty=true; saveLocal(); toast('อัปโหลดแล้ว: '+res.name)}
     catch(err){toast('อัปโหลดไม่สำเร็จ: '+err.message)}
     finally{b.disabled=false;b.textContent='⬆ อัปโหลด'}
   };
@@ -282,7 +303,7 @@ function bindForm(){
     try{
       if(LIVE){P.reports=(await api('progressSubmit',d)).reports}
       else{const r={...d,sent:new Date().toISOString(),rating:'',comment:'',reviewed:''};P.reports=P.reports.filter(x=>x.month!==d.month).concat(r).sort((a,b)=>a.month.localeCompare(b.month))}
-      render(); toast(`ส่งรายงาน${thM(d.month,1)}แล้ว`); loadMonth(d.month);
+      dropLocal(d.month); pDirty=false; render(); toast(`ส่งรายงาน${thM(d.month,1)}แล้ว`); loadMonth(d.month);
     }catch(err){toast('ส่งไม่สำเร็จ: '+err.message);b.disabled=false;b.textContent='ส่งรายงานเดือนนี้'}
   };
 }
@@ -292,7 +313,7 @@ async function open(ref,email){
   const b=$('#go'); b.disabled=true; b.textContent='กำลังเปิด…';
   try{
     P=LIVE?await api('progressInfo',{ref,email}):sample(ref.toUpperCase());
-    AUTH={ref:P.ref,email}; ss.set('nurs-progress',JSON.stringify(AUTH)); render();
+    AUTH={ref:P.ref,email}; ss.set('nurs-progress',JSON.stringify(AUTH)); try{localStorage.setItem('nurs-progress-last',JSON.stringify(AUTH))}catch(e){} render();
   }catch(err){$('#out').innerHTML=`<div class="err">${esc(err.message)}</div>`}
   finally{b.disabled=false;b.textContent='เปิดโครงการ'}
 }
@@ -300,6 +321,9 @@ $('#f').addEventListener('submit',e=>{e.preventDefault();const ref=$('#ref').val
 const q=new URLSearchParams(location.search);
 let saved=null; try{saved=JSON.parse(ss.get('nurs-progress')||'null')}catch(e){}
 if(q.get('ref')) $('#ref').value=q.get('ref');
+else{try{const l=JSON.parse(localStorage.getItem('nurs-progress-last')||'null');if(l){$('#ref').value=l.ref;$('#email').value=l.email}}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&$('#rep'))saveLocal()});
+window.addEventListener('pagehide',()=>{if($('#rep'))saveLocal()});
 if(saved&&(!q.get('ref')||q.get('ref').toUpperCase()===saved.ref)){$('#ref').value=saved.ref;$('#email').value=saved.email;open(saved.ref,saved.email)}
 </script>
 </body>

@@ -104,6 +104,7 @@ input[type=text],input[type=email],input[type=tel],input[type=number],input[type
 textarea{min-height:110px;resize:vertical;line-height:1.6}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 18%,transparent)}
 .invalid{border-color:var(--danger)!important}
+.f textarea{resize:vertical;overflow-y:auto}
 .count{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
 /* choice chips */
 .chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -350,14 +351,14 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30p
         <fieldset><legend>สาระสำคัญของโครงร่าง</legend>
           <div class="grid">
             <label class="f c12">ความเป็นมาและความสำคัญของปัญหา <span class="req">*</span> <span class="hint">สรุปสั้น ๆ ไม่เกิน 1,500 ตัวอักษร</span>
-              <textarea id="background" name="background" maxlength="1500" required></textarea><span class="count" data-for="background"></span>
+              <textarea id="background" name="background" required></textarea><span class="count" data-for="background"></span>
             </label>
             <div class="f c12"><span style="font-size:13.5px;font-weight:500">วัตถุประสงค์การวิจัย <span class="req">*</span></span>
               <div id="objectives"></div>
               <div><button class="btn btn-g btn-s" type="button" id="addObj">+ เพิ่มวัตถุประสงค์</button></div>
             </div>
             <label class="f c12">กรอบแนวคิด / ทฤษฎีที่ใช้
-              <textarea id="framework" name="framework" maxlength="800" style="min-height:80px" placeholder="เช่น ทฤษฎีการรับรู้ความสามารถของตนเอง (Bandura)"></textarea><span class="count" data-for="framework"></span>
+              <textarea id="framework" name="framework" style="min-height:80px" placeholder="เช่น ทฤษฎีการรับรู้ความสามารถของตนเอง (Bandura)"></textarea><span class="count" data-for="framework"></span>
             </label>
           </div>
         </fieldset>
@@ -367,7 +368,7 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30p
             <label class="f c6">พื้นที่ดำเนินการวิจัย<input type="text" id="area" name="area" placeholder="ตำบล / อำเภอ / จังหวัด"></label>
             <label class="f c8">ประชากรและกลุ่มตัวอย่าง<input type="text" id="sample" name="sample" placeholder="ระบุจำนวนและวิธีได้มา"></label>
             <label class="f c4">ขนาดตัวอย่าง (คน)<input type="number" id="n" name="n" min="0"></label>
-            <label class="f c12">เครื่องมือและการวิเคราะห์ข้อมูล<textarea id="tools" name="tools" style="min-height:80px" maxlength="800"></textarea></label>
+            <label class="f c12">เครื่องมือและการวิเคราะห์ข้อมูล<textarea id="tools" name="tools" style="min-height:80px"></textarea></label>
             <label class="f c6">เริ่มโครงการ <span class="req">*</span><input type="month" id="start" name="start" required></label>
             <label class="f c6">ระยะเวลา (เดือน) <span class="req">*</span><input type="number" id="months" name="months" min="1" max="24" required></label>
           </div>
@@ -414,7 +415,7 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30p
               <div class="chips" id="equityDims"></div>
             </div>
             <label class="f c12">อธิบายว่าโครงการช่วยลดความเหลื่อมล้ำหรือยกระดับภาวะสุขภาพอย่างไร
-              <textarea id="equityDesc" name="equityDesc" maxlength="600" style="min-height:80px" placeholder="เช่น ผู้สูงอายุติดเตียงในพื้นที่ห่างไกลได้รับการดูแลที่บ้านจาก อสม. ที่ผ่านการพัฒนาทักษะ ลดการเดินทางและค่าใช้จ่ายของครอบครัว"></textarea><span class="count" data-for="equityDesc"></span>
+              <textarea id="equityDesc" name="equityDesc" style="min-height:80px" placeholder="เช่น ผู้สูงอายุติดเตียงในพื้นที่ห่างไกลได้รับการดูแลที่บ้านจาก อสม. ที่ผ่านการพัฒนาทักษะ ลดการเดินทางและค่าใช้จ่ายของครอบครัว"></textarea><span class="count" data-for="equityDesc"></span>
             </label>
           </div>
         </fieldset>
@@ -424,7 +425,7 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30p
               <div class="chips" id="outputs"></div>
             </div>
             <label class="f c12">ประโยชน์ที่คาดว่าจะได้รับ <span class="req">*</span>
-              <textarea id="benefit" name="benefit" maxlength="800" style="min-height:80px" required></textarea><span class="count" data-for="benefit"></span>
+              <textarea id="benefit" name="benefit" style="min-height:80px" required></textarea><span class="count" data-for="benefit"></span>
             </label>
           </div>
         </fieldset>
@@ -694,7 +695,9 @@ function renderKw(){
   $$('#kwBox .tag').forEach(t=>t.remove());
   S.keywords.forEach((k,i)=>{const s=document.createElement('span');s.className='tag';s.innerHTML=`${esc(k)}<button type="button" data-delk="${i}" aria-label="ลบ ${esc(k)}">×</button>`;$('#kwBox').insertBefore(s,$('#kwInput'))});
 }
-function counters(){$$('.count').forEach(c=>{const t=$('#'+c.dataset.for);c.textContent=`${t.value.length.toLocaleString()} / ${(+t.maxLength).toLocaleString()}`})}
+function counters(){$$('.count').forEach(c=>{const t=$('#'+c.dataset.for);c.textContent=t.value.length?`${t.value.length.toLocaleString()} ตัวอักษร · ไม่จำกัดความยาว`:'ไม่จำกัดความยาว'})}
+/* ขยายช่องข้อความตามเนื้อหาที่พิมพ์ */
+function grow(t){if(!t||t.tagName!=='TEXTAREA')return;t.style.height='auto';t.style.height=Math.min(t.scrollHeight+4,Math.max(window.innerHeight*.7,320))+'px'}
 
 /* ---------- data ---------- */
 function collect(){
@@ -764,7 +767,7 @@ function review(){
 /* ---------- navigation ---------- */
 function go(i,noScroll){
   if(cur===5&&i!==5&&unsavedDocs()){saveDocs(null)}
-  cur=Math.max(0,Math.min(STEPS.length-1,i)); maxSeen=Math.max(maxSeen,cur);
+  cur=Math.max(0,Math.min(STEPS.length-1,i)); maxSeen=Math.max(maxSeen,cur); try{localStorage.setItem('nurs-proposal-step',String(cur))}catch(e){}
   $$('.panel').forEach(p=>p.classList.toggle('show',+p.dataset.step===cur));
   $('#eb').textContent=`ขั้นตอนที่ ${cur+1} จาก ${STEPS.length}`;
   $('#ph').textContent=STEPS[cur].t; $('#pd').textContent=STEPS[cur].d;
@@ -786,10 +789,16 @@ async function persist(){
   }
   return where;
 }
+let dirty=false, sentAt=0;
+function autosave(){dirty=true;clearTimeout(saveDraft.t);saveDraft.t=setTimeout(()=>saveDraft(true),800);clearTimeout(autosave.r);autosave.r=setTimeout(syncRemote,20000)}
+/* สำรองร่างเข้าระบบคณะอัตโนมัติ (เมื่อกรอกอีเมลหัวหน้าโครงการแล้ว) */
+function syncRemote(){const d=collect();if(!LIVE||!/^\S+@\S+\.\S+$/.test(d.leadEmail||'')||Date.now()-sentAt<15000)return;sentAt=Date.now();api('saveDraft',d).catch(()=>{})}
+function flush(){if(!dirty)return;clearTimeout(saveDraft.t);saveDraft(true);
+  const d=collect();if(LIVE&&/^\S+@\S+\.\S+$/.test(d.leadEmail||'')){try{navigator.sendBeacon&&navigator.sendBeacon(API_URL,new Blob([JSON.stringify({action:'saveDraft',data:d})],{type:'text/plain;charset=utf-8'}))}catch(e){}}}
 function saveDraft(silent){
-  try{localStorage.setItem('nurs-proposal-draft',JSON.stringify(collect()));
-    const tm=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
-    $('#saveNote').textContent=`บันทึกร่างในเครื่องนี้ล่าสุด ${tm} น.`; if(!silent) toast('บันทึกร่างแล้ว');
+  try{localStorage.setItem('nurs-proposal-draft',JSON.stringify(collect()));localStorage.setItem('nurs-proposal-step',String(cur));dirty=false;
+    const tm=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    $('#saveNote').textContent=`✓ บันทึกอัตโนมัติแล้ว ${tm} น.`; if(!silent) toast('บันทึกร่างแล้ว');
   }catch(e){ if(!silent) toast('เบราว์เซอร์นี้ไม่อนุญาตให้บันทึกร่าง') }
 }
 function submit(){
@@ -798,7 +807,7 @@ function submit(){
   if(!$('#certify').checked){toast('กรุณาทำเครื่องหมายรับรองข้อมูลก่อนส่ง');return}
   const d=collect(); const btn=$('#next'); btn.disabled=true; btn.textContent='กำลังส่ง...';
   const done=ref=>{
-    try{localStorage.removeItem('nurs-proposal-draft')}catch(e){}
+    try{localStorage.removeItem('nurs-proposal-draft');localStorage.removeItem('nurs-proposal-step')}catch(e){} dirty=false;
     $('#form').innerHTML=`<div class="done-card"><div class="seal">✓</div><h2>ส่งโครงร่างวิจัยเรียบร้อย</h2><div class="ref">${esc(ref)}</div><p class="hint">เก็บเลขที่นี้ไว้ติดตามสถานะ งานวิจัยคณะจะแจ้งผลการพิจารณาทางอีเมล ${esc(d.leadEmail)}</p><div class="export"><p class="ex-h">ดาวน์โหลดต้นฉบับโครงร่างวิจัย</p><div class="ex-btns"><button class="btn btn-ex" type="button" id="exWord"><span class="ex-ic w">W</span>ดาวน์โหลด Word</button><button class="btn btn-ex" type="button" id="exPdf"><span class="ex-ic p">PDF</span>บันทึกเป็น PDF</button></div><p class="hint" style="margin:8px 0 0">ไฟล์ Word แก้ไขต่อได้ · PDF จะเปิดหน้าตัวอย่างแล้วเลือก “บันทึกเป็น PDF”</p></div><p><a class="btn btn-g" href="track.html?ref=${encodeURIComponent(ref)}">ติดตามสถานะ</a></p>${LIVE?'':'<p class="hint">(โหมดทดลอง: ข้อมูลยังไม่ถูกบันทึก)</p>'}<button class="btn btn-p" type="button" onclick="location.reload()">เสนอโครงการใหม่</button></div>`;
     $('#exWord').onclick=()=>{try{ProposalExport.word(d,ref);toast('กำลังดาวน์โหลดไฟล์ Word')}catch(e){toast('สร้างไฟล์ Word ไม่สำเร็จ: '+e.message)}};
     $('#exPdf').onclick=()=>{try{ProposalExport.pdf(d,ref)}catch(e){toast('สร้าง PDF ไม่สำเร็จ: '+e.message)}};
@@ -821,8 +830,14 @@ document.addEventListener('click',e=>{
   else if(t.dataset.delk!=null){S.keywords.splice(+t.dataset.delk,1);renderKw()}
   else if(t.dataset.saved!=null){saveDocs(+t.dataset.saved);return}
   else if(t.dataset.deld!=null){S.links.splice(+t.dataset.deld,1);renderDocs()}
-  progress();
+  progress(); autosave();
 });
+/* ชิปตัวเลือกและปุ่มอื่น ๆ ในฟอร์ม */
+$('#form').addEventListener('click',e=>{if(e.target.closest('button,label,.chip,input'))setTimeout(autosave,0)});
+/* ออกจากหน้า สลับแท็บ ปิดจอ — บันทึกทันทีไม่ให้ข้อมูลหาย */
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flush()});
+window.addEventListener('pagehide',flush);
+document.addEventListener('focusout',e=>{if(dirty&&e.target.matches&&e.target.matches('input,textarea,select')){clearTimeout(saveDraft.t);saveDraft(true)}});
 document.addEventListener('input',e=>{
   const t=e.target;
   if(t.dataset.m!=null){S.members[+t.dataset.m][t.dataset.k]=t.value; if(t.dataset.k==='share') updateShare()}
@@ -835,11 +850,11 @@ document.addEventListener('input',e=>{
   if(t.id==='leadDept') fillDeptList();
   if(t.id==='fy') $('#fyHead').textContent=t.value;
   if(t.classList.contains('invalid')&&t.value) t.classList.remove('invalid');
-  counters(); progress(); clearTimeout(saveDraft.t); saveDraft.t=setTimeout(()=>saveDraft(true),1500);
+  grow(t); counters(); progress(); autosave();
 });
-document.addEventListener('change',e=>{if(e.target.dataset.up!=null&&e.target.files[0]){uploadDoc(+e.target.dataset.up,e.target.files[0]);e.target.value='';return}if(e.target.dataset.doc!=null&&e.target.dataset.k==='url') checkDoc(+e.target.dataset.doc);if(e.target.id==='months'||e.target.id==='start') renderGantt(); progress()});
+document.addEventListener('change',e=>{if(e.target.dataset.up!=null&&e.target.files[0]){uploadDoc(+e.target.dataset.up,e.target.files[0]);e.target.value='';return}if(e.target.dataset.doc!=null&&e.target.dataset.k==='url') checkDoc(+e.target.dataset.doc);if(e.target.id==='months'||e.target.id==='start') renderGantt(); progress(); autosave()});
 $('#kwInput').addEventListener('keydown',e=>{
-  if((e.key==='Enter'||e.key===',')&&e.target.value.trim()){e.preventDefault();S.keywords.push(e.target.value.trim().replace(/,$/,''));e.target.value='';renderKw();progress()}
+  if((e.key==='Enter'||e.key===',')&&e.target.value.trim()){e.preventDefault();S.keywords.push(e.target.value.trim().replace(/,$/,''));e.target.value='';renderKw();progress();autosave()}
   else if(e.key==='Enter') e.preventDefault();
   else if(e.key==='Backspace'&&!e.target.value&&S.keywords.length){S.keywords.pop();renderKw()}
 });
@@ -885,12 +900,13 @@ if(LIVE) api('faculty').then(setFaculty).catch(()=>toast('โหลดราย�
 chipsFrom($('#sdgs'),SDG,'sdgs',true); chipsFrom($('#outputs'),OUTPUTS,'outputs');
 chipsFrom($('#healthIssues'),HEALTH_ISSUES,'healthIssues'); chipsFrom($('#equityGroups'),EQUITY_GROUPS,'equityGroups'); chipsFrom($('#equityDims'),EQUITY_DIMS,'equityDims');
 let draft=null; try{draft=JSON.parse(localStorage.getItem('nurs-proposal-draft')||'null')}catch(e){}
-if(draft){apply(draft);$('#saveNote').textContent='เปิดร่างที่บันทึกไว้ในเครื่องนี้'}
+if(draft){apply(draft);$('#saveNote').textContent='✓ กู้คืนข้อมูลที่กรอกค้างไว้แล้ว';setTimeout(()=>toast('กู้คืนข้อมูลที่กรอกค้างไว้ กรอกต่อได้เลย'),400)}
 else if(!LIVE){apply(SAMPLE);$('#demoBar').hidden=false}
 $('#clearAll').onclick=()=>{$('#form').reset();apply({links:[],keywords:[],members:[],objectives:[''],activities:[],budget:{comp:[{n:'',a:''}],use:[{n:'',a:''}],mat:[{n:'',a:''}]}});
-  try{localStorage.removeItem('nurs-proposal-draft')}catch(e){} $('#demoBar').hidden=true; init2(); go(0); toast('ล้างข้อมูลแล้ว พร้อมกรอกจริง')};
+  try{localStorage.removeItem('nurs-proposal-draft');localStorage.removeItem('nurs-proposal-step')}catch(e){} dirty=false; $('#demoBar').hidden=true; init2(); go(0); toast('ล้างข้อมูลแล้ว พร้อมกรอกจริง')};
 function init2(){renderKw();renderMembers();renderObjectives();renderGantt();renderBudget();renderDocs();counters();$('#fyHead').textContent=$('#fy').value}
-init2(); go(0,true);
+init2(); {let st=0;try{st=draft?+(localStorage.getItem('nurs-proposal-step')||0):0}catch(e){} go(Math.min(Math.max(st||0,0),STEPS.length-1),true)}
+$$('#form textarea').forEach(grow);
 </script>
 </body>
 </html>
