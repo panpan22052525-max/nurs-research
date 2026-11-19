@@ -62,9 +62,8 @@
   <main class="main">
     <form class="card lookup" id="f">
       <h2>ตรวจสอบผลการพิจารณา</h2>
-      <p class="hint">กรอกเลขที่โครงร่างที่ได้รับหลังส่ง (เช่น NUR-2570-001) และอีเมลหัวหน้าโครงการที่ใช้ตอนส่ง</p>
+      <p class="hint">กรอกเลขที่โครงร่างที่ได้รับหลังส่ง (เช่น NUR-2570-001) แล้วกดตรวจสอบ</p>
       <label class="f">เลขที่โครงร่าง<input type="text" id="ref" autocomplete="off" placeholder="NUR-2570-001" required></label>
-      <label class="f">อีเมลหัวหน้าโครงการ<input type="email" id="email" autocomplete="email" placeholder="name@sskru.ac.th" required></label>
       <button class="btn btn-p" id="go" type="submit">ตรวจสอบ</button>
     </form>
     <div id="out" aria-live="polite"></div>
@@ -112,15 +111,15 @@ function progressBlock(r){
 }
 $('#f').addEventListener('submit',async e=>{
   e.preventDefault();
-  const ref=$('#ref').value.trim(), email=$('#email').value.trim();
-  if(!ref||!email){$('#out').innerHTML='<div class="err">กรุณากรอกเลขที่โครงร่างและอีเมล</div>';return}
+  const ref=$('#ref').value.trim().toUpperCase().replace(/\s+/g,'');
+  if(!ref){$('#out').innerHTML='<div class="err">กรุณากรอกเลขที่โครงร่าง</div>';return}
   if(!LIVE){render(Object.assign({},SAMPLE,{ref:ref.toUpperCase()}));$('#out').insertAdjacentHTML('afterbegin','<p class="mode">โหมดทดลอง: แสดงข้อมูลตัวอย่าง</p>');return}
   const b=$('#go'); b.disabled=true; b.textContent='กำลังตรวจสอบ…';
-  try{render(await api('status',{ref,email}))}
+  try{render(await api('status',{ref}))}
   catch(err){$('#out').innerHTML=`<div class="err">${esc(err.message)}</div>`}
   finally{b.disabled=false;b.textContent='ตรวจสอบ'}
 });
-const q=new URLSearchParams(location.search); if(q.get('ref')) $('#ref').value=q.get('ref');
+const q=new URLSearchParams(location.search); if(q.get('ref')){$('#ref').value=q.get('ref'); if(LIVE) $('#f').requestSubmit()}
 </script>
 </body>
 </html>
