@@ -118,6 +118,11 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .r-ok{--c:var(--s-pass)}.r-fast{--c:var(--s-review)}.r-slow{--c:var(--s-fix)}.r-bad{--c:var(--s-fail)}.r-wait{--c:var(--muted)}
 .danger{border-color:#f0c4c0;background:#fff8f7}.danger h3{color:#b4332b}
 .btn-del{background:#b4332b;color:#fff;border:0}.btn-del:hover{background:#962820}.btn-del:disabled{opacity:.6}
+.xbtn{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--paper);color:var(--green,#1e7a45);border-radius:8px;padding:3px 9px;margin-right:4px;cursor:pointer}
+.xbtn:hover{border-color:var(--green,#1e7a45);background:#eef6f0}
+.xcard{padding:14px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-color:#cfe3d6;background:#f3faf5}
+.xcard .tx{flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}.xcard .tx small{color:var(--muted);font-size:13px}
+.xcard .xb{display:flex;gap:8px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -165,7 +170,7 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
         <select id="sort" aria-label="เรียงลำดับ"><option value="new">ส่งล่าสุดก่อน</option><option value="old">ส่งก่อนขึ้นก่อน</option><option value="budget">งบประมาณมากไปน้อย</option></select>
       </div>
       <p class="count" id="count"></p>
-      <div class="tbl"><table><thead><tr><th>เลขที่</th><th>ชื่อโครงการ</th><th>หัวหน้าโครงการ</th><th>สาขา</th><th style="text-align:right">งบประมาณ (บาท)</th><th>รับเรื่อง</th><th>สถานะ</th><th>วันที่ส่ง</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="tbl"><table><thead><tr><th>เลขที่</th><th>ชื่อโครงการ</th><th>หัวหน้าโครงการ</th><th>สาขา</th><th style="text-align:right">งบประมาณ (บาท)</th><th>รับเรื่อง</th><th>สถานะ</th><th>วันที่ส่ง</th><th>ต้นฉบับ</th></tr></thead><tbody id="rows"></tbody></table></div>
     </section>
   </div>
   <footer>งานวิจัยและบริการวิชาการ คณะพยาบาลศาสตร์ มหาวิทยาลัยราชภัฏศรีสะเกษ</footer>
@@ -176,6 +181,7 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 <div class="toast" id="toast" role="status"></div>
 
 <script src="config.js"></script>
+<script src="export.js"></script>
 <script>
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API_URL=((window.APP_CONFIG||{}).API_URL||'').trim();
@@ -290,7 +296,7 @@ function renderList(){
   let L=P().filter(p=>(!st||p['สถานะ']===st)&&(!fd||p['สาขา']===fd)&&(!q||[p['เลขที่'],p['ชื่อโครงการ (ไทย)'],p['ชื่อโครงการ (อังกฤษ)'],p['หัวหน้าโครงการ'],p['ผู้ร่วมวิจัย']].join(' ').toLowerCase().includes(q)));
   L.sort((a,b)=>so==='budget'?(b['งบประมาณรวม']||0)-(a['งบประมาณรวม']||0):so==='old'?String(a['วันเวลาที่ส่ง']).localeCompare(String(b['วันเวลาที่ส่ง'])):String(b['วันเวลาที่ส่ง']).localeCompare(String(a['วันเวลาที่ส่ง'])));
   $('#count').textContent=`แสดง ${L.length} จาก ${P().length} เรื่อง · งบประมาณรวม ${baht(L.reduce((a,p)=>a+(Number(p['งบประมาณรวม'])||0),0))} บาท`;
-  $('#rows').innerHTML=L.map(p=>`<tr tabindex="0" data-open="${esc(p['เลขที่'])}"><td class="ref">${esc(p['เลขที่'])}</td><td><div class="t">${esc(p['ชื่อโครงการ (ไทย)'])}</div><div class="sub">${esc(p['แหล่งทุน']||'')}</div></td><td>${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</td><td>${esc(p['สาขา']||'')}</td><td class="num">${baht(p['งบประมาณรวม'])}</td><td>${ackCell(p)}</td><td><span class="pill s-${esc(p['สถานะ'])}">${esc(p['สถานะ'])}</span></td><td style="white-space:nowrap">${fmtDate(p['วันเวลาที่ส่ง'])}</td></tr>`).join('')||`<tr><td colspan="8" class="empty">${DATA.proposals.length?'ไม่พบโครงร่างตามเงื่อนไข':'ยังไม่มีโครงร่างที่ส่งเข้ามา'}</td></tr>`;
+  $('#rows').innerHTML=L.map(p=>`<tr tabindex="0" data-open="${esc(p['เลขที่'])}"><td class="ref">${esc(p['เลขที่'])}</td><td><div class="t">${esc(p['ชื่อโครงการ (ไทย)'])}</div><div class="sub">${esc(p['แหล่งทุน']||'')}</div></td><td>${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</td><td>${esc(p['สาขา']||'')}</td><td class="num">${baht(p['งบประมาณรวม'])}</td><td>${ackCell(p)}</td><td><span class="pill s-${esc(p['สถานะ'])}">${esc(p['สถานะ'])}</span></td><td style="white-space:nowrap">${fmtDate(p['วันเวลาที่ส่ง'])}</td><td style="white-space:nowrap"><button class="xbtn" type="button" data-xpdf="${esc(p['เลขที่'])}" title="พิมพ์ / บันทึกเป็น PDF">PDF</button><button class="xbtn" type="button" data-xword="${esc(p['เลขที่'])}" title="ดาวน์โหลดไฟล์ Word">Word</button></td></tr>`).join('')||`<tr><td colspan="9" class="empty">${DATA.proposals.length?'ไม่พบโครงร่างตามเงื่อนไข':'ยังไม่มีโครงร่างที่ส่งเข้ามา'}</td></tr>`;
 }
 ['q','stF','fdF','sort'].forEach(id=>$('#'+id).addEventListener('input',renderList));
 $('#fyF').addEventListener('change',()=>route());
@@ -350,6 +356,8 @@ function openDetail(ref){
   <div class="d-head"><div style="min-width:0"><div class="ref">${esc(p['เลขที่'])}</div><h2 id="dTitle">${esc(p['ชื่อโครงการ (ไทย)'])}</h2><div class="hint">ส่งเมื่อ ${fmtDate(p['วันเวลาที่ส่ง'],1)} · ${esc((p['คำนำหน้า']||'')+' '+(p['หัวหน้าโครงการ']||''))}</div></div>
     <button class="btn btn-g btn-s x" type="button" id="dClose">ปิด</button></div>
   <div class="d-body">
+    <div class="card xcard"><div class="tx"><b>ต้นฉบับโครงร่างวิจัย</b><small>สร้างจากข้อมูลที่ผู้วิจัยกรอกในระบบ ครบทุกส่วน เปิดได้ทันทีแม้ผู้วิจัยไม่ได้แชร์ลิงก์ไฟล์</small></div>
+      <div class="xb"><button class="btn btn-p" type="button" data-xpdf="${esc(p['เลขที่'])}">🖨 พิมพ์ / บันทึก PDF</button><button class="btn btn-g" type="button" data-xword="${esc(p['เลขที่'])}">⬇ ดาวน์โหลด Word</button></div></div>
     ${p['รับโครงร่างเมื่อ']?`<div class="card ack on"><span class="lamp on"></span><div class="tx"><b>รับโครงร่างแล้ว</b><small>เมื่อ ${fmtDate(p['รับโครงร่างเมื่อ'],1)} · ผู้วิจัยเห็นไฟเขียวในหน้าติดตามสถานะ</small></div></div>`
       :`<div class="card ack"><span class="lamp"></span><div class="tx"><b>ยังไม่ได้กดรับโครงร่าง</b><small>กดรับเมื่อตรวจว่าได้รับเอกสารครบ ผู้วิจัยจะเห็นไฟเขียวทันที</small><label class="chk" style="margin-top:6px;display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" id="ackMail" checked style="width:17px;height:17px;accent-color:var(--green)"> ส่งอีเมลแจ้งผู้วิจัยว่าคณะได้รับแล้ว</label></div><button class="btn btn-ack" type="button" id="ackBtn">✓ รับโครงร่างแล้ว</button></div>`}
     <form class="card sform" id="sForm">
@@ -424,6 +432,30 @@ function progressSection(p){
 function closeDetail(){$('#drawer').hidden=true;$('#scrim').hidden=true;current=null}
 $('#scrim').onclick=closeDetail;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)closeDetail();if(e.key==='Enter'&&e.target.matches('tr[data-open]'))openDetail(e.target.dataset.open)});
+/* ---------- ต้นฉบับ Word / PDF จากข้อมูลที่กรอก ---------- */
+function toExport(p){
+  const lines=v=>String(v||'').split('\n').map(x=>x.trim()).filter(Boolean);
+  const csv=v=>String(v||'').split(/,\s*/).map(x=>x.trim()).filter(Boolean);
+  let start=p['เดือนเริ่ม']||''; if(/^\d{4}-\d{2}-\d{2}T/.test(start)){const t=new Date(start);start=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}`}
+  const CAT={'ค่าตอบแทน':'comp','ค่าใช้สอย':'use','ค่าวัสดุ':'mat'}, budget={comp:[],use:[],mat:[]};
+  (p.budgetItems||[]).forEach(b=>{const k=CAT[b.cat]||'use';budget[k].push({n:b.item,a:b.amount})});
+  if(!(p.budgetItems||[]).length){[['comp','ค่าตอบแทน'],['use','ค่าใช้สอย'],['mat','ค่าวัสดุ']].forEach(([k,h])=>{if(+p[h])budget[k].push({n:h,a:+p[h]})})}
+  const mem=(p.members||[]).filter(m=>m.role!=='หัวหน้าโครงการ').map(m=>({name:m.name,aff:m.aff,share:m.share}));
+  const links=(p.files||[]).length?(p.files||[]).map(f=>({type:f.type,name:f.name,url:f.url})):lines(p['เอกสารแนบทั้งหมด']).map(l=>{const i=l.indexOf(': ');return i>0?{type:l.slice(0,i),url:l.slice(i+2)}:{type:'เอกสารแนบ',url:l}});
+  return {titleTh:p['ชื่อโครงการ (ไทย)'],titleEn:p['ชื่อโครงการ (อังกฤษ)'],fy:p['ปีงบประมาณ'],fund:p['แหล่งทุน'],projType:p['ประเภทโครงการ'],resType:p['ประเภทการวิจัย'],
+    field:p['สาขา'],target:p['กลุ่มเป้าหมาย'],keywords:csv(p['คำสำคัญ']),leadPrefix:p['คำนำหน้า'],leadName:p['หัวหน้าโครงการ'],leadShare:p['สัดส่วนหัวหน้า (%)'],
+    leadDept:p['สาขาวิชา'],leadTel:String(p['โทรศัพท์']||'').replace(/^'/,''),leadEmail:p['อีเมล'],members:mem,
+    background:p['ความเป็นมา'],objectives:lines(p['วัตถุประสงค์']).map(o=>o.replace(/^\d+\)\s*/,'')),framework:p['กรอบแนวคิด'],design:p['รูปแบบการวิจัย'],
+    area:p['พื้นที่'],sample:p['กลุ่มตัวอย่าง'],n:p['ขนาดตัวอย่าง'],tools:p['เครื่องมือ/การวิเคราะห์'],start,months:p['ระยะเวลา (เดือน)'],
+    activities:lines(p['แผนการดำเนินงาน']).map(l=>{const m=l.match(/^(.*?):\s*เดือน\s*([\d,\s]*)$/);return m?{name:m[1].trim(),months:m[2].split(',').map(Number).filter(Boolean)}:{name:l,months:[]}}),
+    strategy:p['ยุทธศาสตร์'],sdgs:csv(p['SDGs']),equityLevel:p['การลดความเหลื่อมล้ำทางสุขภาพ'],healthIssues:csv(p['ภาวะสุขภาพที่มุ่งแก้ไข']),equityGroups:csv(p['กลุ่มเปราะบางที่ได้รับประโยชน์']),
+    equityDims:csv(p['แนวทางลดความเหลื่อมล้ำ']),equityDesc:p['คำอธิบายการลดความเหลื่อมล้ำ'],outputs:csv(p['เป้าหมายการเผยแพร่']),benefit:p['ประโยชน์ที่คาดว่าจะได้รับ'],ethics:p['จริยธรรมการวิจัย'],
+    budget,total:p['งบประมาณรวม'],links};
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-xpdf],[data-xword]');if(!b)return;e.stopPropagation();e.preventDefault();
+  const ref=b.dataset.xpdf||b.dataset.xword, p=DATA.proposals.find(x=>x['เลขที่']===ref); if(!p||!window.ProposalExport){toast('ยังสร้างต้นฉบับไม่ได้ ลองรีเฟรชหน้า');return}
+  try{if(b.dataset.xpdf)ProposalExport.pdf(toExport(p),ref);else{ProposalExport.word(toExport(p),ref);toast('ดาวน์โหลดไฟล์ Word แล้ว')}}catch(err){toast('สร้างไฟล์ไม่สำเร็จ: '+err.message)}
+},true);
 document.addEventListener('click',e=>{const t=e.target.closest('[data-open]');if(t&&!t.closest('#drawer'))openDetail(t.dataset.open)});
 
 /* ---------- CSV ---------- */
