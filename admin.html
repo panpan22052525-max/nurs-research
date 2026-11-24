@@ -123,6 +123,7 @@ dl.kv dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .xcard{padding:14px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-color:#cfe3d6;background:#f3faf5}
 .xcard .tx{flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}.xcard .tx small{color:var(--muted);font-size:13px}
 .xcard .xb{display:flex;gap:8px;flex-wrap:wrap}
+.btn-o{background:var(--orange,#E07B1F);color:#fff;border-color:transparent}.btn-o:hover{filter:brightness(.95)}
 </style>
 </head>
 <body>
@@ -357,7 +358,7 @@ function openDetail(ref){
     <button class="btn btn-g btn-s x" type="button" id="dClose">ปิด</button></div>
   <div class="d-body">
     <div class="card xcard"><div class="tx"><b>ต้นฉบับโครงร่างวิจัย</b><small>สร้างจากข้อมูลที่ผู้วิจัยกรอกในระบบ ครบทุกส่วน เปิดได้ทันทีแม้ผู้วิจัยไม่ได้แชร์ลิงก์ไฟล์</small></div>
-      <div class="xb"><button class="btn btn-p" type="button" data-xpdf="${esc(p['เลขที่'])}">🖨 พิมพ์ / บันทึก PDF</button><button class="btn btn-g" type="button" data-xword="${esc(p['เลขที่'])}">⬇ ดาวน์โหลด Word</button></div></div>
+      <div class="xb"><button class="btn btn-p" type="button" data-xpdf="${esc(p['เลขที่'])}">🖨 พิมพ์ / บันทึก PDF</button><button class="btn btn-g" type="button" data-xword="${esc(p['เลขที่'])}">⬇ ดาวน์โหลด Word</button><a class="btn btn-o" href="./?edit=${encodeURIComponent(p['เลขที่'])}">✏️ แก้ไขเนื้อหา</a></div></div>
     ${p['รับโครงร่างเมื่อ']?`<div class="card ack on"><span class="lamp on"></span><div class="tx"><b>รับโครงร่างแล้ว</b><small>เมื่อ ${fmtDate(p['รับโครงร่างเมื่อ'],1)} · ผู้วิจัยเห็นไฟเขียวในหน้าติดตามสถานะ</small></div></div>`
       :`<div class="card ack"><span class="lamp"></span><div class="tx"><b>ยังไม่ได้กดรับโครงร่าง</b><small>กดรับเมื่อตรวจว่าได้รับเอกสารครบ ผู้วิจัยจะเห็นไฟเขียวทันที</small><label class="chk" style="margin-top:6px;display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" id="ackMail" checked style="width:17px;height:17px;accent-color:var(--green)"> ส่งอีเมลแจ้งผู้วิจัยว่าคณะได้รับแล้ว</label></div><button class="btn btn-ack" type="button" id="ackBtn">✓ รับโครงร่างแล้ว</button></div>`}
     <form class="card sform" id="sForm">

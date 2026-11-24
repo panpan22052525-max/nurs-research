@@ -47,6 +47,9 @@
 .hist li{display:grid;grid-template-columns:150px 1fr;gap:12px;font-size:14px}
 .hist time{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
 @media (max-width:560px){.hist li{grid-template-columns:1fr;gap:2px}}
+.editbox{margin-top:18px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#f7faf7}
+.editbox>div{display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px}.editbox.hot{background:#fff6e6;border-color:#f0d49a}
+.btn-o{background:var(--orange,#E07B1F);color:#fff;border-color:transparent}.btn-o:hover{filter:brightness(.95)}
 </style>
 </head>
 <body>
@@ -98,7 +101,7 @@ function render(r){
     <h3 style="font-size:16px;margin-bottom:10px">ประวัติการดำเนินการ</h3>
     <ol class="hist">${(r.history||[]).slice().reverse().map(h=>`<li><time>${fmtDate(h.at)}</time><div><span class="pill s-${esc(h.status)}">${esc(h.status)}</span>${h.note?` <span class="hint">${esc(h.note)}</span>`:''}</div></li>`).join('')||'<li class="hint">ยังไม่มีประวัติ</li>'}</ol>
     ${st==='ผ่านการพิจารณา'?progressBlock(r):''}
-    ${st==='ให้แก้ไข'?`<p class="hint" style="margin-top:16px">แก้ไขตามความเห็นแล้ว ให้ส่งเอกสารฉบับแก้ไขถึงงานวิจัยคณะ หรือติดต่อผู้ดูแลระบบ</p>`:''}
+    <div class="editbox${st==='ให้แก้ไข'?' hot':''}"><div><b>${st==='ให้แก้ไข'?'แก้ไขโครงร่างตามความเห็นผู้พิจารณา':'ต้องการแก้ไขข้อมูลโครงร่าง?'}</b><span class="hint">${st==='ให้แก้ไข'?'เปิดข้อมูลเดิมมาแก้ไข แล้วกดบันทึก ระบบส่งฉบับแก้ไขให้คณะทันที':'เปิดข้อมูลเดิมมาแก้ไขได้ทุกส่วน แล้วกดบันทึกได้ทันที'} (ใช้อีเมลหัวหน้าโครงการยืนยัน)</span></div><a class="btn ${st==='ให้แก้ไข'?'btn-o':'btn-g'}" href="./?edit=${encodeURIComponent(r.ref)}">✏️ แก้ไขโครงร่าง</a></div>
   </section>`;
 }
 function progressBlock(r){

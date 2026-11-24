@@ -217,6 +217,11 @@ th{background:var(--soft);font-weight:600;font-size:12.5px;color:var(--muted);wh
 @media (max-width:520px){.doc-row{flex-wrap:wrap}.doc-row input{flex-basis:100%}}
 .review a.lnk{color:var(--green);overflow-wrap:anywhere}
 footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30px}
+.editgate{max-width:640px;margin:28px auto;padding:24px 26px}
+.editgate h2{margin:0 0 6px}.eg-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:12px}.eg-row .f{flex:1;min-width:220px;margin:0}
+.editgate .err{color:#b4332b;background:#fdf0ef;border:1px solid #f0c4c0;border-radius:10px;padding:8px 12px;margin:12px 0 0}
+.editbar{position:sticky;top:0;z-index:20;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px auto 0;max-width:1200px;padding:10px 16px;border-radius:12px;background:#fff6e6;border:1px solid #f0d49a;box-shadow:0 6px 18px -10px rgba(0,0,0,.25)}
+.editbar small{color:#7a5b16;margin-left:4px}.editbar .eb-act{display:flex;gap:8px}
 </style>
 </head>
 <body>
@@ -236,6 +241,21 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding-block:0 30p
   <div class="mode" id="demoBar" hidden>
     <span>โหมดทดลอง: ยังไม่ได้ตั้งค่าการเชื่อมต่อฐานข้อมูล ฟอร์มเติมข้อมูลตัวอย่างไว้ และยังไม่บันทึกข้อมูลจริง</span>
     <button class="btn btn-g btn-s" type="button" id="clearAll">ล้างข้อมูลตัวอย่าง</button>
+  </div>
+
+  <section class="card editgate" id="editGate" hidden>
+    <h2>แก้ไขโครงร่างวิจัยที่ส่งแล้ว</h2>
+    <p class="hint">เลขที่โครงร่าง <b id="egRef"></b> · กรอกอีเมลหัวหน้าโครงการที่ใช้ตอนส่ง เพื่อเปิดข้อมูลเดิมมาแก้ไข</p>
+    <form id="egForm" class="eg-row">
+      <label class="f">อีเมลหัวหน้าโครงการ<input type="email" id="egEmail" autocomplete="email" placeholder="name@sskru.ac.th" required></label>
+      <button class="btn btn-p" type="submit" id="egGo">เปิดเพื่อแก้ไข</button>
+    </form>
+    <p class="err" id="egErr" hidden></p>
+    <p class="hint" style="margin:10px 0 0"><a href="./">← กลับไปเสนอโครงร่างใหม่</a></p>
+  </section>
+  <div class="editbar" id="editBar" hidden>
+    <div><b>กำลังแก้ไขโครงร่าง <span id="ebRef"></span></b><small id="ebInfo"></small></div>
+    <div class="eb-act"><a class="btn btn-g btn-s" id="ebCancel" href="./">ยกเลิก</a><button class="btn btn-o btn-s" type="button" id="ebSave">💾 บันทึกการแก้ไข</button></div>
   </div>
 
   <div class="main" id="main">
@@ -767,13 +787,13 @@ function review(){
 /* ---------- navigation ---------- */
 function go(i,noScroll){
   if(cur===5&&i!==5&&unsavedDocs()){saveDocs(null)}
-  cur=Math.max(0,Math.min(STEPS.length-1,i)); maxSeen=Math.max(maxSeen,cur); try{localStorage.setItem('nurs-proposal-step',String(cur))}catch(e){}
+  cur=Math.max(0,Math.min(STEPS.length-1,i)); maxSeen=Math.max(maxSeen,cur); try{if(!EDIT)localStorage.setItem('nurs-proposal-step',String(cur))}catch(e){}
   $$('.panel').forEach(p=>p.classList.toggle('show',+p.dataset.step===cur));
   $('#eb').textContent=`ขั้นตอนที่ ${cur+1} จาก ${STEPS.length}`;
   $('#ph').textContent=STEPS[cur].t; $('#pd').textContent=STEPS[cur].d;
   $('#prev').style.visibility=cur?'visible':'hidden';
   const last=cur===STEPS.length-1;
-  $('#next').textContent=last?'ส่งโครงร่างวิจัย':'ถัดไป →'; $('#next').className='btn '+(last?'btn-o':'btn-p');
+  $('#next').textContent=last?(EDIT?'บันทึกการแก้ไข':'ส่งโครงร่างวิจัย'):'ถัดไป →'; $('#next').className='btn '+(last?'btn-o':'btn-p');
   if(cur===2) renderGantt();
   if(last) review();
   buildSteps(); progress();
@@ -792,16 +812,59 @@ async function persist(){
 let dirty=false, sentAt=0;
 function autosave(){dirty=true;clearTimeout(saveDraft.t);saveDraft.t=setTimeout(()=>saveDraft(true),800);clearTimeout(autosave.r);autosave.r=setTimeout(syncRemote,20000)}
 /* สำรองร่างเข้าระบบคณะอัตโนมัติ (เมื่อกรอกอีเมลหัวหน้าโครงการแล้ว) */
-function syncRemote(){const d=collect();if(!LIVE||!/^\S+@\S+\.\S+$/.test(d.leadEmail||'')||Date.now()-sentAt<15000)return;sentAt=Date.now();api('saveDraft',d).catch(()=>{})}
+function syncRemote(){const d=collect();if(EDIT||!LIVE||!/^\S+@\S+\.\S+$/.test(d.leadEmail||'')||Date.now()-sentAt<15000)return;sentAt=Date.now();api('saveDraft',d).catch(()=>{})}
 function flush(){if(!dirty)return;clearTimeout(saveDraft.t);saveDraft(true);
-  const d=collect();if(LIVE&&/^\S+@\S+\.\S+$/.test(d.leadEmail||'')){try{navigator.sendBeacon&&navigator.sendBeacon(API_URL,new Blob([JSON.stringify({action:'saveDraft',data:d})],{type:'text/plain;charset=utf-8'}))}catch(e){}}}
+  const d=collect();if(!EDIT&&LIVE&&/^\S+@\S+\.\S+$/.test(d.leadEmail||'')){try{navigator.sendBeacon&&navigator.sendBeacon(API_URL,new Blob([JSON.stringify({action:'saveDraft',data:d})],{type:'text/plain;charset=utf-8'}))}catch(e){}}}
 function saveDraft(silent){
-  try{localStorage.setItem('nurs-proposal-draft',JSON.stringify(collect()));localStorage.setItem('nurs-proposal-step',String(cur));dirty=false;
+  if($('#main').hidden) return;
+  try{localStorage.setItem(EDIT?'nurs-proposal-edit:'+EDIT.ref:'nurs-proposal-draft',JSON.stringify(collect()));if(!EDIT)localStorage.setItem('nurs-proposal-step',String(cur));dirty=false;
     const tm=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
     $('#saveNote').textContent=`✓ บันทึกอัตโนมัติแล้ว ${tm} น.`; if(!silent) toast('บันทึกร่างแล้ว');
   }catch(e){ if(!silent) toast('เบราว์เซอร์นี้ไม่อนุญาตให้บันทึกร่าง') }
 }
+/* ---------- แก้ไขโครงร่างที่ส่งแล้ว ---------- */
+let EDIT=null;
+function saveEdit(){
+  const miss=problems(null);
+  if(miss.length){toast(`ยังขาดข้อมูล ${miss.length} รายการ`);go(STEPS.length-1);return}
+  const d=collect(), b1=$('#next'), b2=$('#ebSave'); [b1,b2].forEach(b=>b.disabled=true); b2.textContent='กำลังบันทึก…';
+  const fin=r=>{
+    try{localStorage.removeItem('nurs-proposal-edit:'+EDIT.ref)}catch(e){} dirty=false;
+    $('#editBar').hidden=true;
+    $('#form').innerHTML=`<div class="done-card"><div class="seal">✓</div><h2>บันทึกการแก้ไขเรียบร้อย</h2><div class="ref">${esc(EDIT.ref)}</div><p class="hint">${r.resubmitted?'ส่งโครงร่างฉบับแก้ไขให้คณะแล้ว สถานะกลับเป็น “รอพิจารณา”':'ข้อมูลในระบบเป็นฉบับล่าสุดแล้ว'}</p><div class="export"><p class="ex-h">ดาวน์โหลดต้นฉบับฉบับแก้ไข</p><div class="ex-btns"><button class="btn btn-ex" type="button" id="exWord"><span class="ex-ic w">W</span>ดาวน์โหลด Word</button><button class="btn btn-ex" type="button" id="exPdf"><span class="ex-ic p">PDF</span>บันทึกเป็น PDF</button></div></div><p style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a class="btn btn-p" href="${location.pathname}?edit=${encodeURIComponent(EDIT.ref)}">แก้ไขต่อ</a><a class="btn btn-g" href="${EDIT.key?'admin.html':'track.html?ref='+encodeURIComponent(EDIT.ref)}">${EDIT.key?'กลับหน้าผู้ดูแล':'ติดตามสถานะ'}</a></p>${LIVE?'':'<p class="hint">(โหมดทดลอง: ข้อมูลยังไม่ถูกบันทึก)</p>'}</div>`;
+    $('#exWord').onclick=()=>{try{ProposalExport.word(d,EDIT.ref);toast('กำลังดาวน์โหลดไฟล์ Word')}catch(e){toast('สร้างไฟล์ Word ไม่สำเร็จ: '+e.message)}};
+    $('#exPdf').onclick=()=>{try{ProposalExport.pdf(d,EDIT.ref)}catch(e){toast('สร้าง PDF ไม่สำเร็จ: '+e.message)}};
+    $('#main').scrollIntoView({behavior:'smooth',block:'start'}); toast('บันทึกการแก้ไขแล้ว');
+  };
+  const fail=e=>{[b1,b2].forEach(b=>b.disabled=false);b2.textContent='💾 บันทึกการแก้ไข';toast('บันทึกไม่สำเร็จ: '+e.message)};
+  if(!LIVE){setTimeout(()=>fin({resubmitted:false}),500);return}
+  editApi('proposalUpdate',{ref:EDIT.ref,email:EDIT.email,data:d}).then(fin).catch(fail);
+}
+async function editApi(action,data){
+  const body={action,data}; if(EDIT&&EDIT.key) body.key=EDIT.key;
+  const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+  const j=await r.json(); if(!j.ok) throw new Error(j.error||'เกิดข้อผิดพลาด'); return j.result;
+}
+async function openEdit(ref,email,key){
+  EDIT={ref,email,key}; const b=$('#egGo'); b.disabled=true; b.textContent='กำลังเปิด…'; $('#egErr').hidden=true;
+  try{
+    const res=LIVE?await editApi('proposalLoad',{ref,email}):{ref,status:'ให้แก้ไข',data:SAMPLE};
+    EDIT.ref=res.ref;
+    let d=res.data, local=null; try{local=JSON.parse(localStorage.getItem('nurs-proposal-edit:'+res.ref)||'null')}catch(e){}
+    $('#form').reset(); apply(local||d); init2(); $('#fy').value=(local||d).fy||$('#fy').value; $('#fyHead').textContent=$('#fy').value;
+    $('#editGate').hidden=true; $('#main').hidden=false; $('#editBar').hidden=false; $('#demoBar').hidden=true;
+    $('#ebRef').textContent=res.ref;
+    $('#ebInfo').textContent=` · สถานะ: ${res.status}${key?' · แก้ไขในฐานะผู้ดูแล':''}${res.status==='ให้แก้ไข'&&!key?' · กดบันทึกแล้วสถานะจะกลับเป็น “รอพิจารณา”':''}`;
+    $('#saveNote').textContent=local?'✓ กู้คืนข้อความที่แก้ค้างไว้แล้ว':'เปิดข้อมูลล่าสุดจากระบบแล้ว';
+    if(local) setTimeout(()=>toast('กู้คืนข้อความที่แก้ค้างไว้ กดบันทึกการแก้ไขเมื่อเสร็จ'),300);
+    if(key) $('#ebCancel').href='admin.html';
+    document.title='แก้ไขโครงร่าง '+res.ref+' | '+document.title;
+    go(0,true); $$('#form textarea').forEach(grow);
+  }catch(err){EDIT=null;$('#editGate').hidden=false;$('#egErr').textContent=err.message;$('#egErr').hidden=false}
+  finally{b.disabled=false;b.textContent='เปิดเพื่อแก้ไข'}
+}
 function submit(){
+  if(EDIT) return saveEdit();
   const miss=problems(null);
   if(miss.length){toast(`ยังขาดข้อมูล ${miss.length} รายการ`);review();return}
   if(!$('#certify').checked){toast('กรุณาทำเครื่องหมายรับรองข้อมูลก่อนส่ง');return}
@@ -839,6 +902,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('pagehide',flush);
 document.addEventListener('focusout',e=>{if(dirty&&e.target.matches&&e.target.matches('input,textarea,select')){clearTimeout(saveDraft.t);saveDraft(true)}});
 document.addEventListener('input',e=>{
+  if(!e.target.closest||!e.target.closest('#form')) return;
   const t=e.target;
   if(t.dataset.m!=null){S.members[+t.dataset.m][t.dataset.k]=t.value; if(t.dataset.k==='share') updateShare()}
   else if(t.dataset.obj!=null) S.objectives[+t.dataset.obj]=t.value;
@@ -907,6 +971,13 @@ $('#clearAll').onclick=()=>{$('#form').reset();apply({links:[],keywords:[],membe
 function init2(){renderKw();renderMembers();renderObjectives();renderGantt();renderBudget();renderDocs();counters();$('#fyHead').textContent=$('#fy').value}
 init2(); {let st=0;try{st=draft?+(localStorage.getItem('nurs-proposal-step')||0):0}catch(e){} go(Math.min(Math.max(st||0,0),STEPS.length-1),true)}
 $$('#form textarea').forEach(grow);
+{const er=new URLSearchParams(location.search).get('edit');
+ if(er){const ref=er.trim().toUpperCase().replace(/\s+/g,'');let key='';try{key=sessionStorage.getItem('nurs-admin-key')||''}catch(e){}
+  $('#main').hidden=true;$('#demoBar').hidden=true;$('#egRef').textContent=ref;$('#editGate').hidden=false;
+  $('#egForm').onsubmit=e=>{e.preventDefault();const em=$('#egEmail').value.trim();if(em)openEdit(ref,em,'')};
+  $('#ebSave').onclick=()=>submit();
+  if(key) openEdit(ref,'',key);
+ }}
 </script>
 </body>
 </html>
